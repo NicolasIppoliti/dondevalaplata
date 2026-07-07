@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  web:
+    name: web (lint, test, build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  etl:
+    name: etl (ruff, pytest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: etl
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          working-directory: etl
+      - run: uv sync
+      - run: uv run ruff check .
+      - run: uv run pytest -q
+
+# ETL archival cron (D8) is deliberately deferred: this workflow only runs
+# lint + test on push/PR. A scheduled `etl archive` / `etl build` job is
+# added once the archival pipeline (Slice 2) exists.
