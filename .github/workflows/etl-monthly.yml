@@ -13,6 +13,11 @@ on:
 
 permissions:
   contents: write
+  # Needed to dispatch the CI workflow below: a GITHUB_TOKEN push does NOT
+  # trigger other workflows' `push` events (GitHub's anti-recursion guard),
+  # but `workflow_dispatch`/`repository_dispatch` are explicitly exempted --
+  # see https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow
+  actions: write
 
 concurrency:
   # No cancel-in-progress: a manual dispatch should queue behind an
@@ -80,3 +85,10 @@ jobs:
           git add data archive-manifest.json
           git commit -m "chore(data): monthly data refresh $(date -u +'%Y-%m')"
           git push
+
+      - name: Trigger CI for the pushed data refresh
+        if: steps.diff.outputs.changed == 'true'
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run ci.yml --ref main

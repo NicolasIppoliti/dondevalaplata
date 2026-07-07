@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Lets the monthly data-refresh workflow explicitly validate the commit
+  # it just pushed: a GITHUB_TOKEN push does not trigger `push`-triggered
+  # workflows, but workflow_dispatch is exempt from that guard.
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
