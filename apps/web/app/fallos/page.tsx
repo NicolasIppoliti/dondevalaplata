@@ -15,22 +15,22 @@ export default function FallosIndexPage() {
   return (
     <div className="space-y-6">
       <section>
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
-          Fallos del Tribunal de Cuentas
+        <h1 className="font-display text-[clamp(26px,4vw,40px)] font-semibold text-ink">
+          ¿Qué dicen los fallos del Tribunal de Cuentas?
         </h1>
-        <p className="mt-4 max-w-2xl text-slate-700">
+        <p className="mt-4 max-w-[62ch] text-ink">
           El Tribunal de Cuentas de la Provincia de Buenos Aires audita las
           cuentas municipales ejercicio por ejercicio (año calendario). A
           continuación, los fallos disponibles para Coronel Rosales, con el
           mismo criterio de presentación para cada gestión.
         </p>
       </section>
-      <ul className="space-y-3">
+      <ul className="border-t border-rule">
         {ejercicios.map((ejercicio) => (
-          <li key={ejercicio}>
+          <li key={ejercicio} className="border-b border-rule py-4">
             <Link
               href={`/fallos/${ejercicio}`}
-              className="text-lg font-medium underline underline-offset-2"
+              className="font-display text-xl font-semibold"
             >
               Ejercicio {ejercicio}
             </Link>

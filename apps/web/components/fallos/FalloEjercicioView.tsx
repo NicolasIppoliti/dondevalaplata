@@ -1,16 +1,16 @@
 import { notFound } from "next/navigation";
-import { SourcesFooter } from "@/components/SourcesFooter";
-import { formatDateEsAr, formatFineArs } from "@/lib/format";
+import { FalloCard } from "@/components/fallos/FalloCard";
 import { getPortalData, resolveSourceRef } from "@/lib/sources";
 
 /**
  * Neutral, identical-treatment presentation of every HTC ruling for one
  * ejercicio (htc-fallos capability). Every record — regardless of which
- * administration or official it names — renders the SAME field set, in the
- * same order, with no adjectives or editorial commentary: cited facts only.
- * The only field whose VALUE legitimately varies is "Estado del documento"
- * (scanned-without-text-layer for 2022 vs extracted-text for 2023/2024),
- * and even that field is always present, never conditionally hidden.
+ * administration or official it names — renders through the SAME
+ * `FalloCard` template, with no adjectives or editorial commentary: cited
+ * facts only. The only field whose VALUE legitimately varies is "Estado
+ * del documento" (scanned-without-text-layer for 2022 vs extracted-text
+ * for 2023/2024), and even that field is always present, never
+ * conditionally hidden.
  *
  * Kept as a plain, synchronous, presentational component (container/
  * presentational split) so it can be unit-tested directly with
@@ -20,16 +20,6 @@ import { getPortalData, resolveSourceRef } from "@/lib/sources";
 interface FalloEjercicioViewProps {
   ejercicio: string;
 }
-
-const FIELD_LABELS = {
-  falloId: "Expediente",
-  falloDate: "Fecha del fallo",
-  administration: "Gestión",
-  official: "Funcionario/a",
-  role: "Cargo",
-  fineArs: "Multa",
-  documentStatus: "Estado del documento",
-} as const;
 
 export function FalloEjercicioView({ ejercicio }: FalloEjercicioViewProps) {
   const { fallos, manifest } = getPortalData();
@@ -41,74 +31,26 @@ export function FalloEjercicioView({ ejercicio }: FalloEjercicioViewProps) {
     notFound();
   }
 
-  const sourceLink = resolveSourceRef(records[0].sourceRefs[0], manifest);
-
   return (
     <div className="space-y-8">
       <section>
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
+        <h1 className="font-display text-[clamp(26px,4vw,40px)] font-semibold text-ink">
           Fallo del Tribunal de Cuentas — ejercicio {ejercicio}
         </h1>
-        <p className="mt-2 text-sm text-slate-600">
-          Expediente {records[0].falloId}, fallo del{" "}
-          {formatDateEsAr(records[0].falloDate)}.
-        </p>
       </section>
 
       <section
         aria-label={`Multas aplicadas en el ejercicio ${ejercicio}`}
-        className="space-y-6"
+        className="space-y-5"
       >
         {records.map((record, index) => (
-          <dl
+          <FalloCard
             key={`${record.official}-${index}`}
-            className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-2 rounded-lg border border-slate-200 p-5 text-sm"
-          >
-            <dt className="font-medium text-slate-500">
-              {FIELD_LABELS.falloId}
-            </dt>
-            <dd className="text-slate-900">{record.falloId}</dd>
-
-            <dt className="font-medium text-slate-500">
-              {FIELD_LABELS.falloDate}
-            </dt>
-            <dd className="text-slate-900">
-              {formatDateEsAr(record.falloDate)}
-            </dd>
-
-            <dt className="font-medium text-slate-500">
-              {FIELD_LABELS.administration}
-            </dt>
-            <dd className="text-slate-900">{record.administration}</dd>
-
-            <dt className="font-medium text-slate-500">
-              {FIELD_LABELS.official}
-            </dt>
-            <dd className="text-slate-900">{record.official}</dd>
-
-            <dt className="font-medium text-slate-500">
-              {FIELD_LABELS.role}
-            </dt>
-            <dd className="text-slate-900">{record.role}</dd>
-
-            <dt className="font-medium text-slate-500">
-              {FIELD_LABELS.fineArs}
-            </dt>
-            <dd className="text-slate-900">{formatFineArs(record.fineArs)}</dd>
-
-            <dt className="font-medium text-slate-500">
-              {FIELD_LABELS.documentStatus}
-            </dt>
-            <dd className="text-slate-900">
-              {record.textExtracted
-                ? "Texto extraído del PDF original"
-                : "Documento escaneado, texto no extraído"}
-            </dd>
-          </dl>
+            record={record}
+            sourceLink={resolveSourceRef(record.sourceRefs[0], manifest)}
+          />
         ))}
       </section>
-
-      <SourcesFooter links={[sourceLink]} />
     </div>
   );
 }
