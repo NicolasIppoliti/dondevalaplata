@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-07-07T19:24:46Z",
+  "source": "ASAP",
+  "sourceFullName": "Asociación Argentina de Presupuesto y Administración Financiera Pública, Filial Provincia de Buenos Aires",
+  "sourceType": "asociación civil (no es un ministerio)",
+  "indexName": "Índice de Transparencia Fiscal Municipal – Provincia de Buenos Aires",
+  "scope": "Transparencia FISCAL publicada en la web oficial del municipio. No evalúa transparencia integral.",
+  "framework": "Ley de Responsabilidad Fiscal PBA 13.295 / RAFAM",
+  "reportLabel": "Informe de Mayo 2026",
+  "dataThrough": "1er trimestre 2026",
+  "indexUrl": "https://asap.org.ar/informes-detalle/cumplimiento-municipios/8",
+  "max": 100,
+  "total": 81,
+  "category": "Alto cumplimiento",
+  "dimensions": [
+    { "name": "Acceso web fácil a la información", "got": 5, "max": 5 },
+    { "name": "Presupuesto vigente publicado", "got": 30, "max": 30 },
+    { "name": "Situación económico-financiera (SEF) trimestral", "got": 35, "max": 35 },
+    { "name": "Ejecución presupuestaria trimestral", "got": 5, "max": 10 },
+    { "name": "Gastos por finalidad y función", "got": 3, "max": 10 },
+    { "name": "Stock de deuda y perfil de vencimientos", "got": 3, "max": 10 }
+  ],
+  "trend": [
+    {
+      "reportLabel": "Noviembre 2025",
+      "total": 70,
+      "category": "cumplimiento medio",
+      "sourceRef": "asap-transparencia/informe-noviembre-2025"
+    },
+    {
+      "reportLabel": "Mayo 2026",
+      "total": 81,
+      "category": "Alto cumplimiento",
+      "sourceRef": "asap-transparencia/informe-mayo-2026"
+    }
+  ],
+  "sourceRefs": [
+    "asap-transparencia/informe-mayo-2026",
+    "asap-transparencia/informe-noviembre-2025"
+  ]
+}

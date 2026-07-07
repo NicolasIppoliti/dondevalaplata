@@ -27,6 +27,10 @@ const SECTION_ROWS = [
     href: "/fallos",
   },
   {
+    question: "¿Qué tan transparente es el municipio?",
+    href: "/transparencia",
+  },
+  {
     question: "¿De dónde salen los datos?",
     href: "/fuentes",
   },

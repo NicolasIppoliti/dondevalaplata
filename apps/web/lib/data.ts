@@ -1,13 +1,16 @@
 import manifestJson from "../../../archive-manifest.json";
 import coparticipacionJson from "../../../data/coparticipacion.json";
 import fallosJson from "../../../data/fallos.json";
+import transparenciaJson from "../../../data/transparencia.json";
 import {
   coparticipacionDataSchema,
   fallosDataSchema,
   manifestSchema,
+  transparenciaDataSchema,
   type CoparticipacionData,
   type FallosData,
   type Manifest,
+  type TransparenciaData,
 } from "./schemas";
 
 /**
@@ -31,4 +34,10 @@ export function loadCoparticipacion(
 
 export function loadFallos(raw: unknown = fallosJson): FallosData {
   return fallosDataSchema.parse(raw);
+}
+
+export function loadTransparencia(
+  raw: unknown = transparenciaJson,
+): TransparenciaData {
+  return transparenciaDataSchema.parse(raw);
 }

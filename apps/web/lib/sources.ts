@@ -1,9 +1,15 @@
-import { loadCoparticipacion, loadFallos, loadManifest } from "./data";
+import {
+  loadCoparticipacion,
+  loadFallos,
+  loadManifest,
+  loadTransparencia,
+} from "./data";
 import type {
   CoparticipacionData,
   FallosData,
   Manifest,
   ManifestRecord,
+  TransparenciaData,
 } from "./schemas";
 
 /**
@@ -57,6 +63,7 @@ export function shortHash(sha256: string, length = 11): string {
 export function collectSourceRefs(
   coparticipacion: CoparticipacionData,
   fallos: FallosData,
+  transparencia?: TransparenciaData,
 ): string[] {
   const ids = new Set<string>();
   for (const id of coparticipacion.sourceRefs) ids.add(id);
@@ -66,6 +73,10 @@ export function collectSourceRefs(
   for (const id of fallos.sourceRefs) ids.add(id);
   for (const record of fallos.records) {
     for (const id of record.sourceRefs) ids.add(id);
+  }
+  if (transparencia) {
+    for (const id of transparencia.sourceRefs) ids.add(id);
+    for (const point of transparencia.trend) ids.add(point.sourceRef);
   }
   return [...ids];
 }
@@ -108,6 +119,7 @@ export interface PortalData {
   manifest: Manifest;
   coparticipacion: CoparticipacionData;
   fallos: FallosData;
+  transparencia: TransparenciaData;
 }
 
 /**
@@ -119,6 +131,10 @@ export function getPortalData(): PortalData {
   const manifest = loadManifest();
   const coparticipacion = loadCoparticipacion();
   const fallos = loadFallos();
-  assertSourceRefsResolve(collectSourceRefs(coparticipacion, fallos), manifest);
-  return { manifest, coparticipacion, fallos };
+  const transparencia = loadTransparencia();
+  assertSourceRefsResolve(
+    collectSourceRefs(coparticipacion, fallos, transparencia),
+    manifest,
+  );
+  return { manifest, coparticipacion, fallos, transparencia };
 }

@@ -84,3 +84,39 @@ export const fallosDataSchema = z.object({
 
 export type FalloRecord = z.infer<typeof falloRecordSchema>;
 export type FallosData = z.infer<typeof fallosDataSchema>;
+
+export const transparenciaDimensionSchema = z.object({
+  name: z.string().min(1),
+  got: z.number(),
+  max: z.number(),
+});
+
+export const transparenciaTrendPointSchema = z.object({
+  reportLabel: z.string().min(1),
+  total: z.number(),
+  category: z.string().min(1),
+  sourceRef: z.string().min(1),
+});
+
+export const transparenciaDataSchema = z.object({
+  generatedAt: z.string().min(1),
+  source: z.string().min(1),
+  sourceFullName: z.string().min(1),
+  sourceType: z.string().min(1),
+  indexName: z.string().min(1),
+  scope: z.string().min(1),
+  framework: z.string().min(1),
+  reportLabel: z.string().min(1),
+  dataThrough: z.string().min(1),
+  indexUrl: z.string().min(1),
+  max: z.number(),
+  total: z.number(),
+  category: z.string().min(1),
+  dimensions: z.array(transparenciaDimensionSchema).min(1),
+  trend: z.array(transparenciaTrendPointSchema).min(1),
+  sourceRefs: z.array(z.string().min(1)).min(1),
+});
+
+export type TransparenciaDimension = z.infer<typeof transparenciaDimensionSchema>;
+export type TransparenciaTrendPoint = z.infer<typeof transparenciaTrendPointSchema>;
+export type TransparenciaData = z.infer<typeof transparenciaDataSchema>;

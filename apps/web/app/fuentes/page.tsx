@@ -15,11 +15,13 @@ const CAPABILITY_LABELS = {
   electoral: "Resultados electorales",
   sibom: "Boletines Oficiales (SIBOM)",
   "mcr-docs": "Gobierno Abierto (mcr.gob.ar)",
+  "asap-transparencia": "Índice de Transparencia Fiscal (ASAP)",
 } as const;
 
 const CAPABILITY_ORDER = [
   "coparticipacion-viewer",
   "htc-fallos",
+  "asap-transparencia",
   "ipc",
   "electoral",
   "sibom",
@@ -36,6 +38,8 @@ const CAPABILITY_INTROS: Record<string, string> = {
   electoral: "Resultados electorales oficiales.",
   sibom: "Boletines Oficiales municipales.",
   "mcr-docs": "Documentos del portal de Gobierno Abierto del municipio.",
+  "asap-transparencia":
+    "Informes de ASAP (asociación civil) que miden transparencia fiscal municipal.",
 };
 
 export default function FuentesPage() {
