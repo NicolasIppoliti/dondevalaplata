@@ -5,8 +5,8 @@ export default function Home() {
         Portal de Transparencia de Coronel Rosales
       </h1>
       <p className="max-w-md text-base text-zinc-600 dark:text-zinc-400">
-        Sitio en construcción. Próximamente: coparticipación municipal y
-        fallos del Tribunal de Cuentas, con fuente y archivo verificables.
+        Sitio en construcción. Próximamente: coparticipación municipal y fallos
+        del Tribunal de Cuentas, con fuente y archivo verificables.
       </p>
     </div>
   );
