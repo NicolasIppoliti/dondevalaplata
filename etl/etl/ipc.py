@@ -86,6 +86,25 @@ def rebase_to_latest(
     )
 
 
+def rebased_series_from_json(payload: dict[str, Any]) -> RebasedIpcSeries:
+    """Reconstruct a `RebasedIpcSeries` from a `data/ipc/ipc-nacional.json` payload.
+
+    Lets downstream build steps (``coparticipacion.build_coparticipacion``)
+    consume the pinned, versioned artifact (design D5) instead of
+    recomputing the rebase from the raw archive on every run.
+    """
+    points = [
+        IpcPoint(period=p["period"], index=p["index"], factor=p["factor"])
+        for p in payload["points"]
+    ]
+    return RebasedIpcSeries(
+        series_id=payload["seriesId"],
+        base_month=payload["baseMonth"],
+        data_through=payload["dataThrough"],
+        points=points,
+    )
+
+
 def load_archived_ipc(
     manifest_path: Path, *, record_id: str = IPC_MANIFEST_ID
 ) -> tuple[str, list[tuple[str, float]]]:

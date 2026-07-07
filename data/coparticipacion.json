@@ -1,0 +1,633 @@
+{
+  "generatedAt": "2026-07-07T03:23:49Z",
+  "dataThrough": "2026-04",
+  "ipcSeriesId": "148.3_INIVELNAL_DICI_M_26",
+  "baseMonth": "2026-05",
+  "lagNote": "Los datos de coparticipación suelen publicarse con 2 a 3 meses de rezago. Si un mes no aparece en la serie, todavía no fue publicado por la fuente oficial -- no significa que el monto haya sido cero.",
+  "sourceRefs": [
+    "coparticipacion/transferencias-municipios",
+    "ipc/nivel-general-nacional"
+  ],
+  "series": [
+    {
+      "municipioId": "06182",
+      "municipio": "Coronel Rosales",
+      "baseMonth": "2026-05",
+      "points": [
+        {
+          "period": "2023-12",
+          "nominalArs": 488771457.75935626,
+          "realArs": 1605732838.2916071
+        },
+        {
+          "period": "2024-01",
+          "nominalArs": 576544806.670074,
+          "realArs": 1570369981.631475
+        },
+        {
+          "period": "2024-02",
+          "nominalArs": 692307081.5647385,
+          "realArs": 1665195547.4422784
+        },
+        {
+          "period": "2024-03",
+          "nominalArs": 774581199.9554677,
+          "realArs": 1678311186.371537
+        },
+        {
+          "period": "2024-04",
+          "nominalArs": 855092631.2805681,
+          "realArs": 1702403122.7261267
+        },
+        {
+          "period": "2024-05",
+          "nominalArs": 1244842983.3573875,
+          "realArs": 2379008282.0211315
+        },
+        {
+          "period": "2024-06",
+          "nominalArs": 934312092.0330147,
+          "realArs": 1707401724.5104191
+        },
+        {
+          "period": "2024-07",
+          "nominalArs": 988529259.3940197,
+          "realArs": 1736483968.7294683
+        },
+        {
+          "period": "2024-08",
+          "nominalArs": 1150729089.9932783,
+          "realArs": 1940448854.2147655
+        },
+        {
+          "period": "2024-09",
+          "nominalArs": 1024254729.77,
+          "realArs": 1669267588.8576577
+        },
+        {
+          "period": "2024-10",
+          "nominalArs": 1151759428.8300002,
+          "realArs": 1827865580.306333
+        },
+        {
+          "period": "2024-11",
+          "nominalArs": 1276573339.0900002,
+          "realArs": 1977951681.4024663
+        },
+        {
+          "period": "2024-12",
+          "nominalArs": 1132690252.17,
+          "realArs": 1708808016.7701254
+        },
+        {
+          "period": "2025-01",
+          "nominalArs": 576544806.6700001,
+          "realArs": 850976041.3301986
+        },
+        {
+          "period": "2025-02",
+          "nominalArs": 1082500142.27,
+          "realArs": 1560290167.8569634
+        },
+        {
+          "period": "2025-03",
+          "nominalArs": 1163186398.16,
+          "realArs": 1616311748.9138956
+        },
+        {
+          "period": "2025-04",
+          "nominalArs": 1270066948.4299998,
+          "realArs": 1717079027.9733727
+        },
+        {
+          "period": "2025-05",
+          "nominalArs": 1519678936.78,
+          "realArs": 2024159484.5900767
+        },
+        {
+          "period": "2025-06",
+          "nominalArs": 1362045726.6499999,
+          "realArs": 1785294947.551601
+        },
+        {
+          "period": "2025-07",
+          "nominalArs": 1478368386.9599998,
+          "realArs": 1901601866.6144795
+        },
+        {
+          "period": "2025-08",
+          "nominalArs": 1396552475.8700004,
+          "realArs": 1763287718.0029242
+        },
+        {
+          "period": "2025-09",
+          "nominalArs": 1443080792.7999997,
+          "realArs": 1784978935.1960678
+        },
+        {
+          "period": "2025-10",
+          "nominalArs": 1500745803.4900002,
+          "realArs": 1813827274.9632475
+        },
+        {
+          "period": "2025-11",
+          "nominalArs": 1467816609.54,
+          "realArs": 1731216880.1509168
+        },
+        {
+          "period": "2025-12",
+          "nominalArs": 1132690252.17,
+          "realArs": 1298992107.6495879
+        },
+        {
+          "period": "2026-01",
+          "nominalArs": 1532064135.9800003,
+          "realArs": 1707790149.741148
+        },
+        {
+          "period": "2026-02",
+          "nominalArs": 1506318097.71,
+          "realArs": 1631828121.0626576
+        },
+        {
+          "period": "2026-03",
+          "nominalArs": 1475383888.85,
+          "realArs": 1546020371.804675
+        },
+        {
+          "period": "2026-04",
+          "nominalArs": 1716801480.78,
+          "realArs": 1753712237.6634834
+        }
+      ],
+      "sourceRefs": [
+        "coparticipacion/transferencias-municipios"
+      ]
+    },
+    {
+      "municipioId": "06056",
+      "municipio": "Bahía Blanca",
+      "baseMonth": "2026-05",
+      "points": [
+        {
+          "period": "2023-12",
+          "nominalArs": 1801921949.5177693,
+          "realArs": 5919750837.422395
+        },
+        {
+          "period": "2024-01",
+          "nominalArs": 2203924231.7979436,
+          "realArs": 6002961808.632216
+        },
+        {
+          "period": "2024-02",
+          "nominalArs": 2660469877.0753074,
+          "realArs": 6399187169.076839
+        },
+        {
+          "period": "2024-03",
+          "nominalArs": 2983628952.695883,
+          "realArs": 6464729388.706287
+        },
+        {
+          "period": "2024-04",
+          "nominalArs": 3210900761.434713,
+          "realArs": 6392579333.591052
+        },
+        {
+          "period": "2024-05",
+          "nominalArs": 4113838709.740874,
+          "realArs": 7861920332.295364
+        },
+        {
+          "period": "2024-06",
+          "nominalArs": 3518112771.2487893,
+          "realArs": 6429149171.752405
+        },
+        {
+          "period": "2024-07",
+          "nominalArs": 4184268049.8089333,
+          "realArs": 7350226935.937356
+        },
+        {
+          "period": "2024-08",
+          "nominalArs": 4345583927.830639,
+          "realArs": 7327861463.64156
+        },
+        {
+          "period": "2024-09",
+          "nominalArs": 3910273531.18,
+          "realArs": 6372724166.6069565
+        },
+        {
+          "period": "2024-10",
+          "nominalArs": 4440307204.299999,
+          "realArs": 7046857617.628563
+        },
+        {
+          "period": "2024-11",
+          "nominalArs": 4870031935.4,
+          "realArs": 7545737922.0960045
+        },
+        {
+          "period": "2024-12",
+          "nominalArs": 4367244419.550001,
+          "realArs": 6588546393.000636
+        },
+        {
+          "period": "2025-01",
+          "nominalArs": 2203924231.8,
+          "realArs": 3252976518.8611703
+        },
+        {
+          "period": "2025-02",
+          "nominalArs": 4338327153.03,
+          "realArs": 6253162413.101325
+        },
+        {
+          "period": "2025-03",
+          "nominalArs": 4616761198.93,
+          "realArs": 6415244692.995389
+        },
+        {
+          "period": "2025-04",
+          "nominalArs": 4816857788.76,
+          "realArs": 6512196463.370801
+        },
+        {
+          "period": "2025-05",
+          "nominalArs": 5804243988.430001,
+          "realArs": 7731051102.774055
+        },
+        {
+          "period": "2025-06",
+          "nominalArs": 5143727802.5199995,
+          "realArs": 6742116712.928387
+        },
+        {
+          "period": "2025-07",
+          "nominalArs": 5521424737.47,
+          "realArs": 7102121284.353737
+        },
+        {
+          "period": "2025-08",
+          "nominalArs": 5350230981.43,
+          "realArs": 6755203790.073997
+        },
+        {
+          "period": "2025-09",
+          "nominalArs": 5522994926.169999,
+          "realArs": 6831516053.428975
+        },
+        {
+          "period": "2025-10",
+          "nominalArs": 5761511037.82,
+          "realArs": 6963461660.927013
+        },
+        {
+          "period": "2025-11",
+          "nominalArs": 5680963517.660001,
+          "realArs": 6700414665.818993
+        },
+        {
+          "period": "2025-12",
+          "nominalArs": 4367244419.550001,
+          "realArs": 5008444296.491324
+        },
+        {
+          "period": "2026-01",
+          "nominalArs": 6010977805.759999,
+          "realArs": 6700430122.935528
+        },
+        {
+          "period": "2026-02",
+          "nominalArs": 5837626366.990001,
+          "realArs": 6324031345.300274
+        },
+        {
+          "period": "2026-03",
+          "nominalArs": 5683759358.809999,
+          "realArs": 5955878889.259797
+        },
+        {
+          "period": "2026-04",
+          "nominalArs": 6609155515.080001,
+          "realArs": 6751250530.230743
+        }
+      ],
+      "sourceRefs": [
+        "coparticipacion/transferencias-municipios"
+      ]
+    },
+    {
+      "municipioId": "06553",
+      "municipio": "Monte Hermoso",
+      "baseMonth": "2026-05",
+      "points": [
+        {
+          "period": "2023-12",
+          "nominalArs": 232883847.77000004,
+          "realArs": 765079948.7888764
+        },
+        {
+          "period": "2024-01",
+          "nominalArs": 314922689.37,
+          "realArs": 857773987.7280753
+        },
+        {
+          "period": "2024-02",
+          "nominalArs": 376550943.10837954,
+          "realArs": 905712176.7873031
+        },
+        {
+          "period": "2024-03",
+          "nominalArs": 413591577.32000005,
+          "realArs": 896142807.0357399
+        },
+        {
+          "period": "2024-04",
+          "nominalArs": 401417185.81999993,
+          "realArs": 799181101.1544982
+        },
+        {
+          "period": "2024-05",
+          "nominalArs": 616167317.0099999,
+          "realArs": 1177551843.7867818
+        },
+        {
+          "period": "2024-06",
+          "nominalArs": 456691186.66999996,
+          "realArs": 834576932.4170476
+        },
+        {
+          "period": "2024-07",
+          "nominalArs": 470284738.20000005,
+          "realArs": 826118095.0000877
+        },
+        {
+          "period": "2024-08",
+          "nominalArs": 585660825.6100001,
+          "realArs": 987586815.9551235
+        },
+        {
+          "period": "2024-09",
+          "nominalArs": 521580858.64,
+          "realArs": 850040519.2093269
+        },
+        {
+          "period": "2024-10",
+          "nominalArs": 583455988.1500001,
+          "realArs": 925956490.2771178
+        },
+        {
+          "period": "2024-11",
+          "nominalArs": 658644784.8399999,
+          "realArs": 1020519166.2156408
+        },
+        {
+          "period": "2024-12",
+          "nominalArs": 571369954.78,
+          "realArs": 861984604.7047209
+        },
+        {
+          "period": "2025-01",
+          "nominalArs": 314922689.37,
+          "realArs": 464823653.6428195
+        },
+        {
+          "period": "2025-02",
+          "nominalArs": 576357329.9,
+          "realArs": 830747858.4986277
+        },
+        {
+          "period": "2025-03",
+          "nominalArs": 593512793.4300001,
+          "realArs": 824718809.1857828
+        },
+        {
+          "period": "2025-04",
+          "nominalArs": 557557327.1800001,
+          "realArs": 753794903.9435475
+        },
+        {
+          "period": "2025-05",
+          "nominalArs": 681677989.46,
+          "realArs": 907971371.0617199
+        },
+        {
+          "period": "2025-06",
+          "nominalArs": 604688284.58,
+          "realArs": 792592288.3363857
+        },
+        {
+          "period": "2025-07",
+          "nominalArs": 654793594.7699999,
+          "realArs": 842250641.3454086
+        },
+        {
+          "period": "2025-08",
+          "nominalArs": 671189902.59,
+          "realArs": 847444641.0953867
+        },
+        {
+          "period": "2025-09",
+          "nominalArs": 689167811.58,
+          "realArs": 852447092.791403
+        },
+        {
+          "period": "2025-10",
+          "nominalArs": 710624121.14,
+          "realArs": 858872575.3375777
+        },
+        {
+          "period": "2025-11",
+          "nominalArs": 721755106.4000001,
+          "realArs": 851274345.4554499
+        },
+        {
+          "period": "2025-12",
+          "nominalArs": 571369954.78,
+          "realArs": 655258629.0783474
+        },
+        {
+          "period": "2026-01",
+          "nominalArs": 756439037.63,
+          "realArs": 843201734.8398079
+        },
+        {
+          "period": "2026-02",
+          "nominalArs": 696798352.0400001,
+          "realArs": 754857255.7799131
+        },
+        {
+          "period": "2026-03",
+          "nominalArs": 668756067.3900001,
+          "realArs": 700773887.9125285
+        },
+        {
+          "period": "2026-04",
+          "nominalArs": 781483490.66,
+          "realArs": 798285169.5117109
+        }
+      ],
+      "sourceRefs": [
+        "coparticipacion/transferencias-municipios"
+      ]
+    },
+    {
+      "municipioId": "06875",
+      "municipio": "Villarino",
+      "baseMonth": "2026-05",
+      "points": [
+        {
+          "period": "2023-12",
+          "nominalArs": 721798645.2817783,
+          "realArs": 2371283692.948334
+        },
+        {
+          "period": "2024-01",
+          "nominalArs": 883575203.9050986,
+          "realArs": 2406647255.6407776
+        },
+        {
+          "period": "2024-02",
+          "nominalArs": 1059887937.214402,
+          "realArs": 2549332111.1899724
+        },
+        {
+          "period": "2024-03",
+          "nominalArs": 1182429027.0507758,
+          "realArs": 2562008816.2529917
+        },
+        {
+          "period": "2024-04",
+          "nominalArs": 1310263853.0277536,
+          "realArs": 2608603083.912816
+        },
+        {
+          "period": "2024-05",
+          "nominalArs": 1839484062.628596,
+          "realArs": 3515421525.561943
+        },
+        {
+          "period": "2024-06",
+          "nominalArs": 1379343344.2536235,
+          "realArs": 2520670795.928633
+        },
+        {
+          "period": "2024-07",
+          "nominalArs": 1516938603.6535707,
+          "realArs": 2664705714.8374643
+        },
+        {
+          "period": "2024-08",
+          "nominalArs": 1725106134.7376318,
+          "realArs": 2909008081.6241937
+        },
+        {
+          "period": "2024-09",
+          "nominalArs": 1538734463.34,
+          "realArs": 2507735129.608357
+        },
+        {
+          "period": "2024-10",
+          "nominalArs": 1786900107.89,
+          "realArs": 2835846723.63025
+        },
+        {
+          "period": "2024-11",
+          "nominalArs": 1919165989.99,
+          "realArs": 2973599307.265123
+        },
+        {
+          "period": "2024-12",
+          "nominalArs": 1830407894.2,
+          "realArs": 2761404256.438189
+        },
+        {
+          "period": "2025-01",
+          "nominalArs": 883575203.9100001,
+          "realArs": 1304150727.8223124
+        },
+        {
+          "period": "2025-02",
+          "nominalArs": 1663385299.01,
+          "realArs": 2397564329.1470127
+        },
+        {
+          "period": "2025-03",
+          "nominalArs": 1743408404.91,
+          "realArs": 2422562275.8904176
+        },
+        {
+          "period": "2025-04",
+          "nominalArs": 1798582822.4400003,
+          "realArs": 2431611064.5210557
+        },
+        {
+          "period": "2025-05",
+          "nominalArs": 2308581817.79,
+          "realArs": 3074950681.5782876
+        },
+        {
+          "period": "2025-06",
+          "nominalArs": 1968013254.2299998,
+          "realArs": 2579563997.5560455
+        },
+        {
+          "period": "2025-07",
+          "nominalArs": 2145195011.78,
+          "realArs": 2759330404.136471
+        },
+        {
+          "period": "2025-08",
+          "nominalArs": 2068869849.24,
+          "realArs": 2612155904.15883
+        },
+        {
+          "period": "2025-09",
+          "nominalArs": 2129148774.72,
+          "realArs": 2633591779.2930098
+        },
+        {
+          "period": "2025-10",
+          "nominalArs": 2262224902.04,
+          "realArs": 2734164053.5518937
+        },
+        {
+          "period": "2025-11",
+          "nominalArs": 2188563763.21,
+          "realArs": 2581302395.3606615
+        },
+        {
+          "period": "2025-12",
+          "nominalArs": 1830407894.2,
+          "realArs": 2099148821.8338146
+        },
+        {
+          "period": "2026-01",
+          "nominalArs": 2343413584.7599998,
+          "realArs": 2612200457.4323926
+        },
+        {
+          "period": "2026-02",
+          "nominalArs": 2210036760.76,
+          "realArs": 2394182304.7024865
+        },
+        {
+          "period": "2026-03",
+          "nominalArs": 2135812157.03,
+          "realArs": 2238067753.12576
+        },
+        {
+          "period": "2026-04",
+          "nominalArs": 2615364886.2799997,
+          "realArs": 2671594507.794085
+        }
+      ],
+      "sourceRefs": [
+        "coparticipacion/transferencias-municipios"
+      ]
+    }
+  ]
+}

@@ -23,8 +23,9 @@ from pathlib import Path
 
 from .archive import Fetcher, run_archive_all
 from .config import load_sources
+from .coparticipacion import COPARTICIPACION_CSV_MANIFEST_ID, build_coparticipacion
 from .http_client import RequestsFetcher
-from .ipc import build_ipc
+from .ipc import build_ipc, rebased_series_from_json
 from .manifest import load_manifest, save_manifest
 from .mcr_docs import discover_documentos
 from .mcr_docs import to_source_entries as mcr_docs_to_entries
@@ -173,9 +174,29 @@ def run_build_ipc(args: argparse.Namespace) -> int:
 
 
 def run_build_coparticipacion(args: argparse.Namespace) -> int:
-    """Build the coparticipacion display JSON. Not yet implemented."""
-    print("etl build-coparticipacion: not implemented yet (see Slice 3)")
-    return 1
+    """Build `data/coparticipacion.json` from the archived CSV + pinned IPC series.
+
+    Reads the CSV path from the manifest (rather than hardcoding it) and
+    the rebased IPC series from `data/ipc/ipc-nacional.json` (must be
+    built first via `etl build-ipc` -- the pinned, versioned artifact
+    per design D5, not recomputed from the raw archive here).
+    """
+    records = load_manifest(args.manifest_path)
+    record = next(r for r in records if r["id"] == COPARTICIPACION_CSV_MANIFEST_ID)
+    csv_path = args.manifest_path.parent / record["archived_path"]
+
+    ipc_path = args.data_root / "ipc" / "ipc-nacional.json"
+    ipc_payload = json.loads(ipc_path.read_text(encoding="utf-8"))
+    ipc = rebased_series_from_json(ipc_payload)
+
+    result = build_coparticipacion(csv_path, ipc)
+
+    output_path = args.data_root / "coparticipacion.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(result, indent=2, ensure_ascii=False) + "\n"
+    output_path.write_text(payload, encoding="utf-8")
+    print(f"etl build-coparticipacion: wrote {output_path} (data through {result['dataThrough']})")
+    return 0
 
 
 def run_build_fallos(args: argparse.Namespace) -> int:
@@ -254,6 +275,12 @@ def build_parser() -> argparse.ArgumentParser:
     build_coparticipacion_parser = subparsers.add_parser(
         "build-coparticipacion",
         help="Build the coparticipacion display JSON from the archive.",
+    )
+    build_coparticipacion_parser.add_argument(
+        "--manifest-path", type=Path, default=DEFAULT_MANIFEST_PATH,
+    )
+    build_coparticipacion_parser.add_argument(
+        "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
     )
     build_coparticipacion_parser.set_defaults(func=run_build_coparticipacion)
 

@@ -16,6 +16,7 @@ from etl.ipc import (
     monthly_variation,
     parse_series_tiempo_response,
     rebase_to_latest,
+    rebased_series_from_json,
 )
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "ipc_sample.json"
@@ -140,3 +141,34 @@ def test_build_ipc_writes_expected_shape_from_manifest(tmp_path) -> None:
     assert result["sourceRefs"] == ["ipc/nivel-general-nacional"]
     factors = {p["period"]: p["factor"] for p in result["points"]}
     assert factors["2024-02"] == 1.0
+
+
+def test_rebased_series_from_json_round_trips_build_ipc_output(tmp_path) -> None:
+    fixture_payload = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
+    archive_dir = tmp_path / "archive" / "ipc"
+    archive_dir.mkdir(parents=True)
+    (archive_dir / "ipc-nivel-general-nacional.json").write_text(
+        json.dumps(fixture_payload), encoding="utf-8"
+    )
+    manifest_path = tmp_path / "archive-manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            [
+                {
+                    "id": "ipc/nivel-general-nacional",
+                    "capability": "ipc",
+                    "archived_path": "archive/ipc/ipc-nivel-general-nacional.json",
+                    "status": "ok",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    payload = build_ipc(manifest_path)
+    rebased = rebased_series_from_json(payload)
+
+    assert rebased.series_id == payload["seriesId"]
+    assert rebased.base_month == payload["baseMonth"]
+    assert rebased.data_through == payload["dataThrough"]
+    assert len(rebased.points) == len(payload["points"])

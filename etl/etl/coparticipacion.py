@@ -15,6 +15,7 @@ from __future__ import annotations
 import csv
 from collections.abc import Iterable
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -33,6 +34,9 @@ TARGET_MUNICIPIOS: dict[str, str] = {
 # The CSV's own municipio_nombre spells out the municipio's full legal name;
 # TARGET_MUNICIPIOS above holds the shorter, UI-facing label instead.
 CORONEL_ROSALES_ID = "06182"
+
+# Manifest id for the primary source CSV (see sources.yaml / task 2.4).
+COPARTICIPACION_CSV_MANIFEST_ID = "coparticipacion/transferencias-municipios"
 
 
 @dataclass(frozen=True)
@@ -132,3 +136,47 @@ def build_series(
             }
         )
     return series
+
+
+def build_coparticipacion(
+    csv_path: Path,
+    ipc: RebasedIpcSeries,
+    *,
+    municipio_ids: Iterable[str] = TARGET_MUNICIPIOS,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Build the full ``data/coparticipacion.json`` payload (tasks 3.5, 3.6).
+
+    Embeds ``ipcSeriesId``/``baseMonth`` (Adjustment Disclosure spec
+    requirement) and ``generatedAt``/``dataThrough`` (freshness), plus a
+    Spanish-language lag note the web layer can render verbatim without
+    recomputing anything (coparticipacion-viewer Data Freshness
+    Disclosure requirement). ``dataThrough`` is the latest period
+    actually present across all series -- a month missing from the
+    source CSV is never synthesized as zero (task 3.6).
+    """
+    rows = parse_csv(csv_path, municipio_ids)
+    series = build_series(rows, ipc, municipio_ids=municipio_ids)
+
+    periods = {point["period"] for one_series in series for point in one_series["points"]}
+    data_through = max(periods) if periods else None
+
+    generated_at = (now or datetime.now(UTC)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    return {
+        "generatedAt": generated_at,
+        "dataThrough": data_through,
+        "ipcSeriesId": ipc.series_id,
+        "baseMonth": ipc.base_month,
+        "lagNote": (
+            "Los datos de coparticipación suelen publicarse con 2 a 3 meses de "
+            "rezago. Si un mes no aparece en la serie, todavía no fue "
+            "publicado por la fuente oficial -- no significa que el monto "
+            "haya sido cero."
+        ),
+        "sourceRefs": [
+            "coparticipacion/transferencias-municipios",
+            "ipc/nivel-general-nacional",
+        ],
+        "series": series,
+    }
