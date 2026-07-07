@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import Home from "@/app/page";
@@ -80,6 +80,24 @@ describe("vocabulary: 'Multas del Tribunal de Cuentas', never bare 'HTC'", () =>
   });
 });
 
+describe("SiteHeader — active nav item", () => {
+  it("marks the matching nav item aria-current='page' when activeHref matches", () => {
+    render(<SiteHeader activeHref="/coparticipacion" />);
+    const active = screen.getByRole("link", { name: "Coparticipación" });
+    expect(active.getAttribute("aria-current")).toBe("page");
+    const inactive = screen.getByRole("link", { name: "Fuentes" });
+    expect(inactive.getAttribute("aria-current")).toBeNull();
+  });
+
+  it("marks no nav item active when activeHref is null (default, e.g. home)", () => {
+    render(<SiteHeader />);
+    const links = screen.getAllByRole("link");
+    for (const link of links) {
+      expect(link.getAttribute("aria-current")).toBeNull();
+    }
+  });
+});
+
 describe("Home — mobile-first fold + tappable rows", () => {
   it("shows a one-line subhead explaining what the site is, without needing to scroll", () => {
     render(<Home />);
@@ -107,9 +125,13 @@ describe("Home — mobile-first fold + tappable rows", () => {
 
   it("offers at least one tappable index chip right under the hero number (peeks above the fold)", () => {
     render(<Home />);
-    expect(screen.getByRole("link", { name: "Plata que entra" })).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Multas" })).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Fuentes" })).toBeTruthy();
+    // Home also renders the SiteHeader nav now (for active-nav
+    // highlighting), which has its own "Fuentes" link -- scope the query
+    // to the index-chips list specifically.
+    const chips = within(screen.getByRole("list", { name: "Accesos rápidos" }));
+    expect(chips.getByRole("link", { name: "Plata que entra" })).toBeTruthy();
+    expect(chips.getByRole("link", { name: "Multas" })).toBeTruthy();
+    expect(chips.getByRole("link", { name: "Fuentes" })).toBeTruthy();
   });
 
   it("explains the hero number in plain language directly below it", () => {
