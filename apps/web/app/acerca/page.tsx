@@ -11,10 +11,10 @@ export default function AcercaPage() {
   return (
     <div className="space-y-10">
       <section>
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
+        <h1 className="font-display text-[clamp(26px,4vw,40px)] font-semibold text-ink">
           Acerca de este portal
         </h1>
-        <p className="mt-4 max-w-2xl text-slate-700">
+        <p className="mt-4 max-w-[62ch] text-ink">
           Este es un portal ciudadano independiente que reúne datos públicos
           de Coronel Rosales — coparticipación municipal y fallos del
           Tribunal de Cuentas — a partir de fuentes oficiales, con el
@@ -26,11 +26,11 @@ export default function AcercaPage() {
       <section aria-labelledby="neutralidad-heading">
         <h2
           id="neutralidad-heading"
-          className="text-xl font-semibold text-slate-900"
+          className="font-display text-xl font-semibold text-ink"
         >
           Declaración de neutralidad
         </h2>
-        <p className="mt-2 max-w-2xl text-slate-700">
+        <p className="mt-2 max-w-[62ch] text-ink">
           Este portal no pertenece a ningún partido político ni recibe
           financiamiento de campañas. Toda la información se presenta con el
           mismo criterio y la misma estructura, sin importar qué gestión
@@ -45,11 +45,11 @@ export default function AcercaPage() {
       <section aria-labelledby="datos-personales-heading">
         <h2
           id="datos-personales-heading"
-          className="text-xl font-semibold text-slate-900"
+          className="font-display text-xl font-semibold text-ink"
         >
           Protección de datos personales (Ley 25.326)
         </h2>
-        <p className="mt-2 max-w-2xl text-slate-700">
+        <p className="mt-2 max-w-[62ch] text-ink">
           Los nombres de funcionarios y funcionarias que aparecen en este
           portal corresponden a información pública vinculada al ejercicio de
           su función institucional (fallos del Tribunal de Cuentas de la
@@ -58,10 +58,7 @@ export default function AcercaPage() {
           de los Datos Personales, este portal no publica datos personales
           sensibles ni ajenos al ejercicio de la función pública. Si detectás
           un error o una inexactitud en algún dato transcripto, podés
-          verificarlo contra la{" "}
-          <Link href="/fuentes" className="underline underline-offset-2">
-            fuente original y la copia archivada
-          </Link>{" "}
+          verificarlo contra la <Link href="/fuentes">fuente original y la copia archivada</Link>{" "}
           citadas en cada página.
         </p>
       </section>

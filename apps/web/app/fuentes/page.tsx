@@ -47,10 +47,10 @@ export default function FuentesPage() {
   return (
     <div className="space-y-10">
       <section>
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
-          Fuentes y metodología
+        <h1 className="font-display text-[clamp(26px,4vw,40px)] font-semibold text-ink">
+          ¿De dónde salen los datos?
         </h1>
-        <p className="mt-4 max-w-2xl text-slate-700">
+        <p className="mt-4 max-w-[62ch] text-ink">
           Todos los datos publicados en este portal provienen de fuentes
           oficiales, archivadas de forma verificable (hash SHA-256) antes de
           ser procesadas. A continuación, la metodología de ajuste por
@@ -61,15 +61,15 @@ export default function FuentesPage() {
       <section aria-labelledby="metodologia-heading">
         <h2
           id="metodologia-heading"
-          className="text-xl font-semibold text-slate-900"
+          className="font-display text-xl font-semibold text-ink"
         >
           Ajuste por inflación
         </h2>
-        <p className="mt-2 max-w-2xl text-sm text-slate-700">
+        <p className="mt-2 max-w-[62ch] text-sm text-ink">
           Los montos de coparticipación se ajustan con el Índice de Precios
           al Consumidor (IPC) Nivel General Nacional que publica el INDEC,
           serie{" "}
-          <code className="rounded bg-slate-100 px-1 py-0.5 text-xs">
+          <code className="bg-paper px-1 py-0.5 font-mono text-xs">
             {coparticipacion.ipcSeriesId}
           </code>
           . Los valores se expresan en pesos constantes del último mes
@@ -77,7 +77,7 @@ export default function FuentesPage() {
           ): se recalculan hacia adelante para reflejar el poder adquisitivo
           de ese mes.
         </p>
-        <p className="mt-3 max-w-2xl text-sm text-slate-700">
+        <p className="mt-3 max-w-[62ch] text-sm text-ink">
           La cifra mensual de coparticipación que muestra el portal es la
           suma de los aproximadamente 28 conceptos que integran esa
           transferencia según la fuente oficial (Coparticipación Bruta,
@@ -91,11 +91,11 @@ export default function FuentesPage() {
       <section aria-labelledby="preservacion-heading">
         <h2
           id="preservacion-heading"
-          className="text-xl font-semibold text-slate-900"
+          className="font-display text-xl font-semibold text-ink"
         >
           Preservación de las fuentes
         </h2>
-        <p className="mt-2 max-w-2xl text-sm text-slate-700">
+        <p className="mt-2 max-w-[62ch] border-l-[5px] border-ocre bg-surface py-3 pl-4 text-sm text-ink">
           Cada fuente se descarga, se verifica con un hash SHA-256 y se
           guarda en un bucket público de Cloudflare R2, que es la copia
           archivada canónica enlazada en el índice de abajo; los
@@ -111,7 +111,7 @@ export default function FuentesPage() {
       <section aria-labelledby="indice-heading" className="space-y-8">
         <h2
           id="indice-heading"
-          className="text-xl font-semibold text-slate-900"
+          className="font-display text-xl font-semibold text-ink"
         >
           Índice de fuentes archivadas
         </h2>
@@ -122,9 +122,9 @@ export default function FuentesPage() {
             capability;
           return (
             <div key={capability}>
-              <h3 className="text-lg font-semibold text-slate-900">
+              <h3 className="font-display text-lg font-semibold text-ink">
                 {label}{" "}
-                <span className="text-sm font-normal text-slate-500">
+                <span className="font-mono text-sm font-normal text-muted">
                   ({records.length})
                 </span>
               </h3>
@@ -134,7 +134,7 @@ export default function FuentesPage() {
                     Fuentes archivadas — {label}
                   </caption>
                   <thead>
-                    <tr className="border-b border-slate-300">
+                    <tr className="border-b-2 border-ink">
                       <th scope="col" className="py-2 pr-4 text-left font-semibold">
                         Fuente
                       </th>
@@ -151,20 +151,12 @@ export default function FuentesPage() {
                   </thead>
                   <tbody>
                     {records.map((record) => (
-                      <tr
-                        key={record.id}
-                        className="border-b border-slate-200 align-top"
-                      >
+                      <tr key={record.id} className="border-b border-rule align-top">
                         <th scope="row" className="py-1.5 pr-4 text-left font-normal">
                           {record.source}
                         </th>
                         <td className="py-1.5 pr-4">
-                          <a
-                            href={record.source_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline underline-offset-2"
-                          >
+                          <a href={record.source_url} target="_blank" rel="noopener noreferrer">
                             Fuente original
                           </a>
                           {" · "}
@@ -173,18 +165,17 @@ export default function FuentesPage() {
                               href={record.archived_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="underline underline-offset-2"
                             >
                               Copia archivada
                             </a>
                           ) : (
-                            <span>Copia archivada no disponible</span>
+                            <span className="text-muted">Copia archivada no disponible</span>
                           )}
                         </td>
-                        <td className="py-1.5 pr-4 font-mono text-xs">
+                        <td className="py-1.5 pr-4 font-mono text-xs text-muted">
                           {shortHash(record.sha256)}
                         </td>
-                        <td className="py-1.5 pr-4">
+                        <td className="py-1.5 pr-4 font-mono text-xs text-muted">
                           {formatDateEsAr(record.fetched_at.slice(0, 10))}
                         </td>
                       </tr>
