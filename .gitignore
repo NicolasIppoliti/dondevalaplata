@@ -29,3 +29,10 @@ __pycache__/
 # Misc
 coverage/
 .atl/.skill-registry.cache.json
+
+# Raw archive blobs (design D3): the local working copy of every fetched
+# source lives under archive/, but only archive-manifest.json (repo root)
+# is versioned. R2 is the canonical archived_url for every source once
+# credentials are configured; keeping blobs out of git keeps clones fast.
+/archive/**
+!/archive/.gitkeep

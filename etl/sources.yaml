@@ -1,19 +1,126 @@
-# Source registry for `etl archive`.
+# Source registry for `etl archive` (design D4).
 #
-# Each top-level key is a capability (see design D4). Entries are populated in
-# Slice 2, one source family per commit. This file only declares the schema
-# scaffold in Slice 1 — no source is registered yet.
+# Each top-level key is a capability. Static entries are declared here;
+# `sibom` and `mcr-docs` stay empty below because they are enumerated
+# dynamically at archive time (see `etl/sibom.py` and `etl/mcr_docs.py`) so
+# newly published bulletins/documents are picked up automatically.
 #
-# Entry shape (documented for Slice 2 authors):
+# All URLs verified live on 2026-07-06/07 (Slice 2 apply). See
+# `sdd/portal-transparencia/apply-progress` (engram) for the verification
+# method (curl HEAD/GET, CKAN API lookups, wp-json enumeration).
+#
+# Entry shape:
 #   - id: <stable slug, referenced by sourceRefs and archive-manifest.json>
 #     source: <host label>
 #     source_url: <https://... official URL>
-#     mime: <text/csv | application/pdf | application/json | application/zip>
+#     mime: <text/csv | application/pdf | application/json | application/zip
+#           | application/vnd.openxmlformats-officedocument.spreadsheetml.sheet>
 #     notes: <free text, e.g. municipio_id filter, known lag, drift caveats>
+#     filename: <optional explicit local/R2 filename; defaults to id's last segment>
 
-coparticipacion: []
-htc-fallos: []
-ipc: []
-electoral: []
-sibom: []
-mcr-docs: []
+coparticipacion-viewer:
+  - id: coparticipacion/transferencias-municipios
+    source: catalogo.datos.gba.gob.ar
+    source_url: https://catalogo.datos.gba.gob.ar/dataset/96ee21b4-b116-4b83-9228-ba664af1b480/resource/d13acdb6-bd59-4c09-b954-8f3258a65e8a/download/transferencias-municipios-012010_042026.csv
+    mime: text/csv
+    notes: >-
+      Full monthly series 01/2010-04/2026, all municipios (filter to
+      municipio_id 06182 = Coronel Rosales + neighbors at build time,
+      per D3/D5). Primary coparticipacion source (dataset
+      "transferencias-municipios", CKAN package_search verified).
+    filename: transferencias-municipios-012010_042026.csv
+  - id: coparticipacion/transferencias-diciembre-2023
+    source: ec.gba.gov.ar
+    source_url: "https://www.ec.gba.gov.ar/areas/Sub_Politica_Coord_Eco/CoordMunicipal/municipios/12-23 - Transferencias Diciembre 2023.xlsx"
+    mime: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    notes: >-
+      Per-year XLSX snapshot for December 2023, published by the
+      Ministerio de Hacienda y Finanzas (Dirección Provincial de
+      Coordinación Municipal). Supplementary/cross-check source, not the
+      primary series consumed by build-coparticipacion.
+    filename: transferencias-diciembre-2023.xlsx
+
+htc-fallos:
+  - id: htc-fallos/coronel-rosales-2022
+    source: sistemas.htc.gba.gov.ar
+    source_url: https://sistemas.htc.gba.gov.ar/sistemas/summun/uploads/documents/fallohtc/34740/65f84d4f833db.CoronelDeLaMarinaLeonardoRosales2022F.pdf
+    mime: application/pdf
+    notes: >-
+      Ejercicio 2022, expediente 3-024.0-2022, fallo dated 14/03/2024.
+      Municipalidad de Coronel de Marina Leonardo Rosales. Scanned PDF,
+      no extractable text layer (pdftotext yields ~0 bytes across 30
+      pages) -- ficha/metadata-only per htc-fallos spec. Multa de
+      $100.000 al Intendente Municipal Mariano Cecilio USET.
+    filename: coronel-rosales-2022.pdf
+  - id: htc-fallos/coronel-rosales-2023
+    source: sistemas.htc.gba.gov.ar
+    source_url: https://sistemas.htc.gba.gov.ar/sistemas/summun/uploads/documents/fallohtc/36042/67d8489f5b8c3.CoronelDeMarinaLeonardoRosales2023F.pdf
+    mime: application/pdf
+    notes: >-
+      Ejercicio 2023, expediente 3-024.0-2023, fallo dated 13/03/2025.
+      26 pages, extractable text layer. Multa de $300.000 al Intendente
+      Municipal Mariano Cecilio USET; $300.000 a la Contadora Municipal
+      Patricia Elisabeth BUSTAMANTE; $250.000 al Intendente Municipal
+      Rodrigo Lionel ARISTIMUÑO.
+    filename: coronel-rosales-2023.pdf
+  - id: htc-fallos/coronel-rosales-2024
+    source: sistemas.htc.gba.gov.ar
+    source_url: https://sistemas.htc.gba.gov.ar/sistemas/summun/uploads/documents/fallohtc/37269/69e78b03b343a.CoronelDeMarinaLeonaardoRosales2024F.pdf
+    mime: application/pdf
+    notes: >-
+      Ejercicio 2024, expediente 3-024.0-2024, fallo dated 09/04/2026.
+      64 pages, extractable text layer. Multa de $650.000 al Intendente
+      Municipal Rodrigo Lionel ARISTIMUÑO; $500.000 a la Contadora
+      Municipal Patricia Elisabeth BUSTAMANTE. NOTE: filename contains
+      the real-world typo "Leonaardo" (double a) on the source server --
+      preserved verbatim, not a transcription error on our side.
+    filename: coronel-rosales-2024.pdf
+
+ipc:
+  - id: ipc/nivel-general-nacional
+    source: apis.datos.gob.ar
+    source_url: https://apis.datos.gob.ar/series/api/series/?ids=148.3_INIVELNAL_DICI_M_26&start_date=2023-12-01&format=json&limit=1000
+    mime: application/json
+    notes: >-
+      INDEC IPC Nivel General Nacional, base dic-2016=100, monthly,
+      series-tiempo API. Series id 148.3_INIVELNAL_DICI_M_26 verified at
+      apply-time (2026-07-06) against 3 known published monthly
+      variations: Dec-2023 +25.47% (published ~25.5%), Jan-2024 +20.61%
+      (~20.6%), Feb-2024 +13.24% (~13.2%). start_date pins the capture to
+      Dec-2023 onward per D5; refetch without start_date for full
+      history if ever needed.
+    filename: ipc-nivel-general-nacional.json
+
+electoral:
+  - id: electoral/2023-generales
+    source: argentina.gob.ar
+    source_url: https://www.argentina.gob.ar/sites/default/files/2023_generales_1.zip
+    mime: application/zip
+    notes: 2023 Elecciones Generales, mesa-level results ZIP. ~28MB, verified reachable (200, content-length 28028857).
+    filename: 2023-generales.zip
+  - id: electoral/2023-balotaje
+    source: argentina.gob.ar
+    source_url: https://www.argentina.gob.ar/sites/default/files/2023_segundavuelta.zip
+    mime: application/zip
+    notes: 2023 Balotaje (segunda vuelta), mesa-level results ZIP. ~3MB, verified reachable (200, content-length 3014122).
+    filename: 2023-balotaje.zip
+  - id: electoral/2025-legislativas
+    source: datos.mininterior.gob.ar
+    source_url: https://datos.mininterior.gob.ar/dataset/947e871a-650e-4b63-8939-ecb29acb717c/resource/a24110fb-bfcf-47a6-8aa7-2e53dab9caf5/download/elecciones_legislativas_2025.zip
+    mime: application/zip
+    notes: 2025 Elecciones Legislativas Nacionales, mesa-level results ZIP. ~13.5MB, verified reachable (200 after https redirect, content-length 13554180).
+    filename: 2025-legislativas.zip
+  - id: electoral/2023-paso-wayback
+    source: web.archive.org
+    source_url: https://web.archive.org/web/20240106010034if_/https://www.argentina.gob.ar/sites/default/files/dine-resultados/2023-PROVISORIOS_PASO.zip
+    mime: application/zip
+    notes: >-
+      2023 PASO, mesa-level results ZIP. Official URL
+      (argentina.gob.ar/sites/default/files/dine-resultados/2023-PROVISORIOS_PASO.zip)
+      returns 404 as of 2026-07-06 -- this is the only surviving copy,
+      via the Wayback Machine snapshot dated 2024-01-06 (the `if_`
+      modifier serves the raw file without Wayback's HTML/JS injection).
+      ~88MB (content-length 88157604 at the snapshot), can be slow to
+      fetch from Wayback -- use a generous timeout and resume/retry.
+    filename: 2023-paso.zip
+    timeout: 180

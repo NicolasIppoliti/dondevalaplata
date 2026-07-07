@@ -1,0 +1,27 @@
+[
+  {
+    "id": 2681,
+    "date": "2026-07-01T12:53:56",
+    "slug": "situacion-economica-financiera-primer-semestre-2026",
+    "title": { "rendered": "SITUACION ECONOMICA FINANCIERA PRIMER SEMESTRE 2026" },
+    "content": {
+      "rendered": "<a href=\"https://mcr.gob.ar/wp-content/uploads/2026/07/SITUACION-ECONOMICA-FINANCIERA-PRIMER-SEMESTRE-2026.pdf\" class=\"pdfemb-viewer\">SITUACION-ECONOMICA-FINANCIERA-PRIMER-SEMESTRE-2026</a>"
+    }
+  },
+  {
+    "id": 2250,
+    "date": "2026-04-01T00:00:00",
+    "slug": "memoria-general-anual-ejercicio-2025",
+    "title": { "rendered": "Memoria General Anual Ejercicio 2025" },
+    "content": {
+      "rendered": "<a href=\"https://mcr.gob.ar/wp-content/uploads/2026/04/Memoria-General-Anual-Ejercicio-2025.pdf\" class=\"pdfemb-viewer\">Memoria-General-Anual-Ejercicio-2025</a>"
+    }
+  },
+  {
+    "id": 9999,
+    "date": "2026-01-01T00:00:00",
+    "slug": "no-attachment-example",
+    "title": { "rendered": "Entry without a PDF link (should be skipped)" },
+    "content": { "rendered": "<p>No attachment here.</p>" }
+  }
+]
