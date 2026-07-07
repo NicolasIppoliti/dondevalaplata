@@ -194,4 +194,7 @@ def test_run_archive_all_applies_politeness_delay_for_mcr_docs(tmp_path) -> None
     )
 
     # One delay between each pair of entries, not after the last one.
-    assert sleeps == [1.5, 1.5]
+    from etl.archive import POLITENESS_DELAY_SECONDS
+
+    expected_delay = POLITENESS_DELAY_SECONDS["mcr-docs"]
+    assert sleeps == [expected_delay, expected_delay]

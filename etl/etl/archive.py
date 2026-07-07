@@ -28,7 +28,7 @@ DEFAULT_USER_AGENT = (
 # requests without a delay during Slice 2 apply).
 POLITENESS_DELAY_SECONDS: dict[str, float] = {
     "sibom": 0.75,
-    "mcr-docs": 1.5,
+    "mcr-docs": 4.0,
 }
 
 
