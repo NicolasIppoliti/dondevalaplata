@@ -6,6 +6,7 @@ Subcommands:
   build-ipc             Rebase the INDEC IPC series to constant pesos.
   build-coparticipacion Build the coparticipacion display JSON from the archive.
   build-fallos          Build the HTC fallos display JSON from the archive.
+  build-transparencia   Build the ASAP transparency-score display JSON from the curated source.
   build                 Run all build-* steps in sequence.
 
 ``archive`` and ``sync-r2`` are the only commands that perform network I/O
@@ -35,6 +36,7 @@ from .r2_sync import sync_archived_to_r2
 from .sibom import discover_bulletins
 from .sibom import to_source_entries as sibom_to_entries
 from .storage import LocalArchiveStore
+from .transparencia import build_transparencia
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_SOURCES_PATH = REPO_ROOT / "etl" / "sources.yaml"
@@ -42,6 +44,7 @@ DEFAULT_MANIFEST_PATH = REPO_ROOT / "archive-manifest.json"
 DEFAULT_ARCHIVE_ROOT = REPO_ROOT / "archive"
 DEFAULT_DATA_ROOT = REPO_ROOT / "data"
 DEFAULT_FICHA_2022_PATH = REPO_ROOT / "etl" / "fallos_ficha_2022.yaml"
+DEFAULT_TRANSPARENCIA_CURATED_PATH = REPO_ROOT / "etl" / "asap_transparencia.yaml"
 
 # From Nº31 (2023) onward, per design D4/tasks Slice 2 scope note.
 SIBOM_FROM_NUMBER = 31
@@ -212,6 +215,23 @@ def run_build_fallos(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_build_transparencia(args: argparse.Namespace) -> int:
+    """Build `data/transparencia.json` from the curated ASAP score.
+
+    Reads `etl/asap_transparencia.yaml` by default (see --curated-path).
+    """
+    result = build_transparencia(args.curated_path)
+    output_path = args.data_root / "transparencia.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(result, indent=2, ensure_ascii=False) + "\n"
+    output_path.write_text(payload, encoding="utf-8")
+    print(
+        f"etl build-transparencia: wrote {output_path} "
+        f"(total {result['total']}/{result['max']})"
+    )
+    return 0
+
+
 def run_build(args: argparse.Namespace) -> int:
     """Run all build-* steps in sequence. Not yet implemented."""
     print("etl build: not implemented yet (see Slice 3)")
@@ -304,6 +324,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--ficha-2022-path", type=Path, default=DEFAULT_FICHA_2022_PATH,
     )
     build_fallos_parser.set_defaults(func=run_build_fallos)
+
+    build_transparencia_parser = subparsers.add_parser(
+        "build-transparencia",
+        help="Build the ASAP transparency-score display JSON from the curated source.",
+    )
+    build_transparencia_parser.add_argument(
+        "--curated-path", type=Path, default=DEFAULT_TRANSPARENCIA_CURATED_PATH,
+    )
+    build_transparencia_parser.add_argument(
+        "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
+    )
+    build_transparencia_parser.set_defaults(func=run_build_transparencia)
 
     build_parser_cmd = subparsers.add_parser(
         "build", help="Run all build-* steps in sequence."

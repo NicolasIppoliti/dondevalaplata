@@ -1,0 +1,75 @@
+# Curated source for the ASAP "Índice de Transparencia Fiscal Municipal –
+# Provincia de Buenos Aires" score, Coronel Rosales.
+#
+# ASAP = Asociación Argentina de Presupuesto y Administración Financiera
+# Pública, Filial Provincia de Buenos Aires -- a civil/professional
+# association, NOT a ministry. (An earlier draft of this portal
+# attributed the index to "Ministerio de Capital Humano"; that
+# attribution was factually wrong -- Capital Humano publishes no
+# municipal transparency index -- and must never reappear here.)
+#
+# Scope: FISCAL transparency published on the municipality's own official
+# website ONLY -- this index does NOT evaluate compras, salarios,
+# declaraciones juradas, actas or datos abiertos (integral transparency).
+# Framework: Ley de Responsabilidad Fiscal PBA 13.295 / RAFAM. Max score
+# 100.
+#
+# Every figure below was read directly off the primary ASAP PDF (page 24
+# of the Mayo 2026 report, archive-manifest.json id
+# asap-transparencia/informe-mayo-2026) by a human reviewer -- NOT
+# machine-extracted -- per this portal's curated-ficha pattern (see
+# etl/fallos_ficha_2022.yaml). Do not re-derive, "improve" or round these
+# numbers; if the source PDF ever changes, `etl archive` will detect the
+# sha256 drift and this file must be re-curated from the new report.
+source: "ASAP"
+source_full_name: "Asociación Argentina de Presupuesto y Administración Financiera Pública, Filial Provincia de Buenos Aires"
+source_type: "asociación civil (no es un ministerio)"
+index_name: "Índice de Transparencia Fiscal Municipal – Provincia de Buenos Aires"
+scope: >-
+  Transparencia FISCAL publicada en la web oficial del municipio. No
+  evalúa transparencia integral (compras, salarios, declaraciones
+  juradas, actas ni datos abiertos).
+framework: "Ley de Responsabilidad Fiscal PBA 13.295 / RAFAM"
+report_label: "Informe de Mayo 2026"
+data_through: "1er trimestre 2026"
+index_url: "https://asap.org.ar/informes-detalle/cumplimiento-municipios/8"
+max: 100
+total: 81
+category: "Alto cumplimiento"
+# 5 + 30 + 35 + 5 + 3 + 3 = 81 -- verified by the honesty test
+# (etl/tests/test_transparencia.py, etl/tests/test_build_transparencia.py).
+dimensions:
+  - name: "Acceso web fácil a la información"
+    got: 5
+    max: 5
+  - name: "Presupuesto vigente publicado"
+    got: 30
+    max: 30
+  - name: "Situación económico-financiera (SEF) trimestral"
+    got: 35
+    max: 35
+  - name: "Ejecución presupuestaria trimestral"
+    got: 5
+    max: 10
+  - name: "Gastos por finalidad y función"
+    got: 3
+    max: 10
+  - name: "Stock de deuda y perfil de vencimientos"
+    got: 3
+    max: 10
+# Verified arc: 70 (nov 2025, "cumplimiento medio") -> 81 (may 2026, "Alto
+# cumplimiento"). Older 60->75 figures reported by secondary sources are
+# intentionally NOT published here -- only the two totals read directly
+# off primary ASAP PDFs, both archived in archive-manifest.json.
+trend:
+  - report_label: "Noviembre 2025"
+    total: 70
+    category: "cumplimiento medio"
+    source_ref: "asap-transparencia/informe-noviembre-2025"
+  - report_label: "Mayo 2026"
+    total: 81
+    category: "Alto cumplimiento"
+    source_ref: "asap-transparencia/informe-mayo-2026"
+source_refs:
+  - "asap-transparencia/informe-mayo-2026"
+  - "asap-transparencia/informe-noviembre-2025"
