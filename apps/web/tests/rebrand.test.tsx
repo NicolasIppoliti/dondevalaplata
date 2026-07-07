@@ -70,6 +70,16 @@ describe("rebrand: ¿Dónde va la plata?", () => {
   });
 });
 
+describe("vocabulary: 'Multas del Tribunal de Cuentas', never bare 'HTC'", () => {
+  it("SiteHeader's nav no longer uses the 'Fallos HTC' abbreviation", () => {
+    render(<SiteHeader />);
+    expect(
+      screen.getByRole("link", { name: "Multas del Tribunal de Cuentas" }),
+    ).toBeTruthy();
+    expect(screen.queryByText(/\bHTC\b/)).toBeNull();
+  });
+});
+
 describe("Home — mobile-first fold + tappable rows", () => {
   it("shows a one-line subhead explaining what the site is, without needing to scroll", () => {
     render(<Home />);

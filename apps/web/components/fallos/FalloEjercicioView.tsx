@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FalloCard } from "@/components/fallos/FalloCard";
 import { getPortalData, resolveSourceRef } from "@/lib/sources";
@@ -34,9 +35,19 @@ export function FalloEjercicioView({ ejercicio }: FalloEjercicioViewProps) {
   return (
     <div className="space-y-8">
       <section>
-        <h1 className="font-display text-[clamp(26px,4vw,40px)] font-semibold text-ink">
-          Fallo del Tribunal de Cuentas — ejercicio {ejercicio}
+        <Link
+          href="/fallos"
+          className="inline-flex min-h-11 items-center font-mono text-sm"
+        >
+          ← Todas las multas
+        </Link>
+        <h1 className="mt-2 font-display text-[clamp(26px,4vw,40px)] font-semibold text-ink">
+          Multas del Tribunal de Cuentas — ejercicio {ejercicio}
         </h1>
+        <p className="mt-3 max-w-[62ch] text-ink">
+          Es una sanción administrativa por cómo se rindieron las cuentas, no
+          una condena penal.
+        </p>
       </section>
 
       <section

@@ -15,7 +15,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { ejercicio } = await params;
   return {
-    title: `Fallo HTC ${ejercicio}`,
+    title: `Multas del Tribunal de Cuentas — ejercicio ${ejercicio}`,
   };
 }
 

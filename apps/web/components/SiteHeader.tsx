@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const NAV_ITEMS = [
   { href: "/coparticipacion", label: "Coparticipación" },
-  { href: "/fallos", label: "Fallos HTC" },
+  { href: "/fallos", label: "Multas del Tribunal de Cuentas" },
   { href: "/fuentes", label: "Fuentes" },
   { href: "/acerca", label: "Acerca de" },
 ] as const;
