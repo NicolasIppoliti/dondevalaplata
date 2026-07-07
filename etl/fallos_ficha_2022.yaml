@@ -10,13 +10,14 @@
 ejercicio: "2022"
 fallo_id: "3-024.0-2022"
 fallo_date: "2024-03-14"
-administration: "Mariano Cecilio Uset (01/01/2022–31/12/2022)"
+administration: "Mariano Cecilio Uset (01/01/2022–29/05/2022 y 30/06/2022–31/12/2022); Carlos Esteban Gabbarini (30/05/2022–29/06/2022)"
 administration_note: >-
-  Inferred as the full calendar year: the 2023 fallo's own extracted
-  text confirms Uset remained Intendente Municipal through 11/12/2023,
-  with no administration change reported for 2022. Not
-  machine-extracted (no text layer) -- consistent with this ficha's
-  curated, no-OCR scope.
+  Read directly off page 1 (RESULTA I) of the scanned PDF by a human
+  reviewer: Mariano Cecilio Uset served as Intendente Municipal from
+  01/01/2022 to 29/05/2022 and again from 30/06/2022 to 31/12/2022,
+  with Carlos Esteban Gabbarini serving as interim Intendente
+  Municipal from 30/05/2022 to 29/06/2022. Not machine-extracted (no
+  text layer) -- consistent with this ficha's curated, no-OCR scope.
 scanned: true
 text_extracted: false
 fines:
