@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-07-07T03:23:49Z",
+  "dataThrough": "2026-04",
+  "ipcSeriesId": "148.3_INIVELNAL_DICI_M_26",
+  "baseMonth": "2026-05",
+  "lagNote": "Los datos de coparticipación suelen publicarse con 2 a 3 meses de rezago.",
+  "sourceRefs": ["coparticipacion/transferencias-municipios", "ipc/nivel-general-nacional"],
+  "series": [
+    {
+      "municipioId": "06182",
+      "municipio": "Coronel Rosales",
+      "baseMonth": "2026-05",
+      "sourceRefs": ["coparticipacion/transferencias-municipios"],
+      "points": [
+        { "period": "2026-03", "nominalArs": 1500000000, "realArs": 1550000000 },
+        { "period": "2026-04", "nominalArs": 1716801480.78, "realArs": 1753712237.66 }
+      ]
+    }
+  ]
+}

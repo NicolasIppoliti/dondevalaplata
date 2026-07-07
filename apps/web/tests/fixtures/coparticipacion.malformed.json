@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-07-07T03:23:49Z",
+  "dataThrough": "2026-04",
+  "baseMonth": "2026-05",
+  "series": [
+    {
+      "municipioId": "06182",
+      "municipio": "Coronel Rosales",
+      "points": [{ "period": "2026-04", "nominalArs": "1716801480.78" }]
+    }
+  ]
+}

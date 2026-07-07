@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-07-07T03:33:56Z",
+  "sourceRefs": ["htc-fallos/coronel-rosales-2023"],
+  "records": [
+    {
+      "ejercicio": "2023",
+      "falloId": "3-024.0-2023",
+      "falloDate": "2025-03-13",
+      "administration": "Mariano Cecilio Uset (01/01/2023–11/12/2023)",
+      "official": "Mariano Cecilio Uset",
+      "role": "Intendente Municipal",
+      "fineArs": 300000,
+      "scanned": false,
+      "textExtracted": true,
+      "sourceRefs": ["htc-fallos/coronel-rosales-2023"]
+    }
+  ]
+}

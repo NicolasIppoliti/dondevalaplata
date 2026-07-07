@@ -1,0 +1,44 @@
+[
+  {
+    "id": "coparticipacion/transferencias-municipios",
+    "capability": "coparticipacion-viewer",
+    "source": "catalogo.datos.gba.gob.ar",
+    "source_url": "https://catalogo.datos.gba.gob.ar/dataset/example.csv",
+    "archived_url": "https://pub-example.r2.dev/coparticipacion-viewer/example.csv",
+    "archived_path": "archive/coparticipacion-viewer/example.csv",
+    "sha256": "375cd4d3480077e93dc0a3d1ab6a15a49144477600d024489c943a8fb561ad36",
+    "mime": "text/csv",
+    "bytes": 15284788,
+    "fetched_at": "2026-07-07T02:08:03Z",
+    "status": "ok",
+    "notes": "Fixture record for tests."
+  },
+  {
+    "id": "ipc/nivel-general-nacional",
+    "capability": "ipc",
+    "source": "apis.datos.gob.ar",
+    "source_url": "https://apis.datos.gob.ar/series/api/series/?ids=148.3_INIVELNAL_DICI_M_26",
+    "archived_url": "https://pub-example.r2.dev/ipc/ipc-nivel-general-nacional.json",
+    "archived_path": "archive/ipc/ipc-nivel-general-nacional.json",
+    "sha256": "6cb6b6dceb54c2ad97a4d9252888a1089c910308c56fb3fbe3556321c04609cf",
+    "mime": "application/json",
+    "bytes": 2022,
+    "fetched_at": "2026-07-07T02:09:31Z",
+    "status": "ok",
+    "notes": "Fixture record for tests."
+  },
+  {
+    "id": "htc-fallos/coronel-rosales-2023",
+    "capability": "htc-fallos",
+    "source": "sistemas.htc.gba.gov.ar",
+    "source_url": "https://sistemas.htc.gba.gov.ar/example-2023.pdf",
+    "archived_url": "https://pub-example.r2.dev/htc-fallos/coronel-rosales-2023.pdf",
+    "archived_path": "archive/htc-fallos/coronel-rosales-2023.pdf",
+    "sha256": "d66a639956be9c8f36d99bae041730e0d23fa574a36d800fa97484f837c83e36",
+    "mime": "application/pdf",
+    "bytes": 643225,
+    "fetched_at": "2026-07-07T02:08:58Z",
+    "status": "ok",
+    "notes": "Fixture record for tests."
+  }
+]

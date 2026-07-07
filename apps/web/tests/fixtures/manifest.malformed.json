@@ -1,0 +1,13 @@
+[
+  {
+    "id": "coparticipacion/transferencias-municipios",
+    "capability": "coparticipacion-viewer",
+    "source": "catalogo.datos.gba.gob.ar",
+    "archived_url": "https://pub-example.r2.dev/coparticipacion-viewer/example.csv",
+    "sha256": "375cd4d3480077e93dc0a3d1ab6a15a49144477600d024489c943a8fb561ad3",
+    "mime": "text/csv",
+    "bytes": "not-a-number",
+    "fetched_at": "2026-07-07T02:08:03Z",
+    "status": "ok"
+  }
+]
