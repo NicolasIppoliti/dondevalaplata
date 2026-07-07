@@ -9,7 +9,8 @@ municipio to prove the filter works).
 
 from pathlib import Path
 
-from etl.coparticipacion import TARGET_MUNICIPIOS, aggregate_by_period, parse_csv
+from etl.coparticipacion import TARGET_MUNICIPIOS, aggregate_by_period, build_series, parse_csv
+from etl.ipc import rebase_to_latest
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "coparticipacion_sample.csv"
 
@@ -69,3 +70,48 @@ def test_aggregate_by_period_excludes_non_target_municipio() -> None:
     totals = aggregate_by_period(rows)
 
     assert ("06007", "2023-12") not in totals
+
+
+def test_build_series_joins_nominal_and_real_ars_matching_manual_calc() -> None:
+    # Real IPC index values for the two periods covered by the fixture
+    # (cut from the archived series), rebased to the latest month.
+    ipc = rebase_to_latest(
+        "148.3_INIVELNAL_DICI_M_26",
+        [("2023-12", 3533.1922), ("2024-01", 4261.5324)],
+        base_month="2024-01",
+    )
+    rows = parse_csv(FIXTURE_PATH)
+
+    series = build_series(rows, ipc)
+
+    coronel_rosales = next(s for s in series if s["municipioId"] == "06182")
+    points_by_period = {p["period"]: p for p in coronel_rosales["points"]}
+
+    expected_nominal_dec_2023 = 410301012.51 + 3492197.359356272 + 5921583.54
+    expected_factor_dec_2023 = 4261.5324 / 3533.1922
+    dec_2023 = points_by_period["2023-12"]
+    assert dec_2023["nominalArs"] == expected_nominal_dec_2023
+    assert dec_2023["realArs"] == expected_nominal_dec_2023 * expected_factor_dec_2023
+
+    # Base month itself: real == nominal (factor 1.0).
+    expected_nominal_jan_2024 = 537544006.99 + 1464661.22007388 + 6243093.98
+    jan_2024 = points_by_period["2024-01"]
+    assert jan_2024["nominalArs"] == expected_nominal_jan_2024
+    assert jan_2024["realArs"] == expected_nominal_jan_2024
+
+
+def test_build_series_covers_all_four_target_municipios() -> None:
+    ipc = rebase_to_latest(
+        "148.3_INIVELNAL_DICI_M_26",
+        [("2023-12", 3533.1922), ("2024-01", 4261.5324)],
+        base_month="2024-01",
+    )
+    rows = parse_csv(FIXTURE_PATH)
+
+    series = build_series(rows, ipc)
+
+    assert {s["municipioId"] for s in series} == set(TARGET_MUNICIPIOS)
+    for one_series in series:
+        assert len(one_series["points"]) == 2  # 2023-12 and 2024-01
+        assert one_series["baseMonth"] == "2024-01"
+        assert one_series["sourceRefs"] == ["coparticipacion/transferencias-municipios"]

@@ -16,6 +16,9 @@ import csv
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
+
+from .ipc import RebasedIpcSeries
 
 # Pinned by inspecting the real archived CSV (see apply-progress, task 3.2):
 # Coronel Rosales is municipio_id 06182; comparison neighbors resolved by
@@ -85,3 +88,47 @@ def aggregate_by_period(rows: Iterable[CoparticipacionRow]) -> dict[tuple[str, s
         key = (row.municipio_id, row.period)
         totals[key] = totals.get(key, 0.0) + row.monto
     return totals
+
+
+def build_series(
+    rows: Iterable[CoparticipacionRow],
+    ipc: RebasedIpcSeries,
+    *,
+    municipio_ids: Iterable[str] = TARGET_MUNICIPIOS,
+) -> list[dict[str, Any]]:
+    """Join monthly totals with the IPC rebase factor (task 3.4).
+
+    Only periods present in *both* the coparticipacion data and the IPC
+    series are emitted -- per the freshness-disclosure requirement, a
+    period absent from the source data (not yet published) is simply
+    omitted, never synthesized as a zero (task 3.6).
+    """
+    totals = aggregate_by_period(rows)
+    ipc_factor_by_period = {point.period: point.factor for point in ipc.points}
+
+    series: list[dict[str, Any]] = []
+    for municipio_id in municipio_ids:
+        points = []
+        for (mid, period), nominal in sorted(totals.items()):
+            if mid != municipio_id:
+                continue
+            factor = ipc_factor_by_period.get(period)
+            if factor is None:
+                continue  # outside the IPC series range -- not fabricated
+            points.append(
+                {
+                    "period": period,
+                    "nominalArs": nominal,
+                    "realArs": nominal * factor,
+                }
+            )
+        series.append(
+            {
+                "municipioId": municipio_id,
+                "municipio": TARGET_MUNICIPIOS[municipio_id],
+                "baseMonth": ipc.base_month,
+                "points": points,
+                "sourceRefs": ["coparticipacion/transferencias-municipios"],
+            }
+        )
+    return series
