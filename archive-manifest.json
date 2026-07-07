@@ -26,5 +26,47 @@
     "fetched_at": "2026-07-07T02:08:06Z",
     "status": "ok",
     "notes": "Per-year XLSX snapshot for December 2023, published by the Ministerio de Hacienda y Finanzas (Dirección Provincial de Coordinación Municipal). Supplementary/cross-check source, not the primary series consumed by build-coparticipacion."
+  },
+  {
+    "id": "htc-fallos/coronel-rosales-2022",
+    "capability": "htc-fallos",
+    "source": "sistemas.htc.gba.gov.ar",
+    "source_url": "https://sistemas.htc.gba.gov.ar/sistemas/summun/uploads/documents/fallohtc/34740/65f84d4f833db.CoronelDeLaMarinaLeonardoRosales2022F.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/htc-fallos/coronel-rosales-2022.pdf",
+    "archived_path": "archive/htc-fallos/coronel-rosales-2022.pdf",
+    "sha256": "a2bb783fd8dfab8f459328d215c5855d7beb76183c7c22babb72b937fc7ef4cc",
+    "mime": "application/pdf",
+    "bytes": 6404088,
+    "fetched_at": "2026-07-07T02:08:32Z",
+    "status": "ok",
+    "notes": "Ejercicio 2022, expediente 3-024.0-2022, fallo dated 14/03/2024. Municipalidad de Coronel de Marina Leonardo Rosales. Scanned PDF, no extractable text layer (pdftotext yields ~0 bytes across 30 pages) -- ficha/metadata-only per htc-fallos spec. Multa de $100.000 al Intendente Municipal Mariano Cecilio USET."
+  },
+  {
+    "id": "htc-fallos/coronel-rosales-2023",
+    "capability": "htc-fallos",
+    "source": "sistemas.htc.gba.gov.ar",
+    "source_url": "https://sistemas.htc.gba.gov.ar/sistemas/summun/uploads/documents/fallohtc/36042/67d8489f5b8c3.CoronelDeMarinaLeonardoRosales2023F.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/htc-fallos/coronel-rosales-2023.pdf",
+    "archived_path": "archive/htc-fallos/coronel-rosales-2023.pdf",
+    "sha256": "d66a639956be9c8f36d99bae041730e0d23fa574a36d800fa97484f837c83e36",
+    "mime": "application/pdf",
+    "bytes": 643225,
+    "fetched_at": "2026-07-07T02:08:58Z",
+    "status": "ok",
+    "notes": "Ejercicio 2023, expediente 3-024.0-2023, fallo dated 13/03/2025. 26 pages, extractable text layer. Multa de $300.000 al Intendente Municipal Mariano Cecilio USET; $300.000 a la Contadora Municipal Patricia Elisabeth BUSTAMANTE; $250.000 al Intendente Municipal Rodrigo Lionel ARISTIMUÑO."
+  },
+  {
+    "id": "htc-fallos/coronel-rosales-2024",
+    "capability": "htc-fallos",
+    "source": "sistemas.htc.gba.gov.ar",
+    "source_url": "https://sistemas.htc.gba.gov.ar/sistemas/summun/uploads/documents/fallohtc/37269/69e78b03b343a.CoronelDeMarinaLeonaardoRosales2024F.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/htc-fallos/coronel-rosales-2024.pdf",
+    "archived_path": "archive/htc-fallos/coronel-rosales-2024.pdf",
+    "sha256": "369694def147ef919e456ab040cc951aaca8bf18d720534db213e0c270853387",
+    "mime": "application/pdf",
+    "bytes": 709157,
+    "fetched_at": "2026-07-07T02:08:59Z",
+    "status": "ok",
+    "notes": "Ejercicio 2024, expediente 3-024.0-2024, fallo dated 09/04/2026. 64 pages, extractable text layer. Multa de $650.000 al Intendente Municipal Rodrigo Lionel ARISTIMUÑO; $500.000 a la Contadora Municipal Patricia Elisabeth BUSTAMANTE. NOTE: filename contains the real-world typo \"Leonaardo\" (double a) on the source server -- preserved verbatim, not a transcription error on our side."
   }
 ]
