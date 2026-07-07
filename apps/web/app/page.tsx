@@ -31,7 +31,7 @@ export default function Home() {
     <div className="space-y-10">
       <section>
         <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
-          Portal de Transparencia de Coronel Rosales
+          ¿Dónde va la plata? — Coronel Rosales
         </h1>
         <p className="mt-4 max-w-2xl text-slate-700">
           Datos públicos de coparticipación municipal y fallos del Tribunal de

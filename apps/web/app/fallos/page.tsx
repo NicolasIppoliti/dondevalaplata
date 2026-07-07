@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getPortalData } from "@/lib/sources";
 
 export const metadata: Metadata = {
-  title: "Fallos del Tribunal de Cuentas — Portal de Transparencia de Coronel Rosales",
+  title: "Fallos del Tribunal de Cuentas",
   description:
     "Índice de fallos del Tribunal de Cuentas de la Provincia de Buenos Aires sobre las cuentas municipales de Coronel Rosales, 2022-2024.",
 };

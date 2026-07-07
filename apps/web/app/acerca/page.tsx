@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Acerca de — Portal de Transparencia de Coronel Rosales",
+  title: "Acerca de",
   description:
     "Qué es este portal, su declaración de neutralidad y la nota sobre protección de datos personales (Ley 25.326).",
 };

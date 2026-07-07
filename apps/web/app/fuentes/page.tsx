@@ -3,7 +3,7 @@ import { formatDateEsAr, formatPeriodEsAr } from "@/lib/format";
 import { getPortalData, shortHash } from "@/lib/sources";
 
 export const metadata: Metadata = {
-  title: "Fuentes y metodología — Portal de Transparencia de Coronel Rosales",
+  title: "Fuentes y metodología",
   description:
     "Metodología de ajuste por inflación e índice completo de fuentes archivadas por el portal.",
 };

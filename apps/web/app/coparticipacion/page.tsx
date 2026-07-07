@@ -7,7 +7,7 @@ import { formatArsCompact, formatArsPlain, formatPeriodEsAr } from "@/lib/format
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
 export const metadata: Metadata = {
-  title: "Coparticipación municipal — Portal de Transparencia de Coronel Rosales",
+  title: "Coparticipación municipal",
   description:
     "Serie mensual de coparticipación de Coronel Rosales, ajustada por inflación y comparada con municipios vecinos, con fuente y archivo verificables.",
 };

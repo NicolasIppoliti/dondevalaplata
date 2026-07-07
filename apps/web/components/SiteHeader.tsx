@@ -16,8 +16,8 @@ export function SiteHeader() {
           href="/"
           className="text-base font-semibold tracking-tight text-slate-900 hover:text-slate-700"
         >
-          Portal de Transparencia
-          <span className="sr-only"> de Coronel Rosales</span>
+          ¿Dónde va la plata?
+          <span className="sr-only"> — Coronel Rosales</span>
         </Link>
         <nav aria-label="Navegación principal">
           <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">

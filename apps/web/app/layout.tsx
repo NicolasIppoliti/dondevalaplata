@@ -15,7 +15,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portal de Transparencia de Coronel Rosales",
+  title: {
+    template: "%s — ¿Dónde va la plata? — Coronel Rosales",
+    default: "¿Dónde va la plata? — Coronel Rosales",
+  },
   description:
     "Datos públicos de coparticipación y fallos del Tribunal de Cuentas de Coronel Rosales, con enlaces a fuente y archivo.",
 };
