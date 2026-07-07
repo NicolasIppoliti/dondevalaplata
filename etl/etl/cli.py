@@ -49,7 +49,10 @@ def run_build(args: argparse.Namespace) -> int:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="etl",
-        description="Archival and build pipeline for the Portal de Transparencia de Coronel Rosales.",
+        description=(
+            "Archival and build pipeline for the Portal de Transparencia "
+            "de Coronel Rosales."
+        ),
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
