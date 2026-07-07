@@ -1,0 +1,30 @@
+# Node
+node_modules/
+.pnp.*
+npm-debug.log*
+
+# Next.js
+.next/
+out/
+dist/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# OS / editor
+.DS_Store
+*.swp
+
+# Misc
+coverage/
