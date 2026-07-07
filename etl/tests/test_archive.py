@@ -164,3 +164,34 @@ def test_run_archive_all_writes_manifest_for_every_capability(tmp_path) -> None:
     assert load_manifest(manifest_path) == records
     ids = {r["id"] for r in records}
     assert ids == {"coparticipacion/transferencias-municipios", "ipc/nivel-general-nacional"}
+
+
+def test_run_archive_all_applies_politeness_delay_for_mcr_docs(tmp_path) -> None:
+    """mcr.gob.ar rate-limited rapid sequential requests (HTTP 429) during apply."""
+    entries = [
+        {
+            "id": f"mcr-docs/doc-{i}",
+            "source": "mcr.gob.ar",
+            "source_url": f"https://mcr.gob.ar/doc-{i}.pdf",
+            "mime": "application/pdf",
+            "notes": "",
+            "filename": f"doc-{i}.pdf",
+        }
+        for i in range(3)
+    ]
+    fetcher = FakeFetcher(
+        {e["source_url"]: FetchResponse(200, b"%PDF-fake") for e in entries}
+    )
+    sleeps: list[float] = []
+
+    run_archive_all(
+        {"mcr-docs": entries},
+        fetcher=fetcher,
+        local_root=tmp_path / "archive",
+        manifest_path=tmp_path / "archive-manifest.json",
+        r2_store=None,
+        sleep=sleeps.append,
+    )
+
+    # One delay between each pair of entries, not after the last one.
+    assert sleeps == [1.5, 1.5]

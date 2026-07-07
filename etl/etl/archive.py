@@ -23,9 +23,12 @@ DEFAULT_USER_AGENT = (
 
 # Per-capability delay (seconds) applied between sequential fetches, to be
 # polite to sources that ask for it explicitly (SIBOM: "sequential, small
-# delay, proper User-Agent").
+# delay, proper User-Agent") and to sources observed to rate-limit rapid
+# sequential requests (mcr.gob.ar returned HTTP 429 on ~30 consecutive
+# requests without a delay during Slice 2 apply).
 POLITENESS_DELAY_SECONDS: dict[str, float] = {
     "sibom": 0.75,
+    "mcr-docs": 1.5,
 }
 
 

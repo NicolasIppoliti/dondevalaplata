@@ -42,14 +42,22 @@ class RequestsFetcher:
                 response = requests.get(
                     url, timeout=timeout, headers=headers or {}, allow_redirects=True
                 )
-                return FetchResponse(
-                    status_code=response.status_code,
-                    content=response.content,
-                    headers=dict(response.headers),
-                )
             except requests.RequestException as exc:
                 last_exc = exc
                 if attempt < self.max_retries:
                     time.sleep(self.retry_delay_seconds)
+                continue
+
+            if response.status_code == 429 and attempt < self.max_retries:
+                retry_after = response.headers.get("Retry-After")
+                delay = float(retry_after) if retry_after else self.retry_delay_seconds
+                time.sleep(delay)
+                continue
+
+            return FetchResponse(
+                status_code=response.status_code,
+                content=response.content,
+                headers=dict(response.headers),
+            )
         assert last_exc is not None
         raise last_exc
