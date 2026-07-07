@@ -25,6 +25,20 @@ scenario): when ``upsert_record`` receives a record whose ``sha256``
 differs from the existing "ok" record sharing the same ``id``, the prior
 version is kept under a dated id (``{id}@{fetched_at date}``) so it
 remains retrievable, and the canonical id is updated to the new capture.
+
+Failed re-fetch handling (raw-data-archive spec, "Source returns 404"
+scenario): when ``upsert_record`` receives a ``status: "error"`` record
+(``sha256`` is always ``None`` for these -- see ``archive.py``'s
+``_empty_record``) for an ``id`` whose existing record is ``status:
+"ok"``, the existing "ok" record is PRESERVED AS-IS (never overwritten
+with the failed attempt's ``None`` fields). The failure is instead
+recorded on the preserved record via two additive fields,
+``last_error`` (the failed attempt's ``notes``) and ``last_error_at``
+(the failed attempt's ``fetched_at``), so the failure is still visible
+in the manifest without destroying the previously archived copy or its
+``archived_url``/``archived_path``/``sha256``. If the existing record
+was ALREADY ``status: "error"`` (no archived copy to protect), the
+newest failure simply replaces it, same as before.
 """
 
 from __future__ import annotations
@@ -85,6 +99,11 @@ def upsert_record(
     different ``sha256`` than the incoming record, the existing record is
     preserved under a dated id (so the prior version remains retrievable)
     and the incoming record is annotated as drifted.
+
+    If the incoming record is a failed fetch (``status == "error"``) and
+    the existing record is ``status == "ok"``, the existing record is
+    preserved in place (see module docstring) instead of being
+    overwritten with the failed attempt's empty fields.
     """
     result: list[dict[str, Any]] = []
     replaced = False
@@ -94,6 +113,17 @@ def upsert_record(
             continue
 
         replaced = True
+
+        is_failed_overwrite = (
+            record.get("status") == "error" and existing.get("status") == "ok"
+        )
+        if is_failed_overwrite:
+            preserved = dict(existing)
+            preserved["last_error"] = record.get("notes") or None
+            preserved["last_error_at"] = record.get("fetched_at")
+            result.append(preserved)
+            continue
+
         is_drift = (
             existing.get("status") == "ok"
             and existing.get("sha256")

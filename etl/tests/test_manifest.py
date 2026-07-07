@@ -97,6 +97,59 @@ def test_upsert_does_not_flag_drift_when_prior_status_was_error() -> None:
     assert updated[0]["status"] == "ok"
 
 
+def test_upsert_preserves_prior_ok_record_when_incoming_fetch_fails() -> None:
+    """Reproduces the verifier's exact C1 finding: a failed re-fetch (HTTP
+    429/404, sha256=None) must NEVER destroy a previously archived copy --
+    per raw-data-archive's "Source returns 404" scenario ("records the
+    failure in the manifest without deleting the existing archived copy").
+    """
+    existing = [
+        _record(
+            status="ok",
+            sha256="a" * 64,
+            archived_url="https://pub.example.r2.dev/coparticipacion/file.csv",
+            archived_path="archive/coparticipacion/file.csv",
+        )
+    ]
+    failed_attempt = _record(
+        status="error",
+        sha256=None,
+        archived_url=None,
+        archived_path=None,
+        fetched_at="2026-07-07T00:00:00Z",
+        notes="[HTTP 429]",
+    )
+
+    updated = upsert_record(existing, failed_attempt)
+
+    assert len(updated) == 1
+    preserved = updated[0]
+    # The prior good record must survive intact -- this is the exact field
+    # set that a naive overwrite (the pre-fix behavior) destroyed.
+    assert preserved["status"] == "ok"
+    assert preserved["sha256"] == "a" * 64
+    assert preserved["archived_url"] == "https://pub.example.r2.dev/coparticipacion/file.csv"
+    assert preserved["archived_path"] == "archive/coparticipacion/file.csv"
+    # The failed attempt must still be recorded, not silently dropped.
+    assert preserved.get("last_error")
+    assert "429" in preserved["last_error"]
+    assert preserved.get("last_error_at") == "2026-07-07T00:00:00Z"
+
+
+def test_upsert_still_overwrites_when_prior_status_was_already_error() -> None:
+    """No archived copy exists to protect when the prior attempt also
+    failed -- the newest failure record should simply replace it."""
+    existing = [_record(status="error", sha256=None, archived_url=None, notes="[HTTP 429]")]
+    fresh_failure = _record(
+        status="error", sha256=None, archived_url=None, notes="[HTTP 500]"
+    )
+
+    updated = upsert_record(existing, fresh_failure)
+
+    assert len(updated) == 1
+    assert updated[0]["notes"] == "[HTTP 500]"
+
+
 def test_manifest_is_valid_json_array(tmp_path) -> None:
     path = tmp_path / "archive-manifest.json"
     save_manifest(path, [_record(), _record(id="other/id")])

@@ -166,6 +166,46 @@ def test_run_archive_all_writes_manifest_for_every_capability(tmp_path) -> None:
     assert ids == {"coparticipacion/transferencias-municipios", "ipc/nivel-general-nacional"}
 
 
+def test_run_archive_all_preserves_prior_ok_record_across_a_failed_rerun(tmp_path) -> None:
+    """End-to-end safety net for the C1 fix (see test_manifest.py's unit test):
+    a source that archived successfully on run 1 but fails (HTTP 429) on a
+    later ``etl archive`` re-run must keep its working archived_url/sha256
+    in the manifest, not get overwritten with the failed attempt's empty
+    fields -- this is exactly the class of run that regressed real
+    mcr-docs data during Slice 2 (see apply-progress's incident narrative).
+    """
+    manifest_path = tmp_path / "archive-manifest.json"
+    local_root = tmp_path / "archive"
+    good_data = b"a,b\n1,2\n"
+
+    run_archive_all(
+        {"coparticipacion-viewer": [{**ENTRY, "filename": "file.csv"}]},
+        fetcher=FakeFetcher({ENTRY["source_url"]: FetchResponse(200, good_data)}),
+        local_root=local_root,
+        manifest_path=manifest_path,
+        r2_store=None,
+    )
+    first_pass = load_manifest(manifest_path)
+    assert first_pass[0]["status"] == "ok"
+    assert first_pass[0]["sha256"] == sha256_of(good_data)
+
+    run_archive_all(
+        {"coparticipacion-viewer": [{**ENTRY, "filename": "file.csv"}]},
+        fetcher=FakeFetcher({ENTRY["source_url"]: FetchResponse(429, b"")}),
+        local_root=local_root,
+        manifest_path=manifest_path,
+        r2_store=None,
+    )
+    second_pass = load_manifest(manifest_path)
+
+    assert len(second_pass) == 1
+    record = second_pass[0]
+    assert record["status"] == "ok"
+    assert record["sha256"] == sha256_of(good_data)
+    assert record["archived_path"] is not None
+    assert "429" in (record.get("last_error") or "")
+
+
 def test_run_archive_all_applies_politeness_delay_for_mcr_docs(tmp_path) -> None:
     """mcr.gob.ar rate-limited rapid sequential requests (HTTP 429) during apply."""
     entries = [
