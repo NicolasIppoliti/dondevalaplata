@@ -11,6 +11,8 @@ verify the series itself, per task 3.1 ("VERIFY-AT-APPLY, do FIRST").
 import json
 from pathlib import Path
 
+import pytest
+
 from etl.ipc import (
     build_ipc,
     monthly_variation,
@@ -22,6 +24,11 @@ from etl.ipc import (
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "ipc_sample.json"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 REAL_ARCHIVED_IPC_PATH = REPO_ROOT / "archive" / "ipc" / "ipc-nivel-general-nacional.json"
+_MISSING_REAL_ARCHIVE_REASON = (
+    "requires the locally archived IPC series, which is not git-versioned "
+    "by design (R2 is the canonical archive store, see design D3/W1) -- run "
+    "`uv run etl archive` locally to populate it"
+)
 
 # Well-established, independently published INDEC "IPC Nivel General
 # Nacional" monthly (m/m) variations for calendar year 2024 -- used to
@@ -67,6 +74,7 @@ def test_monthly_variation_skips_first_point_and_computes_pct_change() -> None:
     assert round(jan_pct, 2) == 20.61
 
 
+@pytest.mark.skipif(not REAL_ARCHIVED_IPC_PATH.exists(), reason=_MISSING_REAL_ARCHIVE_REASON)
 def test_ipc_series_matches_known_published_2024_variations() -> None:
     """task 3.1 VERIFY-AT-APPLY: cross-check the archived series against
     independently known published INDEC figures before trusting it for

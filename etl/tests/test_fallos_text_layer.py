@@ -9,6 +9,8 @@ runs the real extraction against the full archived PDFs.
 
 from pathlib import Path
 
+import pytest
+
 from etl.fallos import (
     Fine,
     extract_pdf_text,
@@ -21,6 +23,13 @@ from etl.fallos import (
 
 FIXTURES = Path(__file__).parent / "fixtures"
 REPO_ROOT = Path(__file__).resolve().parents[2]
+_REAL_PDF_2023 = REPO_ROOT / "archive" / "htc-fallos" / "coronel-rosales-2023.pdf"
+_REAL_PDF_2024 = REPO_ROOT / "archive" / "htc-fallos" / "coronel-rosales-2024.pdf"
+_MISSING_REAL_ARCHIVE_REASON = (
+    "requires the locally archived HTC fallo PDFs, which are not "
+    "git-versioned by design (R2 is the canonical archive store, see "
+    "design D3/W1) -- run `uv run etl archive` locally to populate them"
+)
 
 
 def _read(name: str) -> str:
@@ -100,6 +109,10 @@ def test_parse_text_layer_fallo_builds_ficha() -> None:
     assert len(ficha.fines) == 3
 
 
+@pytest.mark.skipif(
+    not (_REAL_PDF_2023.exists() and _REAL_PDF_2024.exists()),
+    reason=_MISSING_REAL_ARCHIVE_REASON,
+)
 def test_end_to_end_extraction_against_real_archived_pdfs() -> None:
     """Confidence check: the real PDFs, not just the trimmed fixtures."""
     ficha_2023 = parse_text_layer_fallo(

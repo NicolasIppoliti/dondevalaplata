@@ -17,6 +17,21 @@ from etl.fallos import build_fallos
 REPO_ROOT = Path(__file__).resolve().parents[2]
 FICHA_2022_PATH = REPO_ROOT / "etl" / "fallos_ficha_2022.yaml"
 FIXED_NOW = datetime(2026, 7, 7, 12, 0, 0, tzinfo=UTC)
+_REAL_PDF_2023 = REPO_ROOT / "archive" / "htc-fallos" / "coronel-rosales-2023.pdf"
+_REAL_PDF_2024 = REPO_ROOT / "archive" / "htc-fallos" / "coronel-rosales-2024.pdf"
+
+# Every test in this module exercises `build_fallos` over the real archived
+# PDFs (via the `result` fixture below). The archive isn't git-versioned by
+# design (R2 is the canonical store, see design D3/W1), so skip the whole
+# module on a fresh clone/CI runner instead of erroring on a missing file.
+pytestmark = pytest.mark.skipif(
+    not (_REAL_PDF_2023.exists() and _REAL_PDF_2024.exists()),
+    reason=(
+        "requires the locally archived HTC fallo PDFs, which are not "
+        "git-versioned by design (R2 is the canonical archive store, see "
+        "design D3/W1) -- run `uv run etl archive` locally to populate them"
+    ),
+)
 
 
 def _write_manifest(manifest_path: Path) -> None:
