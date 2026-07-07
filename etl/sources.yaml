@@ -1,0 +1,19 @@
+# Source registry for `etl archive`.
+#
+# Each top-level key is a capability (see design D4). Entries are populated in
+# Slice 2, one source family per commit. This file only declares the schema
+# scaffold in Slice 1 — no source is registered yet.
+#
+# Entry shape (documented for Slice 2 authors):
+#   - id: <stable slug, referenced by sourceRefs and archive-manifest.json>
+#     source: <host label>
+#     source_url: <https://... official URL>
+#     mime: <text/csv | application/pdf | application/json | application/zip>
+#     notes: <free text, e.g. municipio_id filter, known lag, drift caveats>
+
+coparticipacion: []
+htc-fallos: []
+ipc: []
+electoral: []
+sibom: []
+mcr-docs: []
