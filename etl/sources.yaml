@@ -99,6 +99,34 @@ ipc:
       safe to use for the build-ipc rebase (task 3.3).
     filename: ipc-nivel-general-nacional.json
 
+asap-transparencia:
+  - id: asap-transparencia/informe-mayo-2026
+    source: asap.org.ar
+    source_url: https://asap.org.ar/img_informes/06181547_InformeTransparenciaMunicipiosPBA-Mayo2026.pdf
+    mime: application/pdf
+    notes: >-
+      "Índice de Transparencia Fiscal Municipal – Provincia de Buenos
+      Aires", publicado por ASAP (Asociación Argentina de Presupuesto y
+      Administración Financiera Pública, Filial Provincia de Buenos
+      Aires) -- una asociación civil/profesional, NO un ministerio.
+      Informe de Mayo 2026 (datos al 1er trimestre 2026). Coronel
+      Rosales: 81/100 ("Alto cumplimiento"), desglose en página 24.
+      sha256 pre-verificado por el dueño del proyecto al leer el PDF
+      primario: 689df97fe6f383a136d6a74c88cecce910b8e3f72e1385aa4e8253338aa723ae
+      -- re-verificado bit a bit contra el archivo efectivamente
+      descargado por este pipeline (task 1, VERIFY-AT-APPLY).
+    filename: informe-transparencia-municipios-pba-mayo-2026.pdf
+  - id: asap-transparencia/informe-noviembre-2025
+    source: asap.org.ar
+    source_url: https://asap.org.ar/img_informes/12221419_InformeTransparenciaMunicipiosPBA-Noviembre2025.pdf
+    mime: application/pdf
+    notes: >-
+      Mismo índice ASAP, informe anterior (Noviembre 2025): Coronel
+      Rosales 70/100 ("cumplimiento medio"). Archivado para trazar la
+      tendencia 70 -> 81 mostrada en /transparencia; no se usa ningún
+      otro dato de este informe salvo el total y la categoría.
+    filename: informe-transparencia-municipios-pba-noviembre-2025.pdf
+
 electoral:
   - id: electoral/2023-generales
     source: argentina.gob.ar

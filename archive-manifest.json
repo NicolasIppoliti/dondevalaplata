@@ -1458,5 +1458,33 @@
     "fetched_at": "2026-07-07T05:30:29Z",
     "status": "ok",
     "notes": "Boletín 31º de Coronel Rosales, publicado 28/04/2023"
+  },
+  {
+    "id": "asap-transparencia/informe-mayo-2026",
+    "capability": "asap-transparencia",
+    "source": "asap.org.ar",
+    "source_url": "https://asap.org.ar/img_informes/06181547_InformeTransparenciaMunicipiosPBA-Mayo2026.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/asap-transparencia/informe-transparencia-municipios-pba-mayo-2026.pdf",
+    "archived_path": "archive/asap-transparencia/informe-transparencia-municipios-pba-mayo-2026.pdf",
+    "sha256": "689df97fe6f383a136d6a74c88cecce910b8e3f72e1385aa4e8253338aa723ae",
+    "mime": "application/pdf",
+    "bytes": 1093233,
+    "fetched_at": "2026-07-07T19:24:09Z",
+    "status": "ok",
+    "notes": "\"Índice de Transparencia Fiscal Municipal – Provincia de Buenos Aires\", publicado por ASAP (Asociación Argentina de Presupuesto y Administración Financiera Pública, Filial Provincia de Buenos Aires) -- una asociación civil/profesional, NO un ministerio. Informe de Mayo 2026 (datos al 1er trimestre 2026). Coronel Rosales: 81/100 (\"Alto cumplimiento\"), desglose en página 24. sha256 pre-verificado por el dueño del proyecto al leer el PDF primario: 689df97fe6f383a136d6a74c88cecce910b8e3f72e1385aa4e8253338aa723ae -- re-verificado bit a bit contra el archivo efectivamente descargado por este pipeline (task 1, VERIFY-AT-APPLY). [R2 upload pending: no credentials configured]"
+  },
+  {
+    "id": "asap-transparencia/informe-noviembre-2025",
+    "capability": "asap-transparencia",
+    "source": "asap.org.ar",
+    "source_url": "https://asap.org.ar/img_informes/12221419_InformeTransparenciaMunicipiosPBA-Noviembre2025.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/asap-transparencia/informe-transparencia-municipios-pba-noviembre-2025.pdf",
+    "archived_path": "archive/asap-transparencia/informe-transparencia-municipios-pba-noviembre-2025.pdf",
+    "sha256": "ab953674d809233ee867f18a75d1befb9edf8d2b8c3702946c5da4f0b58f4479",
+    "mime": "application/pdf",
+    "bytes": 969185,
+    "fetched_at": "2026-07-07T19:24:11Z",
+    "status": "ok",
+    "notes": "Mismo índice ASAP, informe anterior (Noviembre 2025): Coronel Rosales 70/100 (\"cumplimiento medio\"). Archivado para trazar la tendencia 70 -> 81 mostrada en /transparencia; no se usa ningún otro dato de este informe salvo el total y la categoría. [R2 upload pending: no credentials configured]"
   }
 ]

@@ -13,6 +13,7 @@ KNOWN_CAPABILITIES = (
     "electoral",
     "sibom",
     "mcr-docs",
+    "asap-transparencia",
 )
 
 

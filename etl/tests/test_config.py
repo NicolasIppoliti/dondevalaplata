@@ -40,3 +40,4 @@ def test_load_sources_defaults_missing_capabilities_to_empty_list(tmp_path) -> N
 
     assert sources["sibom"] == []
     assert sources["mcr-docs"] == []
+    assert sources["asap-transparencia"] == []
