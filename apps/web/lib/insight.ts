@@ -98,12 +98,16 @@ function buildMessage(
 
   if (direction === "up") {
     const percent =
-      primaryFraction !== null ? `${formatVariationEsAr(primaryFraction)} ` : "";
+      primaryFraction !== null
+        ? `${formatVariationEsAr(primaryFraction)} `
+        : "";
     return `En plata de hoy, lo que recibe Coronel Rosales está subiendo: ${percent}${comparisonLabel}.`;
   }
   if (direction === "down") {
     const percent =
-      primaryFraction !== null ? `${formatVariationEsAr(primaryFraction)} ` : "";
+      primaryFraction !== null
+        ? `${formatVariationEsAr(primaryFraction)} `
+        : "";
     return `En plata de hoy, lo que recibe Coronel Rosales está cayendo: ${percent}${comparisonLabel}.`;
   }
   const sinceClause = info.earliestReferenceYear

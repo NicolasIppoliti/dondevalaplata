@@ -114,7 +114,10 @@ export function formatDateEsAr(isoDate: string): string {
  * negative case, `--olive` the non-negative one; this function only formats
  * the text, callers own the color).
  */
-export function formatVariationEsAr(fraction: number, fractionDigits = 1): string {
+export function formatVariationEsAr(
+  fraction: number,
+  fractionDigits = 1,
+): string {
   const percent = fraction * 100;
   const sign = percent < 0 ? "−" : "+";
   const formatted = formatDecimalEsAr(Math.abs(percent), fractionDigits);
