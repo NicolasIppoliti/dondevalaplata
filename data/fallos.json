@@ -1,0 +1,94 @@
+{
+  "generatedAt": "2026-07-07T03:33:56Z",
+  "sourceRefs": [
+    "htc-fallos/coronel-rosales-2022",
+    "htc-fallos/coronel-rosales-2023",
+    "htc-fallos/coronel-rosales-2024"
+  ],
+  "records": [
+    {
+      "ejercicio": "2022",
+      "falloId": "3-024.0-2022",
+      "falloDate": "2024-03-14",
+      "administration": "Mariano Cecilio Uset (01/01/2022–31/12/2022)",
+      "official": "Mariano Cecilio Uset",
+      "role": "Intendente Municipal",
+      "fineArs": 100000.0,
+      "scanned": true,
+      "textExtracted": false,
+      "sourceRefs": [
+        "htc-fallos/coronel-rosales-2022"
+      ]
+    },
+    {
+      "ejercicio": "2023",
+      "falloId": "3-024.0-2023",
+      "falloDate": "2025-03-13",
+      "administration": "Mariano Cecilio Uset (01/01/2023–11/12/2023); Rodrigo Lionel Aristimuño (12/12/2023–31/12/2023)",
+      "official": "Mariano Cecilio Uset",
+      "role": "Intendente Municipal",
+      "fineArs": 300000.0,
+      "scanned": false,
+      "textExtracted": true,
+      "sourceRefs": [
+        "htc-fallos/coronel-rosales-2023"
+      ]
+    },
+    {
+      "ejercicio": "2023",
+      "falloId": "3-024.0-2023",
+      "falloDate": "2025-03-13",
+      "administration": "Mariano Cecilio Uset (01/01/2023–11/12/2023); Rodrigo Lionel Aristimuño (12/12/2023–31/12/2023)",
+      "official": "Patricia Elisabeth Bustamante",
+      "role": "Contadora Municipal",
+      "fineArs": 300000.0,
+      "scanned": false,
+      "textExtracted": true,
+      "sourceRefs": [
+        "htc-fallos/coronel-rosales-2023"
+      ]
+    },
+    {
+      "ejercicio": "2023",
+      "falloId": "3-024.0-2023",
+      "falloDate": "2025-03-13",
+      "administration": "Mariano Cecilio Uset (01/01/2023–11/12/2023); Rodrigo Lionel Aristimuño (12/12/2023–31/12/2023)",
+      "official": "Rodrigo Lionel Aristimuño",
+      "role": "Intendente Municipal",
+      "fineArs": 250000.0,
+      "scanned": false,
+      "textExtracted": true,
+      "sourceRefs": [
+        "htc-fallos/coronel-rosales-2023"
+      ]
+    },
+    {
+      "ejercicio": "2024",
+      "falloId": "3-024.0-2024",
+      "falloDate": "2026-04-09",
+      "administration": "Rodrigo Lionel Aristimuño (01/01/2024–31/12/2024)",
+      "official": "Rodrigo Lionel Aristimuño",
+      "role": "Intendente Municipal",
+      "fineArs": 650000.0,
+      "scanned": false,
+      "textExtracted": true,
+      "sourceRefs": [
+        "htc-fallos/coronel-rosales-2024"
+      ]
+    },
+    {
+      "ejercicio": "2024",
+      "falloId": "3-024.0-2024",
+      "falloDate": "2026-04-09",
+      "administration": "Rodrigo Lionel Aristimuño (01/01/2024–31/12/2024)",
+      "official": "Patricia Elisabeth Bustamante",
+      "role": "Contadora Municipal",
+      "fineArs": 500000.0,
+      "scanned": false,
+      "textExtracted": true,
+      "sourceRefs": [
+        "htc-fallos/coronel-rosales-2024"
+      ]
+    }
+  ]
+}

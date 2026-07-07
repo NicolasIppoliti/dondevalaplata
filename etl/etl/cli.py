@@ -24,6 +24,7 @@ from pathlib import Path
 from .archive import Fetcher, run_archive_all
 from .config import load_sources
 from .coparticipacion import COPARTICIPACION_CSV_MANIFEST_ID, build_coparticipacion
+from .fallos import build_fallos
 from .http_client import RequestsFetcher
 from .ipc import build_ipc, rebased_series_from_json
 from .manifest import load_manifest, save_manifest
@@ -40,6 +41,7 @@ DEFAULT_SOURCES_PATH = REPO_ROOT / "etl" / "sources.yaml"
 DEFAULT_MANIFEST_PATH = REPO_ROOT / "archive-manifest.json"
 DEFAULT_ARCHIVE_ROOT = REPO_ROOT / "archive"
 DEFAULT_DATA_ROOT = REPO_ROOT / "data"
+DEFAULT_FICHA_2022_PATH = REPO_ROOT / "etl" / "fallos_ficha_2022.yaml"
 
 # From Nº31 (2023) onward, per design D4/tasks Slice 2 scope note.
 SIBOM_FROM_NUMBER = 31
@@ -200,9 +202,14 @@ def run_build_coparticipacion(args: argparse.Namespace) -> int:
 
 
 def run_build_fallos(args: argparse.Namespace) -> int:
-    """Build the HTC fallos display JSON. Not yet implemented."""
-    print("etl build-fallos: not implemented yet (see Slice 3)")
-    return 1
+    """Build `data/fallos.json` from the archived text-layer PDFs + curated 2022 ficha."""
+    result = build_fallos(args.manifest_path, args.ficha_2022_path)
+    output_path = args.data_root / "fallos.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(result, indent=2, ensure_ascii=False) + "\n"
+    output_path.write_text(payload, encoding="utf-8")
+    print(f"etl build-fallos: wrote {output_path} ({len(result['records'])} records)")
+    return 0
 
 
 def run_build(args: argparse.Namespace) -> int:
@@ -286,6 +293,15 @@ def build_parser() -> argparse.ArgumentParser:
 
     build_fallos_parser = subparsers.add_parser(
         "build-fallos", help="Build the HTC fallos display JSON from the archive."
+    )
+    build_fallos_parser.add_argument(
+        "--manifest-path", type=Path, default=DEFAULT_MANIFEST_PATH,
+    )
+    build_fallos_parser.add_argument(
+        "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
+    )
+    build_fallos_parser.add_argument(
+        "--ficha-2022-path", type=Path, default=DEFAULT_FICHA_2022_PATH,
     )
     build_fallos_parser.set_defaults(func=run_build_fallos)
 

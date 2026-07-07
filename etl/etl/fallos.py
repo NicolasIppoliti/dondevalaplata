@@ -17,10 +17,22 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import pypdf
 import yaml
+
+from .manifest import resolve_archived_path
+
+# Manifest ids for the two text-layer fallos (task 2.5). The 2022 fallo
+# is scanned (no text layer) and is never read via the manifest here --
+# it comes entirely from the curated ficha YAML (task 3.9).
+TEXT_LAYER_MANIFEST_IDS: dict[str, str] = {
+    "2023": "htc-fallos/coronel-rosales-2023",
+    "2024": "htc-fallos/coronel-rosales-2024",
+}
 
 SPANISH_MONTHS: dict[str, int] = {
     "enero": 1,
@@ -212,3 +224,59 @@ def load_curated_ficha(path: Path) -> FalloFicha:
         fines=fines,
         source_ref=raw["source_ref"],
     )
+
+
+def _ficha_to_records(ficha: FalloFicha) -> list[dict[str, Any]]:
+    """One flat `FalloRecord` per fine, per design's `FalloRecord` interface.
+
+    Every record for a given ejercicio shares the exact same field set,
+    regardless of official/role/scanned -- the neutrality invariant
+    (htc-fallos spec's Neutral, Identical Treatment requirement).
+    """
+    return [
+        {
+            "ejercicio": ficha.ejercicio,
+            "falloId": ficha.fallo_id,
+            "falloDate": ficha.fallo_date,
+            "administration": ficha.administration,
+            "official": fine.official,
+            "role": fine.role,
+            "fineArs": fine.fine_ars,
+            "scanned": ficha.scanned,
+            "textExtracted": ficha.text_extracted,
+            "sourceRefs": [ficha.source_ref],
+        }
+        for fine in ficha.fines
+    ]
+
+
+def build_fallos(
+    manifest_path: Path,
+    curated_ficha_2022_path: Path,
+    *,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Build the full `data/fallos.json` payload (task 3.10).
+
+    Reads the 2023/2024 text-layer PDFs via the manifest and the 2022
+    scanned fallo via its curated ficha, converging both on the same
+    `FalloFicha` shape before flattening into `FalloRecord`s -- so every
+    ejercicio/administration renders through an identical template.
+    """
+    fichas = [load_curated_ficha(curated_ficha_2022_path)]
+    for ejercicio, manifest_id in TEXT_LAYER_MANIFEST_IDS.items():
+        pdf_path = resolve_archived_path(manifest_path, manifest_id)
+        text = extract_pdf_text(pdf_path)
+        fichas.append(
+            parse_text_layer_fallo(text, ejercicio=ejercicio, source_ref=manifest_id)
+        )
+    fichas.sort(key=lambda f: f.ejercicio)
+
+    records = [record for ficha in fichas for record in _ficha_to_records(ficha)]
+    generated_at = (now or datetime.now(UTC)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    return {
+        "generatedAt": generated_at,
+        "sourceRefs": sorted({ficha.source_ref for ficha in fichas}),
+        "records": records,
+    }

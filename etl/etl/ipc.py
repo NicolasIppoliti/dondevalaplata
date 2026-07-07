@@ -22,7 +22,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from .manifest import load_manifest
+from .manifest import resolve_archived_path
 
 IPC_MANIFEST_ID = "ipc/nivel-general-nacional"
 
@@ -108,17 +108,8 @@ def rebased_series_from_json(payload: dict[str, Any]) -> RebasedIpcSeries:
 def load_archived_ipc(
     manifest_path: Path, *, record_id: str = IPC_MANIFEST_ID
 ) -> tuple[str, list[tuple[str, float]]]:
-    """Resolve the IPC manifest record and parse the archived series-tiempo JSON.
-
-    ``archived_path`` in the manifest is always repo-root-relative (see
-    ``archive.py``), and ``manifest_path`` always lives at the repo root
-    (``archive-manifest.json``), so ``manifest_path.parent`` is the repo root.
-    """
-    records = load_manifest(manifest_path)
-    record = next(r for r in records if r["id"] == record_id)
-    archived_path = Path(record["archived_path"])
-    if not archived_path.is_absolute():
-        archived_path = manifest_path.parent / archived_path
+    """Resolve the IPC manifest record and parse the archived series-tiempo JSON."""
+    archived_path = resolve_archived_path(manifest_path, record_id)
     payload = json.loads(archived_path.read_text(encoding="utf-8"))
     return parse_series_tiempo_response(payload)
 

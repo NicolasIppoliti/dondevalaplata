@@ -60,6 +60,22 @@ def save_manifest(path: Path, records: list[dict[str, Any]]) -> None:
     )
 
 
+def resolve_archived_path(manifest_path: Path, record_id: str) -> Path:
+    """Resolve a manifest record's ``archived_path`` to an absolute path.
+
+    ``archived_path`` is always repo-root-relative (see ``archive.py``),
+    and ``manifest_path`` always lives at the repo root
+    (``archive-manifest.json``), so ``manifest_path.parent`` is the repo
+    root.
+    """
+    records = load_manifest(manifest_path)
+    record = next(r for r in records if r["id"] == record_id)
+    archived_path = Path(record["archived_path"])
+    if not archived_path.is_absolute():
+        archived_path = manifest_path.parent / archived_path
+    return archived_path
+
+
 def upsert_record(
     records: list[dict[str, Any]], record: dict[str, Any]
 ) -> list[dict[str, Any]]:
