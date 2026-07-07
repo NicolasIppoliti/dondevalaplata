@@ -69,3 +69,51 @@ describe("rebrand: ¿Dónde va la plata?", () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe("Home — mobile-first fold + tappable rows", () => {
+  it("shows a one-line subhead explaining what the site is, without needing to scroll", () => {
+    render(<Home />);
+    expect(
+      screen.getByText(
+        "Portal vecinal independiente que sigue la plata pública de Coronel Rosales.",
+      ),
+    ).toBeTruthy();
+  });
+
+  it("makes the whole question row (not just a small cta) the link into each section", () => {
+    render(<Home />);
+    const link = screen.getByRole("link", { name: /¿Cuánto llegó este mes\?/ });
+    expect(link.tagName).toBe("A");
+    expect(link).toHaveProperty(
+      "href",
+      expect.stringContaining("/coparticipacion"),
+    );
+    // The Fraunces question heading lives INSIDE the link (whole row is
+    // tappable), not next to a separate "ver →" link.
+    expect(link.querySelector("h2")?.textContent).toContain(
+      "¿Cuánto llegó este mes?",
+    );
+  });
+
+  it("offers at least one tappable index chip right under the hero number (peeks above the fold)", () => {
+    render(<Home />);
+    expect(screen.getByRole("link", { name: "Plata que entra" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Multas" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Fuentes" })).toBeTruthy();
+  });
+
+  it("explains the hero number in plain language directly below it", () => {
+    render(<Home />);
+    expect(
+      screen.getByText(
+        "La coparticipación es la plata que la Provincia le gira al municipio todos los meses.",
+      ),
+    ).toBeTruthy();
+  });
+
+  it("phrases the month-over-month badge in plain language (not jargon like 'real vs.')", () => {
+    render(<Home />);
+    expect(screen.getByText(/ya descontada la inflación/)).toBeTruthy();
+    expect(screen.queryByText(/real vs\./)).toBeNull();
+  });
+});

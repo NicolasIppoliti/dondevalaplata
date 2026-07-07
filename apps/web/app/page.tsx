@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {
-  formatArsCompact,
+  formatArsHuman,
   formatPeriodEsAr,
   formatVariationEsAr,
 } from "@/lib/format";
@@ -11,25 +11,36 @@ const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
 /**
  * "Home = afiche" (DESIGN.md): one number dominates the fold, then a row
  * per section -- no landing-page marketing copy, no cards, no carousels.
- * Copy for the question and section rows comes from the owner-approved
- * design-system mockup verbatim.
+ * Section questions are Fraunces headings per the design system's doctrine
+ * that section titles ask a question; the whole row is the link (not just
+ * a small "ver →" affordance), so a big thumb-friendly tap target covers
+ * the entire question, with a trailing chevron instead of trailing text.
  */
 const SECTION_ROWS = [
   {
     question: "¿Cuánto llegó este mes?",
     href: "/coparticipacion",
-    cta: "ver la serie →",
   },
   {
-    question: "¿Qué dicen los fallos del Tribunal de Cuentas?",
+    question: "¿Qué dicen las multas del Tribunal de Cuentas?",
     href: "/fallos",
-    cta: "ver las multas →",
   },
   {
     question: "¿De dónde salen los datos?",
     href: "/fuentes",
-    cta: "ver el archivo →",
   },
+] as const;
+
+/**
+ * Compact index chips right under the hero number so at least one
+ * question-action is reachable above the fold on a short mobile viewport,
+ * even before the full section-row nav further down. Same 3 destinations
+ * as SECTION_ROWS, short labels for a single-line tap target.
+ */
+const INDEX_CHIPS = [
+  { label: "Plata que entra", href: "/coparticipacion" },
+  { label: "Multas", href: "/fallos" },
+  { label: "Fuentes", href: "/fuentes" },
 ] as const;
 
 export default function Home() {
@@ -61,18 +72,29 @@ export default function Home() {
           invariant), without repeating the wordmark inside the poster. */}
       <h1 className="sr-only">¿Dónde va la plata? — Coronel Rosales</h1>
 
+      {/* One-line subhead, visible without scrolling: says what this site
+          IS before the hero number says what it's showing. */}
+      <p className="max-w-[46ch] text-base text-ink">
+        Portal vecinal independiente que sigue la plata pública de Coronel
+        Rosales.
+      </p>
+
       {latestPoint ? (
-        <section aria-label="Cifra destacada del mes">
-          <p className="font-mono text-xs tracking-[0.14em] text-muted uppercase">
-            Coronel Rosales recibió de la Provincia en{" "}
+        <section aria-label="Cifra destacada del mes" className="mt-6">
+          {/* Kicker strengthened + darkened (stamp red, DESIGN.md's
+              canonical kicker color) and enlarged so it reads at arm's
+              length -- it's the sentence that resolves the title/number
+              mismatch by saying explicitly this is money that CAME IN. */}
+          <p className="font-mono text-sm font-semibold tracking-[0.1em] text-stamp uppercase sm:text-base">
+            Lo que Coronel Rosales recibió de la Provincia en{" "}
             {formatPeriodEsAr(latestPoint.period)}
           </p>
           <p className="mt-1 font-mono text-[clamp(52px,11vw,128px)] leading-[0.95] font-semibold tracking-tight text-ink tabular-nums">
-            {formatArsCompact(latestPoint.realArs)}
+            {formatArsHuman(latestPoint.realArs)}
           </p>
           {variation !== null && previousMonthName ? (
             <p
-              className={`mt-4 inline-block border-2 px-3 py-1 font-mono text-[clamp(18px,3vw,28px)] tabular-nums ${
+              className={`mt-4 inline-block border-2 px-3 py-1 font-mono text-[clamp(15px,2.4vw,20px)] tabular-nums ${
                 variation >= 0
                   ? "border-olive text-olive"
                   : "border-stamp text-stamp"
@@ -80,17 +102,34 @@ export default function Home() {
             >
               <span className="sr-only">Variación real: </span>
               <span aria-hidden="true">{variation >= 0 ? "▲" : "▼"}</span>{" "}
-              {formatVariationEsAr(variation)} real vs. {previousMonthName}
+              {formatVariationEsAr(variation)} más que en {previousMonthName},
+              ya descontada la inflación
             </p>
           ) : null}
-          <p className="mt-6 max-w-[34ch] font-quote text-[clamp(19px,2.6vw,26px)] text-muted italic">
-            ¿Alcanza para lo que dicen que alcanza? Mirá la serie completa y
-            sacá tu propia cuenta.
+          <p className="mt-4 max-w-[46ch] text-base text-ink">
+            La coparticipación es la plata que la Provincia le gira al municipio
+            todos los meses.
           </p>
+
+          <ul className="mt-5 flex flex-wrap gap-3">
+            {INDEX_CHIPS.map((chip) => (
+              <li key={chip.href}>
+                <Link
+                  href={chip.href}
+                  className="inline-flex min-h-11 items-center border-2 border-ink px-4 font-mono text-sm text-ink no-underline hover:bg-ink hover:text-surface"
+                >
+                  {chip.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
           <p className="mt-5 font-mono text-xs text-muted">
-            Fuente: Ministerio de Economía PBA · datos hasta{" "}
-            {dataThroughLabel} · en pesos constantes de {baseMonthLabel} (IPC
-            INDEC)
+            Fuente: Ministerio de Economía PBA · datos hasta {dataThroughLabel}{" "}
+            · <span className="text-ink">comparado en plata de hoy</span>{" "}
+            <span className="text-muted">
+              (en pesos constantes de {baseMonthLabel}, IPC INDEC)
+            </span>
           </p>
         </section>
       ) : null}
@@ -100,20 +139,21 @@ export default function Home() {
         className="mt-10 border-t border-rule"
       >
         {SECTION_ROWS.map((row) => (
-          <div
+          <Link
             key={row.href}
-            className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-b border-rule py-5"
+            href={row.href}
+            className="flex min-h-11 items-center justify-between gap-4 border-b border-rule py-5 no-underline hover:bg-surface"
           >
-            <h2 className="font-display text-[clamp(20px,3vw,28px)] font-semibold">
+            <h2 className="font-display text-[clamp(20px,3vw,28px)] font-semibold text-ink">
               {row.question}
             </h2>
-            <Link
-              href={row.href}
-              className="font-mono text-[13px] whitespace-nowrap"
+            <span
+              aria-hidden="true"
+              className="font-display text-2xl text-stamp"
             >
-              {row.cta}
-            </Link>
-          </div>
+              ›
+            </span>
+          </Link>
         ))}
       </nav>
     </div>
