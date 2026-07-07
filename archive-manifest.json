@@ -9,7 +9,7 @@
     "sha256": "375cd4d3480077e93dc0a3d1ab6a15a49144477600d024489c943a8fb561ad36",
     "mime": "text/csv",
     "bytes": 15284788,
-    "fetched_at": "2026-07-07T02:08:03Z",
+    "fetched_at": "2026-07-07T05:23:48Z",
     "status": "ok",
     "notes": "Full monthly series 01/2010-04/2026, all municipios (filter to municipio_id 06182 = Coronel Rosales + neighbors at build time, per D3/D5). Primary coparticipacion source (dataset \"transferencias-municipios\", CKAN package_search verified)."
   },
@@ -25,7 +25,9 @@
     "bytes": 510540,
     "fetched_at": "2026-07-07T02:08:06Z",
     "status": "ok",
-    "notes": "Per-year XLSX snapshot for December 2023, published by the Ministerio de Hacienda y Finanzas (Dirección Provincial de Coordinación Municipal). Supplementary/cross-check source, not the primary series consumed by build-coparticipacion."
+    "notes": "Per-year XLSX snapshot for December 2023, published by the Ministerio de Hacienda y Finanzas (Dirección Provincial de Coordinación Municipal). Supplementary/cross-check source, not the primary series consumed by build-coparticipacion.",
+    "last_error": "Per-year XLSX snapshot for December 2023, published by the Ministerio de Hacienda y Finanzas (Dirección Provincial de Coordinación Municipal). Supplementary/cross-check source, not the primary series consumed by build-coparticipacion. [fetch failed: HTTPSConnectionPool(host='www.ec.gba.gov.ar', port=443): Max retries exceeded with url: /areas/Sub_Politica_Coord_Eco/CoordMunicipal/municipios/12-23%20-%20Transferencias%20Diciembre%202023.xlsx (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.ec.gba.gov.ar', port=443) at 0x7f752391f390>, 'Connection to www.ec.gba.gov.ar timed out. (connect timeout=60)'))]",
+    "last_error_at": "2026-07-07T05:23:53Z"
   },
   {
     "id": "htc-fallos/coronel-rosales-2022",
@@ -37,7 +39,7 @@
     "sha256": "a2bb783fd8dfab8f459328d215c5855d7beb76183c7c22babb72b937fc7ef4cc",
     "mime": "application/pdf",
     "bytes": 6404088,
-    "fetched_at": "2026-07-07T02:08:32Z",
+    "fetched_at": "2026-07-07T05:26:58Z",
     "status": "ok",
     "notes": "Ejercicio 2022, expediente 3-024.0-2022, fallo dated 14/03/2024. Municipalidad de Coronel de Marina Leonardo Rosales. Scanned PDF, no extractable text layer (pdftotext yields ~0 bytes across 30 pages) -- ficha/metadata-only per htc-fallos spec. Multa de $100.000 al Intendente Municipal Mariano Cecilio USET."
   },
@@ -51,7 +53,7 @@
     "sha256": "d66a639956be9c8f36d99bae041730e0d23fa574a36d800fa97484f837c83e36",
     "mime": "application/pdf",
     "bytes": 643225,
-    "fetched_at": "2026-07-07T02:08:58Z",
+    "fetched_at": "2026-07-07T05:27:12Z",
     "status": "ok",
     "notes": "Ejercicio 2023, expediente 3-024.0-2023, fallo dated 13/03/2025. 26 pages, extractable text layer. Multa de $300.000 al Intendente Municipal Mariano Cecilio USET; $300.000 a la Contadora Municipal Patricia Elisabeth BUSTAMANTE; $250.000 al Intendente Municipal Rodrigo Lionel ARISTIMUÑO."
   },
@@ -65,7 +67,7 @@
     "sha256": "369694def147ef919e456ab040cc951aaca8bf18d720534db213e0c270853387",
     "mime": "application/pdf",
     "bytes": 709157,
-    "fetched_at": "2026-07-07T02:08:59Z",
+    "fetched_at": "2026-07-07T05:27:14Z",
     "status": "ok",
     "notes": "Ejercicio 2024, expediente 3-024.0-2024, fallo dated 09/04/2026. 64 pages, extractable text layer. Multa de $650.000 al Intendente Municipal Rodrigo Lionel ARISTIMUÑO; $500.000 a la Contadora Municipal Patricia Elisabeth BUSTAMANTE. NOTE: filename contains the real-world typo \"Leonaardo\" (double a) on the source server -- preserved verbatim, not a transcription error on our side."
   },
@@ -79,9 +81,9 @@
     "sha256": "6cb6b6dceb54c2ad97a4d9252888a1089c910308c56fb3fbe3556321c04609cf",
     "mime": "application/json",
     "bytes": 2022,
-    "fetched_at": "2026-07-07T02:09:31Z",
+    "fetched_at": "2026-07-07T05:27:17Z",
     "status": "ok",
-    "notes": "INDEC IPC Nivel General Nacional, base dic-2016=100, monthly, series-tiempo API. Series id 148.3_INIVELNAL_DICI_M_26 verified at apply-time (2026-07-06) against 3 known published monthly variations: Dec-2023 +25.47% (published ~25.5%), Jan-2024 +20.61% (~20.6%), Feb-2024 +13.24% (~13.2%). start_date pins the capture to Dec-2023 onward per D5; refetch without start_date for full history if ever needed."
+    "notes": "INDEC IPC Nivel General Nacional, base dic-2016=100, monthly, series-tiempo API. Series id 148.3_INIVELNAL_DICI_M_26 verified at apply-time (2026-07-06) against 3 known published monthly variations: Dec-2023 +25.47% (published ~25.5%), Jan-2024 +20.61% (~20.6%), Feb-2024 +13.24% (~13.2%). start_date pins the capture to Dec-2023 onward per D5; refetch without start_date for full history if ever needed. Re-verified at Slice 3 apply-time (task 3.1, VERIFY-AT-APPLY, 2026-07-07) against all 12 known published monthly variations for calendar year 2024 (Jan +20.6% ... Dec +2.7%, INDEC's widely reported figures): every month matches within 0.1 percentage points. See etl/tests/test_ipc.py:: test_ipc_series_matches_known_published_2024_variations for the executable regression check. Verdict: series id confirmed correct, safe to use for the build-ipc rebase (task 3.3)."
   },
   {
     "id": "electoral/2023-generales",
@@ -93,7 +95,7 @@
     "sha256": "2562b18c741ba5740d264e5328f206cb25f709ed0a4f8cf962f301e423e79c6b",
     "mime": "application/zip",
     "bytes": 28028857,
-    "fetched_at": "2026-07-07T02:09:48Z",
+    "fetched_at": "2026-07-07T05:27:19Z",
     "status": "ok",
     "notes": "2023 Elecciones Generales, mesa-level results ZIP. ~28MB, verified reachable (200, content-length 28028857)."
   },
@@ -107,7 +109,7 @@
     "sha256": "6d63298575984a9639cc51ed3fb60def789ceab0a4ae9b1b1003571f2b4fa530",
     "mime": "application/zip",
     "bytes": 3014122,
-    "fetched_at": "2026-07-07T02:10:57Z",
+    "fetched_at": "2026-07-07T05:27:24Z",
     "status": "ok",
     "notes": "2023 Balotaje (segunda vuelta), mesa-level results ZIP. ~3MB, verified reachable (200, content-length 3014122)."
   },
@@ -121,7 +123,7 @@
     "sha256": "5fb19bb280af8895dc0bc2ac19d79e836fb4053b713a135357743bf35371ee4b",
     "mime": "application/zip",
     "bytes": 13554180,
-    "fetched_at": "2026-07-07T02:11:04Z",
+    "fetched_at": "2026-07-07T05:27:26Z",
     "status": "ok",
     "notes": "2025 Elecciones Legislativas Nacionales, mesa-level results ZIP. ~13.5MB, verified reachable (200 after https redirect, content-length 13554180)."
   },
@@ -135,7 +137,7 @@
     "sha256": "25558e7b73e8c273726ea12f04040e2fac8e693ad0eb866386502eb112bd2c0c",
     "mime": "application/zip",
     "bytes": 88157604,
-    "fetched_at": "2026-07-07T02:11:41Z",
+    "fetched_at": "2026-07-07T05:27:33Z",
     "status": "ok",
     "notes": "2023 PASO, mesa-level results ZIP. Official URL (argentina.gob.ar/sites/default/files/dine-resultados/2023-PROVISORIOS_PASO.zip) returns 404 as of 2026-07-06 -- this is the only surviving copy, via the Wayback Machine snapshot dated 2024-01-06 (the `if_` modifier serves the raw file without Wayback's HTML/JS injection). ~88MB (content-length 88157604 at the snapshot), can be slow to fetch from Wayback -- use a generous timeout and resume/retry."
   },
@@ -149,7 +151,7 @@
     "sha256": "bba7669baac50203b3421489ce93c5a2049f71d9cbd952600d013f21778ec300",
     "mime": "application/pdf",
     "bytes": 926424,
-    "fetched_at": "2026-07-07T02:41:51Z",
+    "fetched_at": "2026-07-07T05:30:32Z",
     "status": "ok",
     "notes": "SITUACION ECONOMICA FINANCIERA PRIMER SEMESTRE 2026 (published 2026-07-01T12:53:56)"
   },
@@ -163,7 +165,7 @@
     "sha256": "502e07802247c260a0440fc687c83a2154013fae7edaff290ad084db825ad4b7",
     "mime": "application/pdf",
     "bytes": 2487999,
-    "fetched_at": "2026-07-07T02:42:15Z",
+    "fetched_at": "2026-07-07T05:30:37Z",
     "status": "ok",
     "notes": "Talleres culturales (published 2026-06-23T11:51:46)"
   },
@@ -177,7 +179,7 @@
     "sha256": "b43d03b7c9481673e12fbeded20cfaba7188e0bf78ca58bf42e8354980608103",
     "mime": "application/pdf",
     "bytes": 2024734,
-    "fetched_at": "2026-07-07T02:42:48Z",
+    "fetched_at": "2026-07-07T05:30:42Z",
     "status": "ok",
     "notes": "Estado de Ejecución Presupuestaria de Gastos 1º Trimestre (published 2026-04-15T23:53:18)"
   },
@@ -191,7 +193,7 @@
     "sha256": "fef9524c9a0bc3a4039beb2ee32c67e8eda2741c87a8a6f81b5073f2fc3b5e2f",
     "mime": "application/pdf",
     "bytes": 526733,
-    "fetched_at": "2026-07-07T02:50:34Z",
+    "fetched_at": "2026-07-07T05:30:47Z",
     "status": "ok",
     "notes": "BALANCE DE SUMAS Y SALDOS 1º TRIMESTRE (published 2026-04-15T23:48:56)"
   },
@@ -205,7 +207,7 @@
     "sha256": "c9c3668f80edd08a708f6c413ee1cb974463acf181391676b2f78097f2b8bd51",
     "mime": "application/pdf",
     "bytes": 453913,
-    "fetched_at": "2026-07-07T02:50:34Z",
+    "fetched_at": "2026-07-07T05:30:52Z",
     "status": "ok",
     "notes": "SITUACION ECONOMICA FINANCIERA 1º TRIMESTRE (published 2026-04-15T23:47:33)"
   },
@@ -221,7 +223,9 @@
     "bytes": 2218986,
     "fetched_at": "2026-07-07T02:50:34Z",
     "status": "ok",
-    "notes": "Estado de Ejecución Presupuestaria de Gastos 4to Trimestre (published 2026-04-15T23:39:28)"
+    "notes": "Estado de Ejecución Presupuestaria de Gastos 4to Trimestre (published 2026-04-15T23:39:28)",
+    "last_error": "Estado de Ejecución Presupuestaria de Gastos 4to Trimestre (published 2026-04-15T23:39:28) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:30:57Z"
   },
   {
     "id": "mcr-docs/estado-de-ejecucion-presupuestaria-de-recursos-4to-trimestre",
@@ -233,7 +237,7 @@
     "sha256": "500740dc49903d79e2e5da1be9a1807e3a23216116875a0f1f4e0a60ec5bacb5",
     "mime": "application/pdf",
     "bytes": 582910,
-    "fetched_at": "2026-07-07T02:50:34Z",
+    "fetched_at": "2026-07-07T05:31:06Z",
     "status": "ok",
     "notes": "Estado de Ejecución Presupuestaria de Recursos 4to Trimestre (published 2026-04-15T23:37:46)"
   },
@@ -249,7 +253,9 @@
     "bytes": 504952,
     "fetched_at": "2026-07-07T02:43:40Z",
     "status": "ok",
-    "notes": "Estado de Ejecución Presupuestaria de Gastos por finalidad y función 4to Trimestre (published 2026-04-15T23:36:16)"
+    "notes": "Estado de Ejecución Presupuestaria de Gastos por finalidad y función 4to Trimestre (published 2026-04-15T23:36:16)",
+    "last_error": "Estado de Ejecución Presupuestaria de Gastos por finalidad y función 4to Trimestre (published 2026-04-15T23:36:16) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:31:11Z"
   },
   {
     "id": "mcr-docs/memoria-general-anual-ejercicio-2025",
@@ -263,7 +269,9 @@
     "bytes": 67411,
     "fetched_at": "2026-07-07T02:50:34Z",
     "status": "ok",
-    "notes": "Memoria General Anual Ejercicio 2025 (published 2026-04-01T10:24:49)"
+    "notes": "Memoria General Anual Ejercicio 2025 (published 2026-04-01T10:24:49)",
+    "last_error": "Memoria General Anual Ejercicio 2025 (published 2026-04-01T10:24:49) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:31:20Z"
   },
   {
     "id": "mcr-docs/2244",
@@ -275,7 +283,7 @@
     "sha256": "791f1361958ff358f6549d46acb9c68842aa3c30ce13f2821c1826ee11c3a1a6",
     "mime": "application/pdf",
     "bytes": 363585,
-    "fetched_at": "2026-07-07T02:44:08Z",
+    "fetched_at": "2026-07-07T05:31:28Z",
     "status": "ok",
     "notes": "Situación Económica Financiera 4to Trimestre (published 2026-03-30T08:51:04)"
   },
@@ -291,7 +299,9 @@
     "bytes": 364160,
     "fetched_at": "2026-07-07T02:50:34Z",
     "status": "ok",
-    "notes": "Estado de Situación Económico Financiera (published 2026-03-30T08:49:27)"
+    "notes": "Estado de Situación Económico Financiera (published 2026-03-30T08:49:27)",
+    "last_error": "Estado de Situación Económico Financiera (published 2026-03-30T08:49:27) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:31:37Z"
   },
   {
     "id": "mcr-docs/2238",
@@ -305,7 +315,9 @@
     "bytes": 527539,
     "fetched_at": "2026-07-07T02:44:31Z",
     "status": "ok",
-    "notes": "Balance de Sumas y Saldos 4to Trimestre (published 2026-03-30T08:44:52)"
+    "notes": "Balance de Sumas y Saldos 4to Trimestre (published 2026-03-30T08:44:52)",
+    "last_error": "Balance de Sumas y Saldos 4to Trimestre (published 2026-03-30T08:44:52) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:31:46Z"
   },
   {
     "id": "mcr-docs/presupuesto-de-gastos-por-objeto",
@@ -319,7 +331,9 @@
     "bytes": 542181,
     "fetched_at": "2026-07-07T02:50:34Z",
     "status": "ok",
-    "notes": "Presupuesto de Gastos por Objeto (published 2026-03-16T09:30:20)"
+    "notes": "Presupuesto de Gastos por Objeto (published 2026-03-16T09:30:20)",
+    "last_error": "Presupuesto de Gastos por Objeto (published 2026-03-16T09:30:20) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:31:54Z"
   },
   {
     "id": "mcr-docs/listado-de-presupuesto-de-gastos-por-estructura-programatica",
@@ -331,7 +345,7 @@
     "sha256": "290e23664cd8ba461eb037245682f8742ab0e13955d234131d9ef916b7e28151",
     "mime": "application/pdf",
     "bytes": 629042,
-    "fetched_at": "2026-07-07T02:50:34Z",
+    "fetched_at": "2026-07-07T05:32:02Z",
     "status": "ok",
     "notes": "Listado de Presupuesto de Gastos por Estructura Programática (published 2026-03-16T09:23:03)"
   },
@@ -347,7 +361,9 @@
     "bytes": 500560,
     "fetched_at": "2026-07-07T02:45:05Z",
     "status": "ok",
-    "notes": "Presupuesto de Gastos por Carácter Económico (published 2026-03-16T09:16:07)"
+    "notes": "Presupuesto de Gastos por Carácter Económico (published 2026-03-16T09:16:07)",
+    "last_error": "Presupuesto de Gastos por Carácter Económico (published 2026-03-16T09:16:07) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:32:09Z"
   },
   {
     "id": "mcr-docs/situacion-economica-financiera-3o-trimestre",
@@ -361,7 +377,9 @@
     "bytes": 749424,
     "fetched_at": "2026-07-07T02:50:34Z",
     "status": "ok",
-    "notes": "SITUACION ECONOMICA FINANCIERA 3º TRIMESTRE (published 2025-11-05T14:58:30)"
+    "notes": "SITUACION ECONOMICA FINANCIERA 3º TRIMESTRE (published 2025-11-05T14:58:30)",
+    "last_error": "SITUACION ECONOMICA FINANCIERA 3º TRIMESTRE (published 2025-11-05T14:58:30) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:32:18Z"
   },
   {
     "id": "mcr-docs/situacion-economica-financiera-2o-trimestre",
@@ -375,7 +393,9 @@
     "bytes": 748837,
     "fetched_at": "2026-07-07T02:50:34Z",
     "status": "ok",
-    "notes": "SITUACION ECONOMICA FINANCIERA 2º TRIMESTRE (published 2025-11-05T14:57:49)"
+    "notes": "SITUACION ECONOMICA FINANCIERA 2º TRIMESTRE (published 2025-11-05T14:57:49)",
+    "last_error": "SITUACION ECONOMICA FINANCIERA 2º TRIMESTRE (published 2025-11-05T14:57:49) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:32:26Z"
   },
   {
     "id": "mcr-docs/situacion-economica-financiera-1o-trimestre",
@@ -387,7 +407,7 @@
     "sha256": "7d681f13c0cddcda957745d7bb81fe9d6231f6e884e8d503f6cbc4ff8280abb3",
     "mime": "application/pdf",
     "bytes": 530721,
-    "fetched_at": "2026-07-07T02:45:34Z",
+    "fetched_at": "2026-07-07T05:32:35Z",
     "status": "ok",
     "notes": "SITUACION ECONOMICA FINANCIERA 1º TRIMESTRE (published 2025-11-05T14:57:10)"
   },
@@ -403,7 +423,9 @@
     "bytes": 8126,
     "fetched_at": "2026-07-07T02:50:34Z",
     "status": "ok",
-    "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 3º TRIMESTRE (published 2025-11-05T14:53:05)"
+    "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 3º TRIMESTRE (published 2025-11-05T14:53:05)",
+    "last_error": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 3º TRIMESTRE (published 2025-11-05T14:53:05) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:32:39Z"
   },
   {
     "id": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre",
@@ -417,7 +439,9 @@
     "bytes": 8119,
     "fetched_at": "2026-07-07T02:50:34Z",
     "status": "ok",
-    "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 2º TRIMESTRE (published 2025-11-05T14:52:24)"
+    "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 2º TRIMESTRE (published 2025-11-05T14:52:24)",
+    "last_error": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 2º TRIMESTRE (published 2025-11-05T14:52:24) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:32:47Z"
   },
   {
     "id": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre",
@@ -431,7 +455,9 @@
     "bytes": 74345,
     "fetched_at": "2026-07-07T02:46:07Z",
     "status": "ok",
-    "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 1º TRIMESTRE (published 2025-11-05T14:51:46)"
+    "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 1º TRIMESTRE (published 2025-11-05T14:51:46)",
+    "last_error": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 1º TRIMESTRE (published 2025-11-05T14:51:46) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:32:55Z"
   },
   {
     "id": "mcr-docs/estado-por-finalidad-y-funcion-3o-trimestre",
@@ -443,7 +469,7 @@
     "sha256": "bf20bc432601bdce7b735ae8c2a03fbbdaaa4d9c4dad563e2fb6de01d6030456",
     "mime": "application/pdf",
     "bytes": 364153,
-    "fetched_at": "2026-07-07T02:50:38Z",
+    "fetched_at": "2026-07-07T05:33:04Z",
     "status": "ok",
     "notes": "ESTADO POR FINALIDAD Y FUNCION 3º TRIMESTRE (published 2025-11-05T14:38:05)"
   },
@@ -459,7 +485,9 @@
     "bytes": 364086,
     "fetched_at": "2026-07-07T02:50:38Z",
     "status": "ok",
-    "notes": "ESTADO POR FINALIDAD Y FUNCION 2º TRIMESTRE (published 2025-11-05T14:35:57)"
+    "notes": "ESTADO POR FINALIDAD Y FUNCION 2º TRIMESTRE (published 2025-11-05T14:35:57)",
+    "last_error": "ESTADO POR FINALIDAD Y FUNCION 2º TRIMESTRE (published 2025-11-05T14:35:57) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:33:08Z"
   },
   {
     "id": "mcr-docs/estado-por-finalidad-y-funcion-1o-trimestre",
@@ -473,7 +501,9 @@
     "bytes": 535759,
     "fetched_at": "2026-07-07T02:46:36Z",
     "status": "ok",
-    "notes": "ESTADO POR FINALIDAD Y FUNCION 1º TRIMESTRE (published 2025-11-05T14:35:17)"
+    "notes": "ESTADO POR FINALIDAD Y FUNCION 1º TRIMESTRE (published 2025-11-05T14:35:17)",
+    "last_error": "ESTADO POR FINALIDAD Y FUNCION 1º TRIMESTRE (published 2025-11-05T14:35:17) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:33:16Z"
   },
   {
     "id": "mcr-docs/ejecucion-presupuestaria-de-recursos-3o-trimestre",
@@ -487,7 +517,9 @@
     "bytes": 2323001,
     "fetched_at": "2026-07-07T02:50:42Z",
     "status": "ok",
-    "notes": "EJECUCION PRESUPUESTARIA DE RECURSOS 3º TRIMESTRE (published 2025-11-05T14:33:53)"
+    "notes": "EJECUCION PRESUPUESTARIA DE RECURSOS 3º TRIMESTRE (published 2025-11-05T14:33:53)",
+    "last_error": "EJECUCION PRESUPUESTARIA DE RECURSOS 3º TRIMESTRE (published 2025-11-05T14:33:53) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:33:25Z"
   },
   {
     "id": "mcr-docs/ejecucion-presupuestaria-de-gastos-3o-trimeste",
@@ -499,7 +531,7 @@
     "sha256": "9c233c6218aeb7c2e726c531ce7d3b305ec37814375ac21cd8feb02bee01462d",
     "mime": "application/pdf",
     "bytes": 16992,
-    "fetched_at": "2026-07-07T02:50:42Z",
+    "fetched_at": "2026-07-07T05:33:33Z",
     "status": "ok",
     "notes": "EJECUCION PRESUPUESTARIA DE GASTOS 3º TRIMESTE (published 2025-11-05T14:32:20)"
   },
@@ -515,7 +547,9 @@
     "bytes": 2146492,
     "fetched_at": "2026-07-07T02:47:06Z",
     "status": "ok",
-    "notes": "EJECUCION PRESUPUESTARIA DE RECURSOS 2º TRIMESTRE (published 2025-11-05T14:26:11)"
+    "notes": "EJECUCION PRESUPUESTARIA DE RECURSOS 2º TRIMESTRE (published 2025-11-05T14:26:11)",
+    "last_error": "EJECUCION PRESUPUESTARIA DE RECURSOS 2º TRIMESTRE (published 2025-11-05T14:26:11) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:33:39Z"
   },
   {
     "id": "mcr-docs/ejecucion-presupuestaria-de-gastos-2o-trimestre",
@@ -529,7 +563,9 @@
     "bytes": 16257261,
     "fetched_at": "2026-07-07T02:50:42Z",
     "status": "ok",
-    "notes": "EJECUCION PRESUPUESTARIA DE GASTOS 2º TRIMESTRE (published 2025-11-05T14:25:25)"
+    "notes": "EJECUCION PRESUPUESTARIA DE GASTOS 2º TRIMESTRE (published 2025-11-05T14:25:25)",
+    "last_error": "EJECUCION PRESUPUESTARIA DE GASTOS 2º TRIMESTRE (published 2025-11-05T14:25:25) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:33:47Z"
   },
   {
     "id": "mcr-docs/ejecucion-presupuestaria-de-recursos-1o-trimestre",
@@ -543,7 +579,9 @@
     "bytes": 576739,
     "fetched_at": "2026-07-07T02:47:41Z",
     "status": "ok",
-    "notes": "EJECUCION PRESUPUESTARIA DE RECURSOS 1º TRIMESTRE (published 2025-11-05T14:24:16)"
+    "notes": "EJECUCION PRESUPUESTARIA DE RECURSOS 1º TRIMESTRE (published 2025-11-05T14:24:16)",
+    "last_error": "EJECUCION PRESUPUESTARIA DE RECURSOS 1º TRIMESTRE (published 2025-11-05T14:24:16) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:33:56Z"
   },
   {
     "id": "mcr-docs/ejecucion-presupuestaria-de-gastos-1o-trimestre",
@@ -555,7 +593,7 @@
     "sha256": "82cd0eeaf6c83d2def753ec688101528df33b28393480955a6e4a7995fe85655",
     "mime": "application/pdf",
     "bytes": 1130019,
-    "fetched_at": "2026-07-07T02:50:42Z",
+    "fetched_at": "2026-07-07T05:34:04Z",
     "status": "ok",
     "notes": "EJECUCION PRESUPUESTARIA DE GASTOS 1º TRIMESTRE (published 2025-11-05T14:23:38)"
   },
@@ -571,7 +609,9 @@
     "bytes": 1073568,
     "fetched_at": "2026-07-07T02:50:42Z",
     "status": "ok",
-    "notes": "BALANCE DE SUMAS Y SALDOS 3º TRIMESTRE (published 2025-11-05T14:19:15)"
+    "notes": "BALANCE DE SUMAS Y SALDOS 3º TRIMESTRE (published 2025-11-05T14:19:15)",
+    "last_error": "BALANCE DE SUMAS Y SALDOS 3º TRIMESTRE (published 2025-11-05T14:19:15) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:34:10Z"
   },
   {
     "id": "mcr-docs/balance-de-sumas-y-saldos-2o-trimestre",
@@ -585,7 +625,9 @@
     "bytes": 1073022,
     "fetched_at": "2026-07-07T02:48:06Z",
     "status": "ok",
-    "notes": "BALANCE DE SUMAS Y SALDOS 2º TRIMESTRE (published 2025-11-05T14:18:33)"
+    "notes": "BALANCE DE SUMAS Y SALDOS 2º TRIMESTRE (published 2025-11-05T14:18:33)",
+    "last_error": "BALANCE DE SUMAS Y SALDOS 2º TRIMESTRE (published 2025-11-05T14:18:33) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:34:19Z"
   },
   {
     "id": "mcr-docs/balance-de-sumas-y-saldos-1o-trimestre-2025",
@@ -599,7 +641,9 @@
     "bytes": 491346,
     "fetched_at": "2026-07-07T02:50:42Z",
     "status": "ok",
-    "notes": "BALANCE DE SUMAS Y SALDOS 1º TRIMESTRE (published 2025-11-05T14:16:19)"
+    "notes": "BALANCE DE SUMAS Y SALDOS 1º TRIMESTRE (published 2025-11-05T14:16:19)",
+    "last_error": "BALANCE DE SUMAS Y SALDOS 1º TRIMESTRE (published 2025-11-05T14:16:19) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:34:27Z"
   },
   {
     "id": "mcr-docs/situacion-economico-financiera",
@@ -611,7 +655,7 @@
     "sha256": "929e497906be19a3b0524b6155f75f64f5ce172dc79bfcd2f7beaa21237de3a3",
     "mime": "application/pdf",
     "bytes": 748957,
-    "fetched_at": "2026-07-07T02:50:42Z",
+    "fetched_at": "2026-07-07T05:34:35Z",
     "status": "ok",
     "notes": "SITUACION ECONOMICA FINANCIERA 1º SEMESTRE (published 2025-07-11T12:39:37)"
   },
@@ -627,7 +671,9 @@
     "bytes": 868161,
     "fetched_at": "2026-07-07T02:48:39Z",
     "status": "ok",
-    "notes": "R-56-2025 Alc.1 Departamento Ejecutivo responde por perdida de Liquidos Cloacales en Roca 1000 (published 2025-07-11T09:45:13)"
+    "notes": "R-56-2025 Alc.1 Departamento Ejecutivo responde por perdida de Liquidos Cloacales en Roca 1000 (published 2025-07-11T09:45:13)",
+    "last_error": "R-56-2025 Alc.1 Departamento Ejecutivo responde por perdida de Liquidos Cloacales en Roca 1000 (published 2025-07-11T09:45:13) [HTTP 429]",
+    "last_error_at": "2026-07-07T05:34:39Z"
   },
   {
     "id": "sibom/boletin-086",
@@ -639,9 +685,9 @@
     "sha256": "44a580fa1c54fba4da71ae5c035f16383ab5fbea65491916194202910c2e06a4",
     "mime": "application/pdf",
     "bytes": 271154,
-    "fetched_at": "2026-07-07T02:51:45Z",
+    "fetched_at": "2026-07-07T05:27:50Z",
     "status": "ok",
-    "notes": "Boletín 86º de Coronel Rosales, publicado 18/06/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 86º de Coronel Rosales, publicado 18/06/2026"
   },
   {
     "id": "sibom/boletin-085",
@@ -653,9 +699,9 @@
     "sha256": "6d7c8d4cedddf4f4eb0c4dd86d455fdfcadb4fe537e40470584c0b6597607f74",
     "mime": "application/pdf",
     "bytes": 181290,
-    "fetched_at": "2026-07-07T02:51:47Z",
+    "fetched_at": "2026-07-07T05:27:54Z",
     "status": "ok",
-    "notes": "Boletín 85º de Coronel Rosales, publicado 03/06/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 85º de Coronel Rosales, publicado 03/06/2026"
   },
   {
     "id": "sibom/boletin-084",
@@ -667,9 +713,9 @@
     "sha256": "2c078b2bb701366b73d0bdb77f1f0193b5471d025345f77e0ce8030e0ef348e4",
     "mime": "application/pdf",
     "bytes": 530523,
-    "fetched_at": "2026-07-07T02:51:49Z",
+    "fetched_at": "2026-07-07T05:27:57Z",
     "status": "ok",
-    "notes": "Boletín 84º de Coronel Rosales, publicado 22/05/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 84º de Coronel Rosales, publicado 22/05/2026"
   },
   {
     "id": "sibom/boletin-083",
@@ -681,9 +727,9 @@
     "sha256": "db5a3016562fc49056e002546a5cdab3bcd78a3542e5e9493ebf8f1c1087649a",
     "mime": "application/pdf",
     "bytes": 316375,
-    "fetched_at": "2026-07-07T02:51:52Z",
+    "fetched_at": "2026-07-07T05:28:01Z",
     "status": "ok",
-    "notes": "Boletín 83º de Coronel Rosales, publicado 05/05/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 83º de Coronel Rosales, publicado 05/05/2026"
   },
   {
     "id": "sibom/boletin-082",
@@ -695,9 +741,9 @@
     "sha256": "c8c85006b876ba3be9d32b0815b2beff6793d48a7f90599af6ca8e244514acbc",
     "mime": "application/pdf",
     "bytes": 252183,
-    "fetched_at": "2026-07-07T02:51:55Z",
+    "fetched_at": "2026-07-07T05:28:04Z",
     "status": "ok",
-    "notes": "Boletín 82º de Coronel Rosales, publicado 09/04/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 82º de Coronel Rosales, publicado 09/04/2026"
   },
   {
     "id": "sibom/boletin-081",
@@ -709,9 +755,9 @@
     "sha256": "af4cba6faccb9f94263392a5a62aa5ec2fe9ed9cf8c275a9fe18d4904cc93807",
     "mime": "application/pdf",
     "bytes": 308863,
-    "fetched_at": "2026-07-07T02:51:57Z",
+    "fetched_at": "2026-07-07T05:28:08Z",
     "status": "ok",
-    "notes": "Boletín 81º de Coronel Rosales, publicado 30/03/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 81º de Coronel Rosales, publicado 30/03/2026"
   },
   {
     "id": "sibom/boletin-080",
@@ -723,9 +769,9 @@
     "sha256": "d4cad066f8d9589c5afe62a634d232ba176103fc61c92fc51b5d877c3d124c60",
     "mime": "application/pdf",
     "bytes": 191812,
-    "fetched_at": "2026-07-07T02:51:58Z",
+    "fetched_at": "2026-07-07T05:28:11Z",
     "status": "ok",
-    "notes": "Boletín 80º de Coronel Rosales, publicado 25/03/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 80º de Coronel Rosales, publicado 25/03/2026"
   },
   {
     "id": "sibom/boletin-079",
@@ -737,9 +783,9 @@
     "sha256": "41631541ee9da1ce9902f22794871c2b4b04f7f7614b169fe5febf2ab6a4fb91",
     "mime": "application/pdf",
     "bytes": 205900,
-    "fetched_at": "2026-07-07T02:52:00Z",
+    "fetched_at": "2026-07-07T05:28:14Z",
     "status": "ok",
-    "notes": "Boletín 79º de Coronel Rosales, publicado 19/03/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 79º de Coronel Rosales, publicado 19/03/2026"
   },
   {
     "id": "sibom/boletin-078",
@@ -751,9 +797,9 @@
     "sha256": "32f3d42e31d54c76302452b3e001ac31d75b0119d2a87dc8fcc2bb5051bdb6de",
     "mime": "application/pdf",
     "bytes": 361830,
-    "fetched_at": "2026-07-07T02:52:14Z",
+    "fetched_at": "2026-07-07T05:28:18Z",
     "status": "ok",
-    "notes": "Boletín 78º de Coronel Rosales, publicado 18/03/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 78º de Coronel Rosales, publicado 18/03/2026"
   },
   {
     "id": "sibom/boletin-077",
@@ -765,9 +811,9 @@
     "sha256": "40f9916ac39db904974b89df303369d870fdd1f41b164db00e8f24bbe01a150b",
     "mime": "application/pdf",
     "bytes": 245168,
-    "fetched_at": "2026-07-07T02:52:18Z",
+    "fetched_at": "2026-07-07T05:28:21Z",
     "status": "ok",
-    "notes": "Boletín 77º de Coronel Rosales, publicado 12/03/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 77º de Coronel Rosales, publicado 12/03/2026"
   },
   {
     "id": "sibom/boletin-076",
@@ -779,9 +825,9 @@
     "sha256": "ee5c3218cf418b21168864745493b8c3477c3e804198e437531c27038e362904",
     "mime": "application/pdf",
     "bytes": 1803773,
-    "fetched_at": "2026-07-07T02:52:19Z",
+    "fetched_at": "2026-07-07T05:28:23Z",
     "status": "ok",
-    "notes": "Boletín 76º de Coronel Rosales, publicado 11/03/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 76º de Coronel Rosales, publicado 11/03/2026"
   },
   {
     "id": "sibom/boletin-075",
@@ -793,9 +839,9 @@
     "sha256": "d165d29aa19ff47a827eb2a2e614a2163d77f99d40f8e0449f15baea131119f6",
     "mime": "application/pdf",
     "bytes": 274356,
-    "fetched_at": "2026-07-07T02:52:23Z",
+    "fetched_at": "2026-07-07T05:28:26Z",
     "status": "ok",
-    "notes": "Boletín 75º de Coronel Rosales, publicado 06/03/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 75º de Coronel Rosales, publicado 06/03/2026"
   },
   {
     "id": "sibom/boletin-074",
@@ -807,9 +853,9 @@
     "sha256": "bfce2c520ae185caeac25c81e292adc86492801a7e846a7dd93248f676c69309",
     "mime": "application/pdf",
     "bytes": 243160,
-    "fetched_at": "2026-07-07T02:52:25Z",
+    "fetched_at": "2026-07-07T05:28:29Z",
     "status": "ok",
-    "notes": "Boletín 74º de Coronel Rosales, publicado 04/03/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 74º de Coronel Rosales, publicado 04/03/2026"
   },
   {
     "id": "sibom/boletin-073",
@@ -821,9 +867,9 @@
     "sha256": "dc33dd78195b0819782d6e412f8a5249839b7c731a5054eb590aa75518f5e917",
     "mime": "application/pdf",
     "bytes": 289515,
-    "fetched_at": "2026-07-07T02:52:26Z",
+    "fetched_at": "2026-07-07T05:28:32Z",
     "status": "ok",
-    "notes": "Boletín 73º de Coronel Rosales, publicado 20/02/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 73º de Coronel Rosales, publicado 20/02/2026"
   },
   {
     "id": "sibom/boletin-072",
@@ -835,9 +881,9 @@
     "sha256": "abec31f24a97a6ecf6ac9890d70c3feba1a4696546fd7dc3cb9fa17048423a1c",
     "mime": "application/pdf",
     "bytes": 183111,
-    "fetched_at": "2026-07-07T02:52:28Z",
+    "fetched_at": "2026-07-07T05:28:34Z",
     "status": "ok",
-    "notes": "Boletín 72º de Coronel Rosales, publicado 20/02/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 72º de Coronel Rosales, publicado 20/02/2026"
   },
   {
     "id": "sibom/boletin-071",
@@ -849,9 +895,9 @@
     "sha256": "5e217eda0acc479259ce9e9d85cd6bdd60797ef86c4bef199ef41ea816d59f20",
     "mime": "application/pdf",
     "bytes": 372930,
-    "fetched_at": "2026-07-07T02:52:29Z",
+    "fetched_at": "2026-07-07T05:28:37Z",
     "status": "ok",
-    "notes": "Boletín 71º de Coronel Rosales, publicado 20/02/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 71º de Coronel Rosales, publicado 20/02/2026"
   },
   {
     "id": "sibom/boletin-070",
@@ -863,9 +909,9 @@
     "sha256": "7b08ee17204f1d5ec9fda60043df4a84d2e36099812090d1a0490e83c055994e",
     "mime": "application/pdf",
     "bytes": 309064,
-    "fetched_at": "2026-07-07T02:52:31Z",
+    "fetched_at": "2026-07-07T05:28:41Z",
     "status": "ok",
-    "notes": "Boletín 70º de Coronel Rosales, publicado 29/01/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 70º de Coronel Rosales, publicado 29/01/2026"
   },
   {
     "id": "sibom/boletin-069",
@@ -877,9 +923,9 @@
     "sha256": "08aac7d4a6aa686ba363d7d0143e510fe65f28d491fd9ab16ac4921ea74f8f0d",
     "mime": "application/pdf",
     "bytes": 358027,
-    "fetched_at": "2026-07-07T02:52:32Z",
+    "fetched_at": "2026-07-07T05:28:44Z",
     "status": "ok",
-    "notes": "Boletín 69º de Coronel Rosales, publicado 23/01/2026 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 69º de Coronel Rosales, publicado 23/01/2026"
   },
   {
     "id": "sibom/boletin-068",
@@ -891,9 +937,9 @@
     "sha256": "66ae32b8d53b8f15fc95ad1064a33c1347503912cbcddd21bf026302a39630c7",
     "mime": "application/pdf",
     "bytes": 369033,
-    "fetched_at": "2026-07-07T02:52:34Z",
+    "fetched_at": "2026-07-07T05:28:47Z",
     "status": "ok",
-    "notes": "Boletín 68º de Coronel Rosales, publicado 05/12/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 68º de Coronel Rosales, publicado 05/12/2025"
   },
   {
     "id": "sibom/boletin-067",
@@ -905,9 +951,9 @@
     "sha256": "d8d0cc8cac075848fb66fcd1d90f59018028e11ac20174873ae36408d6784cf6",
     "mime": "application/pdf",
     "bytes": 417284,
-    "fetched_at": "2026-07-07T02:52:36Z",
+    "fetched_at": "2026-07-07T05:28:50Z",
     "status": "ok",
-    "notes": "Boletín 67º de Coronel Rosales, publicado 01/12/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 67º de Coronel Rosales, publicado 01/12/2025"
   },
   {
     "id": "sibom/boletin-066",
@@ -919,9 +965,9 @@
     "sha256": "f42ed9cd5fa6e3d5813a2dae74ed6518662b0424db6dbf938e8f939a763dce1b",
     "mime": "application/pdf",
     "bytes": 365442,
-    "fetched_at": "2026-07-07T02:52:37Z",
+    "fetched_at": "2026-07-07T05:28:54Z",
     "status": "ok",
-    "notes": "Boletín 66º de Coronel Rosales, publicado 21/10/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 66º de Coronel Rosales, publicado 21/10/2025"
   },
   {
     "id": "sibom/boletin-065",
@@ -933,9 +979,9 @@
     "sha256": "3d0273b82b56f1ad42212669df6e52613cf2a01fb1ad7a089e790c016ba8195b",
     "mime": "application/pdf",
     "bytes": 375708,
-    "fetched_at": "2026-07-07T02:52:39Z",
+    "fetched_at": "2026-07-07T05:28:57Z",
     "status": "ok",
-    "notes": "Boletín 65º de Coronel Rosales, publicado 15/10/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 65º de Coronel Rosales, publicado 15/10/2025"
   },
   {
     "id": "sibom/boletin-064",
@@ -947,9 +993,9 @@
     "sha256": "101e45fca01f56c82b261e9ee9cafef9b072526fd97b9ea777d7ab5b916a4c49",
     "mime": "application/pdf",
     "bytes": 332031,
-    "fetched_at": "2026-07-07T02:52:41Z",
+    "fetched_at": "2026-07-07T05:28:59Z",
     "status": "ok",
-    "notes": "Boletín 64º de Coronel Rosales, publicado 18/09/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 64º de Coronel Rosales, publicado 18/09/2025"
   },
   {
     "id": "sibom/boletin-063",
@@ -961,9 +1007,9 @@
     "sha256": "12b227f40237c5249570a2f23369657106276a2ee56d10be6776a6f1b47e3f24",
     "mime": "application/pdf",
     "bytes": 568243,
-    "fetched_at": "2026-07-07T02:52:43Z",
+    "fetched_at": "2026-07-07T05:29:02Z",
     "status": "ok",
-    "notes": "Boletín 63º de Coronel Rosales, publicado 25/08/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 63º de Coronel Rosales, publicado 25/08/2025"
   },
   {
     "id": "sibom/boletin-062",
@@ -975,9 +1021,9 @@
     "sha256": "f5169b359932558e581baf7542d414d583eecf9bec1b3bc95c9492b4bbf69dab",
     "mime": "application/pdf",
     "bytes": 342735,
-    "fetched_at": "2026-07-07T02:52:46Z",
+    "fetched_at": "2026-07-07T05:29:05Z",
     "status": "ok",
-    "notes": "Boletín 62º de Coronel Rosales, publicado 08/08/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 62º de Coronel Rosales, publicado 08/08/2025"
   },
   {
     "id": "sibom/boletin-061",
@@ -989,9 +1035,9 @@
     "sha256": "090bd60a229c67451cd4559d48c0b75549df2c8aee7ac00100d79e28be785734",
     "mime": "application/pdf",
     "bytes": 231113,
-    "fetched_at": "2026-07-07T02:52:48Z",
+    "fetched_at": "2026-07-07T05:29:07Z",
     "status": "ok",
-    "notes": "Boletín 61º de Coronel Rosales, publicado 18/07/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 61º de Coronel Rosales, publicado 18/07/2025"
   },
   {
     "id": "sibom/boletin-060",
@@ -1003,9 +1049,9 @@
     "sha256": "22e26291b486f4c2ca9c9b93df7a71e7f2cb2d6d6b48484a51965dd5ba484400",
     "mime": "application/pdf",
     "bytes": 295970,
-    "fetched_at": "2026-07-07T02:52:50Z",
+    "fetched_at": "2026-07-07T05:29:10Z",
     "status": "ok",
-    "notes": "Boletín 60º de Coronel Rosales, publicado 08/07/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 60º de Coronel Rosales, publicado 08/07/2025"
   },
   {
     "id": "sibom/boletin-059",
@@ -1017,9 +1063,9 @@
     "sha256": "8ce512cd1913657d1791089211909c5309e227cf43e2546a4921f2061258ec3a",
     "mime": "application/pdf",
     "bytes": 392279,
-    "fetched_at": "2026-07-07T02:52:51Z",
+    "fetched_at": "2026-07-07T05:29:12Z",
     "status": "ok",
-    "notes": "Boletín 59º de Coronel Rosales, publicado 03/07/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 59º de Coronel Rosales, publicado 03/07/2025"
   },
   {
     "id": "sibom/boletin-058",
@@ -1031,9 +1077,9 @@
     "sha256": "c1519357df9044c62600c970a5c4a6ba5f8d74e4e8eeb268ce23a184d47671e1",
     "mime": "application/pdf",
     "bytes": 357737,
-    "fetched_at": "2026-07-07T02:52:53Z",
+    "fetched_at": "2026-07-07T05:29:15Z",
     "status": "ok",
-    "notes": "Boletín 58º de Coronel Rosales, publicado 06/06/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 58º de Coronel Rosales, publicado 06/06/2025"
   },
   {
     "id": "sibom/boletin-057",
@@ -1045,9 +1091,9 @@
     "sha256": "46818792d6204f63d636aaace94d2dbdb45e03bba8672098f4b55f09c844752f",
     "mime": "application/pdf",
     "bytes": 396715,
-    "fetched_at": "2026-07-07T02:52:56Z",
+    "fetched_at": "2026-07-07T05:29:17Z",
     "status": "ok",
-    "notes": "Boletín 57º de Coronel Rosales, publicado 03/06/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 57º de Coronel Rosales, publicado 03/06/2025"
   },
   {
     "id": "sibom/boletin-056",
@@ -1059,9 +1105,9 @@
     "sha256": "cbf7af7c9afcff5c90a752f530eb6dd78bb3b40ac8d7732e0ba594601ca6bcab",
     "mime": "application/pdf",
     "bytes": 315625,
-    "fetched_at": "2026-07-07T02:53:01Z",
+    "fetched_at": "2026-07-07T05:29:20Z",
     "status": "ok",
-    "notes": "Boletín 56º de Coronel Rosales, publicado 23/04/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 56º de Coronel Rosales, publicado 23/04/2025"
   },
   {
     "id": "sibom/boletin-055",
@@ -1073,9 +1119,9 @@
     "sha256": "4a40e540b19635c007d581a3565cc48718b8ce353266b884d021351c5c1b3065",
     "mime": "application/pdf",
     "bytes": 309475,
-    "fetched_at": "2026-07-07T02:53:05Z",
+    "fetched_at": "2026-07-07T05:29:23Z",
     "status": "ok",
-    "notes": "Boletín 55º de Coronel Rosales, publicado 08/04/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 55º de Coronel Rosales, publicado 08/04/2025"
   },
   {
     "id": "sibom/boletin-054",
@@ -1087,9 +1133,9 @@
     "sha256": "d4faee63da258a459e86d3c7df06f4dbd0be332ff52d8c0cdefd6bde4617627f",
     "mime": "application/pdf",
     "bytes": 428701,
-    "fetched_at": "2026-07-07T02:53:06Z",
+    "fetched_at": "2026-07-07T05:29:25Z",
     "status": "ok",
-    "notes": "Boletín 54º de Coronel Rosales, publicado 21/03/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 54º de Coronel Rosales, publicado 21/03/2025"
   },
   {
     "id": "sibom/boletin-053",
@@ -1101,9 +1147,9 @@
     "sha256": "db80a8f4efc78eceba458260027666bdfdf424db34ce4cda9497baa2798c3b50",
     "mime": "application/pdf",
     "bytes": 217646,
-    "fetched_at": "2026-07-07T02:53:10Z",
+    "fetched_at": "2026-07-07T05:29:28Z",
     "status": "ok",
-    "notes": "Boletín 53º de Coronel Rosales, publicado 10/03/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 53º de Coronel Rosales, publicado 10/03/2025"
   },
   {
     "id": "sibom/boletin-052",
@@ -1115,9 +1161,9 @@
     "sha256": "b28653313eadb6ba79f930f5d58951ad6e2bdcfe377c5b1d520819f46a447352",
     "mime": "application/pdf",
     "bytes": 124074,
-    "fetched_at": "2026-07-07T02:53:12Z",
+    "fetched_at": "2026-07-07T05:29:31Z",
     "status": "ok",
-    "notes": "Boletín 52º de Coronel Rosales, publicado 05/03/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 52º de Coronel Rosales, publicado 05/03/2025"
   },
   {
     "id": "sibom/boletin-051",
@@ -1129,9 +1175,9 @@
     "sha256": "0b965fb5ec67e027c0c45518d6a48db2cca9c6987422793c8e242ffdf38b25a1",
     "mime": "application/pdf",
     "bytes": 103430,
-    "fetched_at": "2026-07-07T02:53:13Z",
+    "fetched_at": "2026-07-07T05:29:33Z",
     "status": "ok",
-    "notes": "Boletín 51º de Coronel Rosales, publicado 26/02/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 51º de Coronel Rosales, publicado 26/02/2025"
   },
   {
     "id": "sibom/boletin-050",
@@ -1143,9 +1189,9 @@
     "sha256": "df5eaa30a1ca7ebcfbba19035b30246a74ce007ece07f2c7a3135a687d645e90",
     "mime": "application/pdf",
     "bytes": 407160,
-    "fetched_at": "2026-07-07T02:53:15Z",
+    "fetched_at": "2026-07-07T05:29:35Z",
     "status": "ok",
-    "notes": "Boletín 50º de Coronel Rosales, publicado 26/02/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 50º de Coronel Rosales, publicado 26/02/2025"
   },
   {
     "id": "sibom/boletin-049",
@@ -1157,9 +1203,9 @@
     "sha256": "212ca362659b170d055b8757c5d84033ac59f45ae57a9a812fe17b45d6f3e3e8",
     "mime": "application/pdf",
     "bytes": 183721,
-    "fetched_at": "2026-07-07T02:53:17Z",
+    "fetched_at": "2026-07-07T05:29:38Z",
     "status": "ok",
-    "notes": "Boletín 49º de Coronel Rosales, publicado 25/02/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 49º de Coronel Rosales, publicado 25/02/2025"
   },
   {
     "id": "sibom/boletin-048",
@@ -1171,9 +1217,9 @@
     "sha256": "c1a5a0cfbddc92771566d7cfc071ba79f9f43f95fe287ac0f7f14186409ff338",
     "mime": "application/pdf",
     "bytes": 79837,
-    "fetched_at": "2026-07-07T02:53:18Z",
+    "fetched_at": "2026-07-07T05:29:40Z",
     "status": "ok",
-    "notes": "Boletín 48º de Coronel Rosales, publicado 24/02/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 48º de Coronel Rosales, publicado 24/02/2025"
   },
   {
     "id": "sibom/boletin-047",
@@ -1185,9 +1231,9 @@
     "sha256": "f07b6658ef97076ea1fc1c9c33f8ba037a02935011f3f3384160da48be948a91",
     "mime": "application/pdf",
     "bytes": 567676,
-    "fetched_at": "2026-07-07T02:53:19Z",
+    "fetched_at": "2026-07-07T05:29:42Z",
     "status": "ok",
-    "notes": "Boletín 47º de Coronel Rosales, publicado 21/02/2025 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 47º de Coronel Rosales, publicado 21/02/2025"
   },
   {
     "id": "sibom/boletin-046",
@@ -1199,9 +1245,9 @@
     "sha256": "102a8e3f41b73dfacef7c48f46b2de0eefad85573e0e2e2d36d84410da840b97",
     "mime": "application/pdf",
     "bytes": 601796,
-    "fetched_at": "2026-07-07T02:53:21Z",
+    "fetched_at": "2026-07-07T05:29:45Z",
     "status": "ok",
-    "notes": "Boletín 46º de Coronel Rosales, publicado 10/12/2024 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 46º de Coronel Rosales, publicado 10/12/2024"
   },
   {
     "id": "sibom/boletin-045",
@@ -1213,9 +1259,9 @@
     "sha256": "8f1ec1e04cf08a34d5f6fe303533530b97653d48f7b7238cf39986d9e908e476",
     "mime": "application/pdf",
     "bytes": 768769,
-    "fetched_at": "2026-07-07T02:53:23Z",
+    "fetched_at": "2026-07-07T05:29:48Z",
     "status": "ok",
-    "notes": "Boletín 45º de Coronel Rosales, publicado 21/11/2024 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 45º de Coronel Rosales, publicado 21/11/2024"
   },
   {
     "id": "sibom/boletin-044",
@@ -1227,9 +1273,9 @@
     "sha256": "d2d2360f242842e457b47cbbc32a04fa41ac0708db5120faa0340dd99f48ff80",
     "mime": "application/pdf",
     "bytes": 776556,
-    "fetched_at": "2026-07-07T02:53:26Z",
+    "fetched_at": "2026-07-07T05:29:51Z",
     "status": "ok",
-    "notes": "Boletín 44º de Coronel Rosales, publicado 17/10/2024 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 44º de Coronel Rosales, publicado 17/10/2024"
   },
   {
     "id": "sibom/boletin-043",
@@ -1241,9 +1287,9 @@
     "sha256": "cb153bfa4745913e479056f1d55653f3a6c138c67001bf73c38d70b407372e52",
     "mime": "application/pdf",
     "bytes": 476175,
-    "fetched_at": "2026-07-07T02:53:28Z",
+    "fetched_at": "2026-07-07T05:29:53Z",
     "status": "ok",
-    "notes": "Boletín 43º de Coronel Rosales, publicado 11/09/2024 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 43º de Coronel Rosales, publicado 11/09/2024"
   },
   {
     "id": "sibom/boletin-042",
@@ -1255,9 +1301,9 @@
     "sha256": "75f8b9118d2dac5806552fb0feaa073f88647927a4593cdd23b062677ca37abc",
     "mime": "application/pdf",
     "bytes": 535827,
-    "fetched_at": "2026-07-07T02:53:29Z",
+    "fetched_at": "2026-07-07T05:29:56Z",
     "status": "ok",
-    "notes": "Boletín 42º de Coronel Rosales, publicado 16/08/2024 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 42º de Coronel Rosales, publicado 16/08/2024"
   },
   {
     "id": "sibom/boletin-041",
@@ -1269,9 +1315,9 @@
     "sha256": "fbe004581b753ebdc4388aef3b709a553c87703e6ce7e4e0f77621b927d98d6b",
     "mime": "application/pdf",
     "bytes": 343460,
-    "fetched_at": "2026-07-07T02:53:31Z",
+    "fetched_at": "2026-07-07T05:29:59Z",
     "status": "ok",
-    "notes": "Boletín 41º de Coronel Rosales, publicado 31/07/2024 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 41º de Coronel Rosales, publicado 31/07/2024"
   },
   {
     "id": "sibom/boletin-040",
@@ -1283,9 +1329,9 @@
     "sha256": "81867f271e5bcc96a12381e42cb00a2b2d6ca014f4058630a274ffc7d4acb514",
     "mime": "application/pdf",
     "bytes": 638311,
-    "fetched_at": "2026-07-07T02:53:32Z",
+    "fetched_at": "2026-07-07T05:30:02Z",
     "status": "ok",
-    "notes": "Boletín 40º de Coronel Rosales, publicado 01/07/2024 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 40º de Coronel Rosales, publicado 01/07/2024"
   },
   {
     "id": "sibom/boletin-039",
@@ -1297,9 +1343,9 @@
     "sha256": "44a64cca09b3b8c430ad2762064591c126e8172540a9864fb289f0231acdaf9d",
     "mime": "application/pdf",
     "bytes": 2486444,
-    "fetched_at": "2026-07-07T02:53:34Z",
+    "fetched_at": "2026-07-07T05:30:05Z",
     "status": "ok",
-    "notes": "Boletín 39º de Coronel Rosales, publicado 10/06/2024 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 39º de Coronel Rosales, publicado 10/06/2024"
   },
   {
     "id": "sibom/boletin-038",
@@ -1311,9 +1357,9 @@
     "sha256": "a0f7e121f6c60a17cc26c75c69df69cf1bceaafb121a426be1febba7f01e979d",
     "mime": "application/pdf",
     "bytes": 163732,
-    "fetched_at": "2026-07-07T02:53:45Z",
+    "fetched_at": "2026-07-07T05:30:08Z",
     "status": "ok",
-    "notes": "Boletín 38º de Coronel Rosales, publicado 13/05/2024 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 38º de Coronel Rosales, publicado 13/05/2024"
   },
   {
     "id": "sibom/boletin-037",
@@ -1325,9 +1371,9 @@
     "sha256": "b60d69975671a11b4fc31c624636448a1d46646b1ba6e7df87733e9b6027aadb",
     "mime": "application/pdf",
     "bytes": 1280013,
-    "fetched_at": "2026-07-07T02:53:46Z",
+    "fetched_at": "2026-07-07T05:30:11Z",
     "status": "ok",
-    "notes": "Boletín 37º de Coronel Rosales, publicado 10/05/2024 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 37º de Coronel Rosales, publicado 10/05/2024"
   },
   {
     "id": "sibom/boletin-036",
@@ -1339,9 +1385,9 @@
     "sha256": "3f0c46ace174b25bd5de6c4ebebd59e0bd4f5d20d13eb65ff9bc45efbf1e1109",
     "mime": "application/pdf",
     "bytes": 773263,
-    "fetched_at": "2026-07-07T02:53:48Z",
+    "fetched_at": "2026-07-07T05:30:14Z",
     "status": "ok",
-    "notes": "Boletín 36º de Coronel Rosales, publicado 07/11/2023 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 36º de Coronel Rosales, publicado 07/11/2023"
   },
   {
     "id": "sibom/boletin-035",
@@ -1353,9 +1399,9 @@
     "sha256": "794c5c1093bb3361df22f7193ee1a98a52ae3376cc9981d1d897c8036f413bee",
     "mime": "application/pdf",
     "bytes": 452151,
-    "fetched_at": "2026-07-07T02:53:52Z",
+    "fetched_at": "2026-07-07T05:30:17Z",
     "status": "ok",
-    "notes": "Boletín 35º de Coronel Rosales, publicado 13/09/2023 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 35º de Coronel Rosales, publicado 13/09/2023"
   },
   {
     "id": "sibom/boletin-034",
@@ -1367,9 +1413,9 @@
     "sha256": "393c07ee48cbe0af83b364a15eb8cc87e80fd839ead17095d4f86114b28abc02",
     "mime": "application/pdf",
     "bytes": 346519,
-    "fetched_at": "2026-07-07T02:53:54Z",
+    "fetched_at": "2026-07-07T05:30:20Z",
     "status": "ok",
-    "notes": "Boletín 34º de Coronel Rosales, publicado 05/09/2023 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 34º de Coronel Rosales, publicado 05/09/2023"
   },
   {
     "id": "sibom/boletin-033",
@@ -1381,9 +1427,9 @@
     "sha256": "0aa41d7d6b257062c37e2512fb2cc446241943023221a0fe9b944f1ea0d82c78",
     "mime": "application/pdf",
     "bytes": 1040428,
-    "fetched_at": "2026-07-07T02:53:57Z",
+    "fetched_at": "2026-07-07T05:30:22Z",
     "status": "ok",
-    "notes": "Boletín 33º de Coronel Rosales, publicado 31/08/2023 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 33º de Coronel Rosales, publicado 31/08/2023"
   },
   {
     "id": "sibom/boletin-032",
@@ -1395,9 +1441,9 @@
     "sha256": "343e4ef2fc1c3ee792f1ebb97eb0834b15f42330c38add0381176b335a760ba7",
     "mime": "application/pdf",
     "bytes": 1777134,
-    "fetched_at": "2026-07-07T02:53:59Z",
+    "fetched_at": "2026-07-07T05:30:25Z",
     "status": "ok",
-    "notes": "Boletín 32º de Coronel Rosales, publicado 09/08/2023 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 32º de Coronel Rosales, publicado 09/08/2023"
   },
   {
     "id": "sibom/boletin-031",
@@ -1409,8 +1455,8 @@
     "sha256": "dc183de9d0daf016d39838a66db319f44b8c9b84c14f1db3c522d6553e5cebe2",
     "mime": "application/pdf",
     "bytes": 3977270,
-    "fetched_at": "2026-07-07T02:54:06Z",
+    "fetched_at": "2026-07-07T05:30:29Z",
     "status": "ok",
-    "notes": "Boletín 31º de Coronel Rosales, publicado 28/04/2023 [R2 upload pending: no credentials configured]"
+    "notes": "Boletín 31º de Coronel Rosales, publicado 28/04/2023"
   }
 ]
