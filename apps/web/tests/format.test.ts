@@ -3,6 +3,7 @@ import {
   formatArsCompact,
   formatArsPlain,
   formatDateEsAr,
+  formatFineArs,
   formatPeriodEsAr,
 } from "@/lib/format";
 
@@ -39,5 +40,22 @@ describe("formatPeriodEsAr", () => {
 describe("formatDateEsAr", () => {
   it("renders an ISO date as 'D de mes de aaaa'", () => {
     expect(formatDateEsAr("2024-03-14")).toBe("14 de marzo de 2024");
+  });
+});
+
+describe("formatFineArs", () => {
+  it("formats a real monetary fine using the compact ARS convention", () => {
+    expect(formatFineArs(300_000)).toBe("$ 300.000");
+  });
+
+  it("renders an explicit es-AR marker for a null fine, never a fabricated $ 0", () => {
+    // Bug: `fineArs ?? 0` previously rendered a null (no monetary fine
+    // reported) exactly like a real $ 0, which is factually misleading.
+    expect(formatFineArs(null)).toBe("sin multa monetaria");
+  });
+
+  it("still distinguishes a genuine zero fine from a null (no-fine) record", () => {
+    expect(formatFineArs(0)).toBe("$ 0");
+    expect(formatFineArs(0)).not.toBe(formatFineArs(null));
   });
 });

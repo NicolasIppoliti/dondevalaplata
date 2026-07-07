@@ -70,3 +70,16 @@ export function formatDateEsAr(isoDate: string): string {
   const monthName = MONTH_NAMES_ES[Number(month) - 1];
   return `${Number(day)} de ${monthName} de ${year}`;
 }
+
+/**
+ * Formats a `FalloRecord.fineArs` value (`number | null`) for display.
+ * `null` means no monetary fine was reported for that official/ejercicio
+ * and MUST render a distinct, explicit marker -- never `"$ 0"`, which
+ * would misrepresent "no fine" as "a fine of exactly zero pesos".
+ */
+export function formatFineArs(fineArs: number | null): string {
+  if (fineArs === null) {
+    return "sin multa monetaria";
+  }
+  return formatArsCompact(fineArs);
+}

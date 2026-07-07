@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { SourcesFooter } from "@/components/SourcesFooter";
-import { formatArsCompact, formatDateEsAr } from "@/lib/format";
+import { formatDateEsAr, formatFineArs } from "@/lib/format";
 import { getPortalData, resolveSourceRef } from "@/lib/sources";
 
 /**
@@ -94,9 +94,7 @@ export function FalloEjercicioView({ ejercicio }: FalloEjercicioViewProps) {
             <dt className="font-medium text-slate-500">
               {FIELD_LABELS.fineArs}
             </dt>
-            <dd className="text-slate-900">
-              {formatArsCompact(record.fineArs ?? 0)}
-            </dd>
+            <dd className="text-slate-900">{formatFineArs(record.fineArs)}</dd>
 
             <dt className="font-medium text-slate-500">
               {FIELD_LABELS.documentStatus}
