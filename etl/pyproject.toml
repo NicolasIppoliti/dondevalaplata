@@ -8,6 +8,7 @@ dependencies = [
   "requests>=2.32",
   "pandas>=2.2",
   "boto3>=1.34",
+  "pypdf>=6.14.2",
 ]
 
 [dependency-groups]
