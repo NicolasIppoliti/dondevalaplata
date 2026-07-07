@@ -53,9 +53,9 @@ export function FalloCard({ record, sourceLink, quote }: FalloCardProps) {
         ) : null}
       </p>
 
-      <h3 className="mt-1.5 font-display text-xl font-semibold text-ink">
+      <h2 className="mt-1.5 font-display text-xl font-semibold text-ink">
         {record.official} — {record.role}
-      </h3>
+      </h2>
 
       <p
         aria-hidden="true"
