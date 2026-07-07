@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getPortalData } from "@/lib/sources";
+import { getFalloEjerciciosDescending, getPortalData } from "@/lib/sources";
 
 export const metadata: Metadata = {
   title: "Fallos del Tribunal de Cuentas",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function FallosIndexPage() {
   const { fallos } = getPortalData();
-  const ejercicios = [...new Set(fallos.records.map((record) => record.ejercicio))].sort();
+  const ejercicios = getFalloEjerciciosDescending(fallos);
 
   return (
     <div className="space-y-6">

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { FalloEjercicioView } from "@/components/fallos/FalloEjercicioView";
-import { getPortalData } from "@/lib/sources";
+import { getFalloEjerciciosDescending, getPortalData } from "@/lib/sources";
 
 export function generateStaticParams() {
   const { fallos } = getPortalData();
-  const ejercicios = [...new Set(fallos.records.map((record) => record.ejercicio))];
+  const ejercicios = getFalloEjerciciosDescending(fallos);
   return ejercicios.map((ejercicio) => ({ ejercicio }));
 }
 

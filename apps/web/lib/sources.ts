@@ -89,6 +89,21 @@ export function assertSourceRefsResolve(
   }
 }
 
+/**
+ * Distinct ejercicios present in the fallos data, ordered newest first
+ * (recency-order capability). This governs ONLY presentation order --
+ * every ejercicio and every record within it stays fully listed elsewhere;
+ * nothing is dropped, hidden or collapsed by this function. The current
+ * administration's ejercicio naturally leads the list simply because it is
+ * the most recent year, not because any other administration was demoted.
+ */
+export function getFalloEjerciciosDescending(fallos: FallosData): string[] {
+  const ejercicios = [
+    ...new Set(fallos.records.map((record) => record.ejercicio)),
+  ];
+  return ejercicios.sort((a, b) => Number(b) - Number(a));
+}
+
 export interface PortalData {
   manifest: Manifest;
   coparticipacion: CoparticipacionData;
@@ -104,9 +119,6 @@ export function getPortalData(): PortalData {
   const manifest = loadManifest();
   const coparticipacion = loadCoparticipacion();
   const fallos = loadFallos();
-  assertSourceRefsResolve(
-    collectSourceRefs(coparticipacion, fallos),
-    manifest,
-  );
+  assertSourceRefsResolve(collectSourceRefs(coparticipacion, fallos), manifest);
   return { manifest, coparticipacion, fallos };
 }
