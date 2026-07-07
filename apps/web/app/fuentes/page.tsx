@@ -77,6 +77,35 @@ export default function FuentesPage() {
           ): se recalculan hacia adelante para reflejar el poder adquisitivo
           de ese mes.
         </p>
+        <p className="mt-3 max-w-2xl text-sm text-slate-700">
+          La cifra mensual de coparticipación que muestra el portal es la
+          suma de los aproximadamente 28 conceptos que integran esa
+          transferencia según la fuente oficial (Coparticipación Bruta,
+          Fondo Educativo, Descentralización Tributaria, entre otros), no
+          únicamente el concepto &quot;Coparticipación Bruta&quot; —
+          esto refleja el monto total efectivamente transferido a cada
+          municipio en el mes.
+        </p>
+      </section>
+
+      <section aria-labelledby="preservacion-heading">
+        <h2
+          id="preservacion-heading"
+          className="text-xl font-semibold text-slate-900"
+        >
+          Preservación de las fuentes
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm text-slate-700">
+          Cada fuente se descarga, se verifica con un hash SHA-256 y se
+          guarda en un bucket público de Cloudflare R2, que es la copia
+          archivada canónica enlazada en el índice de abajo; los
+          documentos de texto pequeños también se conservan en el disco
+          del portal para reprocesarlos sin depender de la fuente
+          original. Estas copias no se versionan en el repositorio de
+          código del portal (por su tamaño y porque R2 ya garantiza su
+          durabilidad); lo que sí se versiona es el código que las
+          procesa y los datos ya calculados que se publican en el sitio.
+        </p>
       </section>
 
       <section aria-labelledby="indice-heading" className="space-y-8">

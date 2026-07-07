@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { DataTable } from "@/components/chart/DataTable";
 import { SvgChart } from "@/components/chart/SvgChart";
 import { SourcesFooter } from "@/components/SourcesFooter";
@@ -48,6 +49,17 @@ export default function CoparticipacionPage() {
         </p>
         <p className="mt-2 max-w-2xl text-sm text-slate-600">
           Datos hasta {dataThroughLabel}. {coparticipacion.lagNote}
+        </p>
+        <p className="mt-2 max-w-2xl text-sm text-slate-600">
+          El monto mensual mostrado es la suma de todos los conceptos que
+          integran la transferencia de coparticipación (Coparticipación
+          Bruta, Fondo Educativo, Descentralización Tributaria y otros),
+          no solo el concepto &quot;Coparticipación Bruta&quot; —
+          más detalle en{" "}
+          <Link href="/fuentes" className="underline underline-offset-2">
+            Fuentes y metodología
+          </Link>
+          .
         </p>
       </section>
 

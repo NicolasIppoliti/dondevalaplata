@@ -11,6 +11,23 @@ describe("/fuentes page", () => {
     expect(originalLinks).toHaveLength(manifest.length);
   });
 
+  it("discloses the headline coparticipación figure is a sum across every CSV concept", () => {
+    const { container } = render(<Page />);
+    const text = container.textContent?.toLowerCase() ?? "";
+    expect(text).toContain("coparticipación bruta");
+    expect(text).toMatch(/suma/);
+  });
+
+  it("discloses that archived source copies live in R2, not mirrored in the git repo", () => {
+    // W1 (verify report): design D3 promised small text docs would ALSO be
+    // git-mirrored, but archive/** is fully gitignored. Not restructuring
+    // storage -- disclosing the accepted deviation to residents instead.
+    const { container } = render(<Page />);
+    const text = container.textContent?.toLowerCase() ?? "";
+    expect(text).toContain("cloudflare r2");
+    expect(text).toMatch(/no se (versionan|guardan) en (el|git)/);
+  });
+
   it("groups records by capability with a heading per group, including archive-only families", () => {
     render(<Page />);
     expect(

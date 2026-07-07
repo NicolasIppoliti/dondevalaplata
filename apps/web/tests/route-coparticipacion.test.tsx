@@ -33,6 +33,16 @@ describe("/coparticipacion page", () => {
     expect(zeroCell).toBeUndefined();
   });
 
+  it("discloses that the headline figure sums every CSV concept, not just Coparticipación Bruta", () => {
+    // W2 (verify report): the ETL sums ~28 distinct `concepto` line items
+    // per municipio-month into one headline figure -- documented in code
+    // (aggregate_by_period's docstring) but never disclosed in the UI.
+    const { container } = render(<Page />);
+    const text = container.textContent?.toLowerCase() ?? "";
+    expect(text).toContain("coparticipación bruta");
+    expect(text).toMatch(/suma de (todos|los)/);
+  });
+
   it("renders exactly the periods present in the data, with no padded rows", () => {
     const { coparticipacion } = getPortalData();
     const coronelRosales = coparticipacion.series.find(
