@@ -20,6 +20,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import pypdf
+import yaml
 
 SPANISH_MONTHS: dict[str, int] = {
     "enero": 1,
@@ -184,4 +185,30 @@ def parse_text_layer_fallo(text: str, *, ejercicio: str, source_ref: str) -> Fal
         scanned=False,
         fines=parse_fines(text),
         source_ref=source_ref,
+    )
+
+
+def load_curated_ficha(path: Path) -> FalloFicha:
+    """Build a `FalloFicha` from a curated ficha YAML (task 3.9).
+
+    Used for the 2022 fallo, whose scanned PDF has no extractable text
+    layer -- fields are read by a human reviewer directly off the scan
+    rather than parsed, but converge on the same `FalloFicha` shape as
+    `parse_text_layer_fallo` so `build_fallos` (task 3.10) treats every
+    ejercicio identically.
+    """
+    raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    fines = [
+        Fine(role=f["role"], official=f["official"], fine_ars=float(f["fine_ars"]))
+        for f in raw["fines"]
+    ]
+    return FalloFicha(
+        ejercicio=raw["ejercicio"],
+        fallo_id=raw["fallo_id"],
+        fallo_date=raw["fallo_date"],
+        administration=raw["administration"],
+        text_extracted=bool(raw["text_extracted"]),
+        scanned=bool(raw["scanned"]),
+        fines=fines,
+        source_ref=raw["source_ref"],
     )

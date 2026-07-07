@@ -1,0 +1,26 @@
+# Curated ficha for the 2022 HTC fallo.
+#
+# The source PDF (archive/htc-fallos/coronel-rosales-2022.pdf) is a
+# scanned document with no extractable text layer -- see
+# archive-manifest.json, id htc-fallos/coronel-rosales-2022: pdftotext
+# yields 0 bytes across 30 pages. The fields below were read directly
+# off the scanned pages by a human reviewer, NOT machine-extracted
+# (task 3.9), per the htc-fallos spec's "Scanned PDF without text
+# layer" scenario. No OCR is performed in this slice.
+ejercicio: "2022"
+fallo_id: "3-024.0-2022"
+fallo_date: "2024-03-14"
+administration: "Mariano Cecilio Uset (01/01/2022–31/12/2022)"
+administration_note: >-
+  Inferred as the full calendar year: the 2023 fallo's own extracted
+  text confirms Uset remained Intendente Municipal through 11/12/2023,
+  with no administration change reported for 2022. Not
+  machine-extracted (no text layer) -- consistent with this ficha's
+  curated, no-OCR scope.
+scanned: true
+text_extracted: false
+fines:
+  - role: "Intendente Municipal"
+    official: "Mariano Cecilio Uset"
+    fine_ars: 100000.0
+source_ref: "htc-fallos/coronel-rosales-2022"
