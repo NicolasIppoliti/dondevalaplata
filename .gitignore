@@ -36,3 +36,4 @@ coverage/
 # credentials are configured; keeping blobs out of git keeps clones fast.
 /archive/**
 !/archive/.gitkeep
+.vercel
