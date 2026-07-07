@@ -5,22 +5,27 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   web:
-    name: web (lint, test, build)
+    name: web (lint, typecheck, test, build)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: apps/web
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: "npm"
           cache-dependency-path: apps/web/package-lock.json
       - run: npm ci
       - run: npm run lint
+      - run: npx tsc --noEmit
       - run: npm test
       - run: npm run build
 
@@ -31,14 +36,15 @@ jobs:
       run:
         working-directory: etl
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v3
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v8
         with:
           working-directory: etl
+          enable-cache: true
       - run: uv sync
       - run: uv run ruff check .
       - run: uv run pytest -q
 
-# ETL archival cron (D8) is deliberately deferred: this workflow only runs
-# lint + test on push/PR. A scheduled `etl archive` / `etl build` job is
-# added once the archival pipeline (Slice 2) exists.
+# The monthly data-refresh cron (D8) lives in a separate workflow
+# (.github/workflows/etl-monthly.yml) so its schedule/permissions don't
+# affect this fast push/PR gate.
