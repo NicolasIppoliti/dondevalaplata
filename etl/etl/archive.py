@@ -106,7 +106,10 @@ def archive_source(
     data = response.content
     digest = sha256_of(data)
     filename = entry.get("filename") or entry["id"].split("/")[-1]
-    local_path = local_store.write(capability, filename, data)
+    local_store.write(capability, filename, data)
+    # Portable, repo-relative path (never the absolute machine path), so the
+    # manifest works identically for every developer/CI checkout.
+    archived_path = f"{local_store.root.name}/{capability}/{filename}"
 
     archived_url = None
     if r2_store is not None:
@@ -123,7 +126,7 @@ def archive_source(
         "source": entry["source"],
         "source_url": source_url,
         "archived_url": archived_url,
-        "archived_path": str(local_path),
+        "archived_path": archived_path,
         "sha256": digest,
         "mime": entry.get("mime", "application/octet-stream"),
         "bytes": len(data),

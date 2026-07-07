@@ -1,1 +1,30 @@
-[]
+[
+  {
+    "id": "coparticipacion/transferencias-municipios",
+    "capability": "coparticipacion-viewer",
+    "source": "catalogo.datos.gba.gob.ar",
+    "source_url": "https://catalogo.datos.gba.gob.ar/dataset/96ee21b4-b116-4b83-9228-ba664af1b480/resource/d13acdb6-bd59-4c09-b954-8f3258a65e8a/download/transferencias-municipios-012010_042026.csv",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/coparticipacion-viewer/transferencias-municipios-012010_042026.csv",
+    "archived_path": "archive/coparticipacion-viewer/transferencias-municipios-012010_042026.csv",
+    "sha256": "375cd4d3480077e93dc0a3d1ab6a15a49144477600d024489c943a8fb561ad36",
+    "mime": "text/csv",
+    "bytes": 15284788,
+    "fetched_at": "2026-07-07T02:08:03Z",
+    "status": "ok",
+    "notes": "Full monthly series 01/2010-04/2026, all municipios (filter to municipio_id 06182 = Coronel Rosales + neighbors at build time, per D3/D5). Primary coparticipacion source (dataset \"transferencias-municipios\", CKAN package_search verified)."
+  },
+  {
+    "id": "coparticipacion/transferencias-diciembre-2023",
+    "capability": "coparticipacion-viewer",
+    "source": "ec.gba.gov.ar",
+    "source_url": "https://www.ec.gba.gov.ar/areas/Sub_Politica_Coord_Eco/CoordMunicipal/municipios/12-23 - Transferencias Diciembre 2023.xlsx",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/coparticipacion-viewer/transferencias-diciembre-2023.xlsx",
+    "archived_path": "archive/coparticipacion-viewer/transferencias-diciembre-2023.xlsx",
+    "sha256": "cdb571b982c25427779c5027f2305e4a494c44996ce3d9972f25f9b7998c5625",
+    "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "bytes": 510540,
+    "fetched_at": "2026-07-07T02:08:06Z",
+    "status": "ok",
+    "notes": "Per-year XLSX snapshot for December 2023, published by the Ministerio de Hacienda y Finanzas (Dirección Provincial de Coordinación Municipal). Supplementary/cross-check source, not the primary series consumed by build-coparticipacion."
+  }
+]

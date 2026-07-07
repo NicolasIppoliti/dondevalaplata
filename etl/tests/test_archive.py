@@ -56,6 +56,23 @@ def test_archive_source_success_writes_local_copy_and_record(tmp_path) -> None:
     assert (tmp_path / "coparticipacion-viewer" / "file.csv").read_bytes() == data
 
 
+def test_archive_source_records_archived_path_relative_to_local_store_root(tmp_path) -> None:
+    """archived_path must be portable (repo-relative), never an absolute machine path."""
+    data = b"a,b\n1,2\n"
+    fetcher = FakeFetcher({ENTRY["source_url"]: FetchResponse(200, data)})
+    local_store = LocalArchiveStore(root=tmp_path / "archive")
+
+    result = archive_source(
+        {**ENTRY, "filename": "file.csv"},
+        fetcher=fetcher,
+        local_store=local_store,
+        r2_store=None,
+        now=FIXED_NOW,
+    )
+
+    assert result.record["archived_path"] == "archive/coparticipacion-viewer/file.csv"
+
+
 def test_archive_source_uploads_to_r2_when_configured(tmp_path) -> None:
     data = b"a,b\n1,2\n"
     fetcher = FakeFetcher({ENTRY["source_url"]: FetchResponse(200, data)})
