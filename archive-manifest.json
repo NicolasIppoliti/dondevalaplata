@@ -82,5 +82,61 @@
     "fetched_at": "2026-07-07T02:09:31Z",
     "status": "ok",
     "notes": "INDEC IPC Nivel General Nacional, base dic-2016=100, monthly, series-tiempo API. Series id 148.3_INIVELNAL_DICI_M_26 verified at apply-time (2026-07-06) against 3 known published monthly variations: Dec-2023 +25.47% (published ~25.5%), Jan-2024 +20.61% (~20.6%), Feb-2024 +13.24% (~13.2%). start_date pins the capture to Dec-2023 onward per D5; refetch without start_date for full history if ever needed."
+  },
+  {
+    "id": "electoral/2023-generales",
+    "capability": "electoral",
+    "source": "argentina.gob.ar",
+    "source_url": "https://www.argentina.gob.ar/sites/default/files/2023_generales_1.zip",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/electoral/2023-generales.zip",
+    "archived_path": "archive/electoral/2023-generales.zip",
+    "sha256": "2562b18c741ba5740d264e5328f206cb25f709ed0a4f8cf962f301e423e79c6b",
+    "mime": "application/zip",
+    "bytes": 28028857,
+    "fetched_at": "2026-07-07T02:09:48Z",
+    "status": "ok",
+    "notes": "2023 Elecciones Generales, mesa-level results ZIP. ~28MB, verified reachable (200, content-length 28028857)."
+  },
+  {
+    "id": "electoral/2023-balotaje",
+    "capability": "electoral",
+    "source": "argentina.gob.ar",
+    "source_url": "https://www.argentina.gob.ar/sites/default/files/2023_segundavuelta.zip",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/electoral/2023-balotaje.zip",
+    "archived_path": "archive/electoral/2023-balotaje.zip",
+    "sha256": "6d63298575984a9639cc51ed3fb60def789ceab0a4ae9b1b1003571f2b4fa530",
+    "mime": "application/zip",
+    "bytes": 3014122,
+    "fetched_at": "2026-07-07T02:10:57Z",
+    "status": "ok",
+    "notes": "2023 Balotaje (segunda vuelta), mesa-level results ZIP. ~3MB, verified reachable (200, content-length 3014122)."
+  },
+  {
+    "id": "electoral/2025-legislativas",
+    "capability": "electoral",
+    "source": "datos.mininterior.gob.ar",
+    "source_url": "https://datos.mininterior.gob.ar/dataset/947e871a-650e-4b63-8939-ecb29acb717c/resource/a24110fb-bfcf-47a6-8aa7-2e53dab9caf5/download/elecciones_legislativas_2025.zip",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/electoral/2025-legislativas.zip",
+    "archived_path": "archive/electoral/2025-legislativas.zip",
+    "sha256": "5fb19bb280af8895dc0bc2ac19d79e836fb4053b713a135357743bf35371ee4b",
+    "mime": "application/zip",
+    "bytes": 13554180,
+    "fetched_at": "2026-07-07T02:11:04Z",
+    "status": "ok",
+    "notes": "2025 Elecciones Legislativas Nacionales, mesa-level results ZIP. ~13.5MB, verified reachable (200 after https redirect, content-length 13554180)."
+  },
+  {
+    "id": "electoral/2023-paso-wayback",
+    "capability": "electoral",
+    "source": "web.archive.org",
+    "source_url": "https://web.archive.org/web/20240106010034if_/https://www.argentina.gob.ar/sites/default/files/dine-resultados/2023-PROVISORIOS_PASO.zip",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/electoral/2023-paso.zip",
+    "archived_path": "archive/electoral/2023-paso.zip",
+    "sha256": "25558e7b73e8c273726ea12f04040e2fac8e693ad0eb866386502eb112bd2c0c",
+    "mime": "application/zip",
+    "bytes": 88157604,
+    "fetched_at": "2026-07-07T02:11:41Z",
+    "status": "ok",
+    "notes": "2023 PASO, mesa-level results ZIP. Official URL (argentina.gob.ar/sites/default/files/dine-resultados/2023-PROVISORIOS_PASO.zip) returns 404 as of 2026-07-06 -- this is the only surviving copy, via the Wayback Machine snapshot dated 2024-01-06 (the `if_` modifier serves the raw file without Wayback's HTML/JS injection). ~88MB (content-length 88157604 at the snapshot), can be slow to fetch from Wayback -- use a generous timeout and resume/retry."
   }
 ]
