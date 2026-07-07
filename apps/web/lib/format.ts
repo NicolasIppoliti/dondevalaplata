@@ -57,6 +57,40 @@ export function formatArsCompact(value: number): string {
   return formatArsPlain(value);
 }
 
+/**
+ * Rounds a value to `sigFigs` significant figures, e.g. `roundToSignificantFigures(1753.71, 3) -> 1750`.
+ */
+function roundToSignificantFigures(value: number, sigFigs: number): number {
+  if (value === 0) return 0;
+  const magnitude = Math.floor(Math.log10(Math.abs(value))) + 1;
+  const factor = Math.pow(10, magnitude - sigFigs);
+  return Math.round(value / factor) * factor;
+}
+
+/**
+ * Formats a headline/table ARS figure "human-rounded" to ~3 significant
+ * figures, always in whole "millones" -- e.g. `1753712237.66` ->
+ * `"$ 1.750 millones"`, never the more precise but harder-to-parse-at-a-
+ * glance `"$ 1,75 mil millones"` that `formatArsCompact` would produce.
+ * This is the primary display value for the hero figure and for tables;
+ * `formatArsPlain`/`formatArsCompact` remain available for full-precision
+ * display (e.g. a `title` attribute) alongside it. Falls back to
+ * `formatArsPlain` below one million, same threshold as `formatArsCompact`.
+ */
+export function formatArsHuman(value: number): string {
+  const sign = value < 0 ? "-" : "";
+  const abs = Math.abs(value);
+  if (abs < MILLION) {
+    return formatArsPlain(value);
+  }
+  const millones = abs / MILLION;
+  const roundedMillones = Math.round(roundToSignificantFigures(millones, 3));
+  const grouped = roundedMillones
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return `${sign}$ ${grouped} millones`;
+}
+
 /** Formats a `"YYYY-MM"` period as `"mes de aaaa"`, e.g. `"2026-04"` -> `"abril de 2026"`. */
 export function formatPeriodEsAr(period: string): string {
   const [year, month] = period.split("-");
@@ -91,11 +125,13 @@ export function formatVariationEsAr(fraction: number, fractionDigits = 1): strin
  * Formats a `FalloRecord.fineArs` value (`number | null`) for display.
  * `null` means no monetary fine was reported for that official/ejercicio
  * and MUST render a distinct, explicit marker -- never `"$ 0"`, which
- * would misrepresent "no fine" as "a fine of exactly zero pesos".
+ * would misrepresent "no fine" as "a fine of exactly zero pesos". Uses the
+ * human-rounded form (`formatArsHuman`) since the fine is displayed as a
+ * headline-style figure on `FalloCard`, same convention as the home hero.
  */
 export function formatFineArs(fineArs: number | null): string {
   if (fineArs === null) {
     return "sin multa monetaria";
   }
-  return formatArsCompact(fineArs);
+  return formatArsHuman(fineArs);
 }

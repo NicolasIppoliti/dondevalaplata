@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   formatArsCompact,
+  formatArsHuman,
   formatArsPlain,
   formatDateEsAr,
   formatFineArs,
@@ -29,6 +30,34 @@ describe("formatArsCompact", () => {
 
   it("falls back to plain formatting under one million", () => {
     expect(formatArsCompact(300_000)).toBe("$ 300.000");
+  });
+});
+
+describe("formatArsHuman", () => {
+  // Headline/table figures round to ~3 significant figures and always say
+  // "millones" -- never "mil millones" -- so a non-technical reader can
+  // read the number at a glance instead of parsing a decimal comma.
+  // "$ 1,75 mil millones" (formatArsCompact) is exactly the confusing form
+  // this function replaces for headline display.
+  it("rounds a billion-plus figure to 'X.XXX millones', never 'mil millones'", () => {
+    expect(formatArsHuman(1_753_712_237.66)).toBe("$ 1.750 millones");
+  });
+
+  it("rounds a sub-billion figure to whole millones", () => {
+    expect(formatArsHuman(716_801_481)).toBe("$ 717 millones");
+  });
+
+  it("falls back to exact plain formatting under one million", () => {
+    expect(formatArsHuman(300_000)).toBe("$ 300.000");
+  });
+
+  it("handles a negative amount with the sign in front of the $ sign", () => {
+    expect(formatArsHuman(-1_753_712_237.66)).toBe("-$ 1.750 millones");
+  });
+
+  it("never claims more precision than 3 significant figures", () => {
+    // 6.751.250.530 -> 6751,25 millones -> 3 sig figs -> 6.750 millones.
+    expect(formatArsHuman(6_751_250_530)).toBe("$ 6.750 millones");
   });
 });
 
