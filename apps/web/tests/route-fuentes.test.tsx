@@ -7,7 +7,9 @@ describe("/fuentes page", () => {
   it("shows both a Fuente original link and a Copia archivada affordance for every manifest record", () => {
     const { manifest } = getPortalData();
     render(<Page />);
-    const originalLinks = screen.getAllByRole("link", { name: /fuente original/i });
+    const originalLinks = screen.getAllByRole("link", {
+      name: /fuente original/i,
+    });
     expect(originalLinks).toHaveLength(manifest.length);
   });
 
@@ -40,5 +42,38 @@ describe("/fuentes page", () => {
     expect(
       screen.getByRole("heading", { name: /gobierno abierto/i }),
     ).toBeTruthy();
+  });
+});
+
+describe("/fuentes — collapsible groups (start closed) with a one-line intro", () => {
+  it("renders each capability group as a <details> that starts closed", () => {
+    render(<Page />);
+    const headings = screen.getAllByRole("heading", { level: 3 });
+    expect(headings.length).toBeGreaterThan(0);
+    for (const heading of headings) {
+      const details = heading.closest("details");
+      expect(details).not.toBeNull();
+      expect(details?.open).toBe(false);
+    }
+  });
+
+  it("shows a one-line intro for each group", () => {
+    render(<Page />);
+    expect(
+      screen.getByText(
+        /Fallos del Tribunal de Cuentas sobre las cuentas municipales\./,
+      ),
+    ).toBeTruthy();
+  });
+
+  it("makes each link its own full-width, ~44px tappable row (not a compact table cell)", () => {
+    render(<Page />);
+    const originalLinks = screen.getAllByRole("link", {
+      name: /fuente original/i,
+    });
+    for (const link of originalLinks) {
+      expect(link.className).toContain("min-h-11");
+      expect(link.className).toContain("w-full");
+    }
   });
 });
