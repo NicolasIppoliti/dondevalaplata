@@ -84,6 +84,73 @@ const seriesWithGap: ChartSeriesData[] = [
   },
 ];
 
+describe("DataTable — red numbers integrity fix (never color-only)", () => {
+  it("prefixes a negative-variation cell with a neutral ▼ marker, not color alone", () => {
+    const drop: ChartSeriesData[] = [
+      {
+        id: "06182",
+        label: "Coronel Rosales",
+        points: [
+          { period: "2026-03", value: 200 },
+          { period: "2026-04", value: 100 },
+        ],
+      },
+    ];
+    render(
+      <DataTable
+        caption="Tabla de prueba"
+        series={drop}
+        formatValue={(v) => String(v)}
+        colorizeBySign
+      />,
+    );
+    const cell = screen.getByText(/▼/);
+    expect(cell.textContent).toContain("100");
+  });
+
+  it("shows the red-numbers legend once when colorizeBySign is on", () => {
+    render(
+      <DataTable
+        caption="Tabla de prueba"
+        series={series}
+        formatValue={(v) => String(v)}
+        colorizeBySign
+      />,
+    );
+    expect(
+      screen.getByText("En rojo: cayó respecto del mes anterior."),
+    ).toBeTruthy();
+  });
+
+  it("does not show the legend when colorizeBySign is off (default)", () => {
+    render(
+      <DataTable
+        caption="Tabla de prueba"
+        series={series}
+        formatValue={(v) => String(v)}
+      />,
+    );
+    expect(
+      screen.queryByText("En rojo: cayó respecto del mes anterior."),
+    ).toBeNull();
+  });
+});
+
+describe("DataTable — full precision on tap/hover", () => {
+  it("carries the full-precision value in a title attribute when formatFullPrecision is given", () => {
+    const { container } = render(
+      <DataTable
+        caption="Tabla de prueba"
+        series={series}
+        formatValue={() => "$ 100"}
+        formatFullPrecision={(v) => `$ ${v}`}
+      />,
+    );
+    const withTitle = container.querySelector('[title="$ 100"]');
+    expect(withTitle).not.toBeNull();
+  });
+});
+
 describe("DataTable — period-keyed indexing (missing middle month)", () => {
   it("aligns cells by period key, never shifting a shorter series' values", () => {
     render(
@@ -105,6 +172,72 @@ describe("DataTable — period-keyed indexing (missing middle month)", () => {
     // next real value shifted up, and NOT a fabricated "0".
     expect(cellsFor(bodyRows[1])).toEqual(["2026-02", "20", "s/d"]);
     expect(cellsFor(bodyRows[2])).toEqual(["2026-03", "30", "300"]);
+  });
+});
+
+describe("SvgChart — hero chart mode (coparticipación page)", () => {
+  it("hides the swatch legend when showLegend is false (a single bold end-of-line label already identifies the line)", () => {
+    const { container } = render(
+      <SvgChart
+        series={[series[0]]}
+        ariaLabel="Serie de prueba"
+        showLastPointLabel
+        showLegend={false}
+      />,
+    );
+    expect(container.querySelector("ul")).toBeNull();
+  });
+
+  it("still shows the legend by default (existing multi-series callers are unaffected)", () => {
+    const { container } = render(
+      <SvgChart series={series} ariaLabel="Serie de prueba" />,
+    );
+    expect(container.querySelector("ul")).not.toBeNull();
+  });
+
+  it("renders more gridlines when gridLineCount is raised (>=1 intermediate tick per year on a multi-year series)", () => {
+    const { container: fewGridLines } = render(
+      <SvgChart
+        series={series}
+        ariaLabel="Serie de prueba"
+        gridLineCount={3}
+      />,
+    );
+    const { container: manyGridLines } = render(
+      <SvgChart
+        series={series}
+        ariaLabel="Serie de prueba"
+        gridLineCount={6}
+      />,
+    );
+    const countLines = (container: HTMLElement) =>
+      container.querySelectorAll("svg > g > line").length;
+    expect(countLines(manyGridLines)).toBeGreaterThan(countLines(fewGridLines));
+  });
+
+  it("renders an axis unit caption above the chart when axisUnitLabel is given", () => {
+    render(
+      <SvgChart
+        series={series}
+        ariaLabel="Serie de prueba"
+        axisUnitLabel="Montos en pesos, ajustados por inflación"
+      />,
+    );
+    expect(
+      screen.getByText("Montos en pesos, ajustados por inflación"),
+    ).toBeTruthy();
+  });
+
+  it("applies a custom height className instead of the default h-auto (so the hero chart can be ~50vh tall)", () => {
+    const { container } = render(
+      <SvgChart
+        series={series}
+        ariaLabel="Serie de prueba"
+        heightClassName="h-[50vh] max-h-[480px] w-full"
+      />,
+    );
+    const svg = container.querySelector("svg");
+    expect(svg?.getAttribute("class")).toBe("h-[50vh] max-h-[480px] w-full");
   });
 });
 

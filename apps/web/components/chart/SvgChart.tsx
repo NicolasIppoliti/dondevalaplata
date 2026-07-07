@@ -15,10 +15,10 @@ import type { ChartSeriesData } from "./types";
  * markup.
  */
 
-const VIEW_WIDTH = 640;
-const VIEW_HEIGHT = 320;
+const DEFAULT_VIEW_WIDTH = 640;
+const DEFAULT_VIEW_HEIGHT = 320;
 const PADDING = { top: 24, right: 16, bottom: 32, left: 16 };
-const GRID_LINE_COUNT = 3;
+const DEFAULT_GRID_LINE_COUNT = 3;
 
 // Design-token colors, referenced as CSS custom properties. Kept as plain
 // constants because <stroke>/<fill> are SVG attributes, not classNames --
@@ -44,6 +44,26 @@ interface SvgChartProps {
   formatPeriod?: (period: string) => string;
   /** Marks and labels the last point of the primary (first) series. */
   showLastPointLabel?: boolean;
+  /**
+   * Shows the series-name legend below the chart. Defaults to `true`
+   * (existing behavior). The hero chart on /coparticipacion turns this off
+   * when it shows a single series with `showLastPointLabel` instead --
+   * a direct end-of-line value already identifies the line, a separate
+   * solid/dashed legend would be redundant chrome for a one-line chart.
+   */
+  showLegend?: boolean;
+  /** Number of horizontal gridlines/ticks. Defaults to 3 (existing behavior). */
+  gridLineCount?: number;
+  viewBoxWidth?: number;
+  viewBoxHeight?: number;
+  /** Tailwind classes controlling the rendered `<svg>` box size. Defaults
+   * to the existing `"h-auto w-full"` (height follows the viewBox aspect
+   * ratio). The hero chart overrides this to a fixed/viewport-relative
+   * height so it reads as genuinely BIG on a phone screen. */
+  heightClassName?: string;
+  /** Optional short caption above the chart naming the value's unit, e.g.
+   * "Montos en pesos, ajustados por inflación (IPC INDEC)". */
+  axisUnitLabel?: string;
 }
 
 export function SvgChart({
@@ -52,7 +72,16 @@ export function SvgChart({
   formatValue = (value) => String(value),
   formatPeriod = (period) => period,
   showLastPointLabel = false,
+  showLegend = true,
+  gridLineCount = DEFAULT_GRID_LINE_COUNT,
+  viewBoxWidth = DEFAULT_VIEW_WIDTH,
+  viewBoxHeight = DEFAULT_VIEW_HEIGHT,
+  heightClassName = "h-auto w-full",
+  axisUnitLabel,
 }: SvgChartProps) {
+  const VIEW_WIDTH = viewBoxWidth;
+  const VIEW_HEIGHT = viewBoxHeight;
+  const GRID_LINE_COUNT = Math.max(2, gridLineCount);
   // Period-keyed, not positional: the canonical x-axis is the UNION of
   // every series' periods, and each series' own points are placed at
   // THEIR period's index in that canonical list -- never at their
@@ -94,17 +123,24 @@ export function SvgChart({
           const index = periodIndex.get(lastPoint.period);
           return index === undefined
             ? null
-            : { x: round(xForIndex(index)), y: round(yForValue(lastPoint.value)) };
+            : {
+                x: round(xForIndex(index)),
+                y: round(yForValue(lastPoint.value)),
+              };
         })()
       : null;
 
   return (
     <div>
+      {axisUnitLabel ? (
+        <p className="mb-1 font-mono text-[11px] text-muted">{axisUnitLabel}</p>
+      ) : null}
       <svg
         viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
         role="img"
         aria-label={ariaLabel}
-        className="h-auto w-full"
+        className={heightClassName}
+        preserveAspectRatio="xMidYMid meet"
       >
         {gridLines.map((line, i) => (
           <g key={line.value}>
@@ -194,24 +230,28 @@ export function SvgChart({
             : ""}
         </text>
       </svg>
-      <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[13px] text-muted">
-        {series.map((s, seriesIndex) => (
-          <li key={s.id} className="flex items-center gap-2">
-            <svg width={24} height={10} aria-hidden="true">
-              <line
-                x1={0}
-                y1={5}
-                x2={24}
-                y2={5}
-                stroke={STROKE_TONES[seriesIndex % STROKE_TONES.length]}
-                strokeWidth={seriesIndex === 0 ? 3 : 1.5}
-                strokeDasharray={DASH_PATTERNS[seriesIndex % DASH_PATTERNS.length]}
-              />
-            </svg>
-            {s.label}
-          </li>
-        ))}
-      </ul>
+      {showLegend ? (
+        <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[13px] text-muted">
+          {series.map((s, seriesIndex) => (
+            <li key={s.id} className="flex items-center gap-2">
+              <svg width={24} height={10} aria-hidden="true">
+                <line
+                  x1={0}
+                  y1={5}
+                  x2={24}
+                  y2={5}
+                  stroke={STROKE_TONES[seriesIndex % STROKE_TONES.length]}
+                  strokeWidth={seriesIndex === 0 ? 3 : 1.5}
+                  strokeDasharray={
+                    DASH_PATTERNS[seriesIndex % DASH_PATTERNS.length]
+                  }
+                />
+              </svg>
+              {s.label}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   );
 }
