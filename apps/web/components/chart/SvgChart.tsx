@@ -17,8 +17,17 @@ import type { ChartSeriesData } from "./types";
 
 const DEFAULT_VIEW_WIDTH = 640;
 const DEFAULT_VIEW_HEIGHT = 320;
-const PADDING = { top: 24, right: 16, bottom: 32, left: 16 };
+const BASE_PADDING = { top: 24, right: 16, bottom: 32, left: 16 };
 const DEFAULT_GRID_LINE_COUNT = 3;
+// Y-axis tick labels ("$ 2.380 millones") are right-aligned into a left
+// gutter whose width must grow with the label text, or long labels get
+// clipped by the viewBox's left edge (only the tail -- e.g. "es" from
+// "millones" -- survives). ~0.62em is a safe advance-width estimate for
+// the mono typeface at AXIS_LABEL_FONT_SIZE; AXIS_LABEL_GAP mirrors the
+// existing 6px text-to-rule offset used when positioning the label.
+const AXIS_LABEL_FONT_SIZE = 11;
+const AXIS_LABEL_CHAR_WIDTH = AXIS_LABEL_FONT_SIZE * 0.62;
+const AXIS_LABEL_GAP = 8;
 
 // Design-token colors, referenced as CSS custom properties. Kept as plain
 // constants because <stroke>/<fill> are SVG attributes, not classNames --
@@ -64,6 +73,25 @@ interface SvgChartProps {
   /** Optional short caption above the chart naming the value's unit, e.g.
    * "Montos en pesos, ajustados por inflación (IPC INDEC)". */
   axisUnitLabel?: string;
+  /**
+   * Opt-in layout mode for callers that wrap `<SvgChart>` in an explicitly
+   * sized (bounded-height) container -- e.g. the `/coparticipacion` hero
+   * chart's `h-[50vh] ... sm:h-[420px]` box. Off by default so every
+   * existing caller (which relies on the `<svg>`'s own intrinsic
+   * viewBox aspect ratio via `h-auto`) renders byte-for-byte unchanged.
+   *
+   * When `true`, this component becomes a column flexbox that actually
+   * fills its parent's height (`flex h-full flex-col`) and the `<svg>`
+   * becomes a `flex-1 min-h-0` flex item instead of sizing itself from
+   * the viewBox aspect ratio. Without this, an unstyled wrapper `<div>`
+   * with `height: auto` sits between the sized container and the `<svg>`,
+   * which breaks the CSS percentage-height chain (`h-full` on the `<svg>`
+   * has no definite containing-block height to resolve against) and the
+   * `<svg>` falls back to sizing its height from `width * (viewBox
+   * aspect ratio)` instead -- producing an unbounded height that grows
+   * with viewport width (the "vertical blowout on wide viewports" bug).
+   */
+  fillHeight?: boolean;
 }
 
 export function SvgChart({
@@ -78,6 +106,7 @@ export function SvgChart({
   viewBoxHeight = DEFAULT_VIEW_HEIGHT,
   heightClassName = "h-auto w-full",
   axisUnitLabel,
+  fillHeight = false,
 }: SvgChartProps) {
   const VIEW_WIDTH = viewBoxWidth;
   const VIEW_HEIGHT = viewBoxHeight;
@@ -99,6 +128,25 @@ export function SvgChart({
   const maxValue = Math.max(...allValues, 0);
   const valueRange = maxValue - minValue || 1;
 
+  // Compute gridline VALUES first (only depends on min/max/count, not on
+  // padding) so their formatted label widths can size the left gutter
+  // before PADDING.left -- and everything derived from it -- is fixed.
+  const gridLineValues = Array.from(
+    { length: GRID_LINE_COUNT },
+    (_, i) => minValue + (valueRange * i) / (GRID_LINE_COUNT - 1),
+  );
+  const longestLabelLength = gridLineValues.reduce(
+    (max, value) => Math.max(max, formatValue(value).length),
+    0,
+  );
+  const PADDING = {
+    ...BASE_PADDING,
+    left: Math.max(
+      BASE_PADDING.left,
+      Math.ceil(longestLabelLength * AXIS_LABEL_CHAR_WIDTH) + AXIS_LABEL_GAP,
+    ),
+  };
+
   const innerWidth = VIEW_WIDTH - PADDING.left - PADDING.right;
   const innerHeight = VIEW_HEIGHT - PADDING.top - PADDING.bottom;
 
@@ -110,10 +158,10 @@ export function SvgChart({
   const yForValue = (value: number): number =>
     PADDING.top + innerHeight - ((value - minValue) / valueRange) * innerHeight;
 
-  const gridLines = Array.from({ length: GRID_LINE_COUNT }, (_, i) => {
-    const value = minValue + (valueRange * i) / (GRID_LINE_COUNT - 1);
-    return { value, y: round(yForValue(value)) };
-  });
+  const gridLines = gridLineValues.map((value) => ({
+    value,
+    y: round(yForValue(value)),
+  }));
 
   const primarySeries = series[0];
   const lastPoint = primarySeries?.points.at(-1);
@@ -131,15 +179,21 @@ export function SvgChart({
       : null;
 
   return (
-    <div>
+    <div className={fillHeight ? "flex h-full w-full flex-col" : undefined}>
       {axisUnitLabel ? (
-        <p className="mb-1 font-mono text-[11px] text-muted">{axisUnitLabel}</p>
+        <p
+          className={`mb-1 font-mono text-[11px] text-muted ${fillHeight ? "shrink-0" : ""}`}
+        >
+          {axisUnitLabel}
+        </p>
       ) : null}
       <svg
         viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
         role="img"
         aria-label={ariaLabel}
-        className={heightClassName}
+        className={
+          fillHeight ? `${heightClassName} min-h-0 flex-1` : heightClassName
+        }
         preserveAspectRatio="xMidYMid meet"
       >
         {gridLines.map((line, i) => (
@@ -157,7 +211,7 @@ export function SvgChart({
               x={PADDING.left - 6}
               y={line.y - 3}
               textAnchor="end"
-              fontSize={11}
+              fontSize={AXIS_LABEL_FONT_SIZE}
               fill="var(--color-muted)"
               className="font-mono"
             >
@@ -231,7 +285,9 @@ export function SvgChart({
         </text>
       </svg>
       {showLegend ? (
-        <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[13px] text-muted">
+        <ul
+          className={`mt-3 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[13px] text-muted ${fillHeight ? "shrink-0" : ""}`}
+        >
           {series.map((s, seriesIndex) => (
             <li key={s.id} className="flex items-center gap-2">
               <svg width={24} height={10} aria-hidden="true">

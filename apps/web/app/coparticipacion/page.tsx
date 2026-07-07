@@ -149,7 +149,8 @@ export default function CoparticipacionPage() {
               showLastPointLabel
               showLegend={false}
               gridLineCount={heroGridLineCount}
-              heightClassName="h-full w-full"
+              heightClassName="w-full"
+              fillHeight
               viewBoxWidth={380}
               viewBoxHeight={460}
               axisUnitLabel={`Montos en pesos, ajustados por inflación (base ${baseMonthLabel})`}
