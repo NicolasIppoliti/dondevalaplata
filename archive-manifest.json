@@ -68,5 +68,19 @@
     "fetched_at": "2026-07-07T02:08:59Z",
     "status": "ok",
     "notes": "Ejercicio 2024, expediente 3-024.0-2024, fallo dated 09/04/2026. 64 pages, extractable text layer. Multa de $650.000 al Intendente Municipal Rodrigo Lionel ARISTIMUÑO; $500.000 a la Contadora Municipal Patricia Elisabeth BUSTAMANTE. NOTE: filename contains the real-world typo \"Leonaardo\" (double a) on the source server -- preserved verbatim, not a transcription error on our side."
+  },
+  {
+    "id": "ipc/nivel-general-nacional",
+    "capability": "ipc",
+    "source": "apis.datos.gob.ar",
+    "source_url": "https://apis.datos.gob.ar/series/api/series/?ids=148.3_INIVELNAL_DICI_M_26&start_date=2023-12-01&format=json&limit=1000",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/ipc/ipc-nivel-general-nacional.json",
+    "archived_path": "archive/ipc/ipc-nivel-general-nacional.json",
+    "sha256": "6cb6b6dceb54c2ad97a4d9252888a1089c910308c56fb3fbe3556321c04609cf",
+    "mime": "application/json",
+    "bytes": 2022,
+    "fetched_at": "2026-07-07T02:09:31Z",
+    "status": "ok",
+    "notes": "INDEC IPC Nivel General Nacional, base dic-2016=100, monthly, series-tiempo API. Series id 148.3_INIVELNAL_DICI_M_26 verified at apply-time (2026-07-06) against 3 known published monthly variations: Dec-2023 +25.47% (published ~25.5%), Jan-2024 +20.61% (~20.6%), Feb-2024 +13.24% (~13.2%). start_date pins the capture to Dec-2023 onward per D5; refetch without start_date for full history if ever needed."
   }
 ]
