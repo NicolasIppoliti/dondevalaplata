@@ -2,14 +2,16 @@
 
 Subcommands:
   archive               Fetch and archive every configured source (network I/O).
+  sync-r2               Backfill R2 uploads for local archive files missing archived_url.
   build-ipc             Rebase the INDEC IPC series to constant pesos.
   build-coparticipacion Build the coparticipacion display JSON from the archive.
   build-fallos          Build the HTC fallos display JSON from the archive.
   build                 Run all build-* steps in sequence.
 
-Only ``archive`` performs network I/O. Every ``build-*`` command is
-deterministic and reads exclusively from the local archive, which makes it
-safe to run offline and to unit test in isolation.
+``archive`` and ``sync-r2`` are the only commands that perform network I/O
+(the latter uploads to R2 only, never re-fetches from the origin). Every
+``build-*`` command is deterministic and reads exclusively from the local
+archive, which makes it safe to run offline and to unit test in isolation.
 """
 
 from __future__ import annotations
@@ -21,11 +23,14 @@ from pathlib import Path
 from .archive import Fetcher, run_archive_all
 from .config import load_sources
 from .http_client import RequestsFetcher
+from .manifest import load_manifest, save_manifest
 from .mcr_docs import discover_documentos
 from .mcr_docs import to_source_entries as mcr_docs_to_entries
 from .r2 import R2Store
+from .r2_sync import sync_archived_to_r2
 from .sibom import discover_bulletins
 from .sibom import to_source_entries as sibom_to_entries
+from .storage import LocalArchiveStore
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_SOURCES_PATH = REPO_ROOT / "etl" / "sources.yaml"
@@ -124,6 +129,35 @@ def run_archive(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_sync_r2(args: argparse.Namespace) -> int:
+    """Backfill R2 uploads for locally-archived records missing `archived_url`.
+
+    Unlike `archive`, this never re-fetches from the origin: it only
+    uploads files already present under `archive/` (see `r2_sync.py`).
+    Useful when files were archived before R2 credentials were configured.
+    """
+    r2_store = R2Store.from_env()
+    if r2_store is None:
+        print(
+            "etl sync-r2: R2 credentials not configured (see etl/.env.example) "
+            "-- nothing to sync."
+        )
+        return 1
+
+    local_store = LocalArchiveStore(root=args.archive_root)
+    records = load_manifest(args.manifest_path)
+    updated = sync_archived_to_r2(records, local_store=local_store, r2_store=r2_store)
+    save_manifest(args.manifest_path, updated)
+
+    uploaded = sum(
+        1
+        for old, new in zip(records, updated, strict=True)
+        if not old.get("archived_url") and new.get("archived_url")
+    )
+    print(f"etl sync-r2: {uploaded} file(s) uploaded, {len(updated)} total records")
+    return 0
+
+
 def run_build_ipc(args: argparse.Namespace) -> int:
     """Rebase the INDEC IPC series to constant pesos. Not yet implemented."""
     print("etl build-ipc: not implemented yet (see Slice 3)")
@@ -185,6 +219,18 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     archive_parser.set_defaults(func=run_archive)
+
+    sync_r2_parser = subparsers.add_parser(
+        "sync-r2",
+        help="Backfill R2 uploads for locally-archived records missing archived_url.",
+    )
+    sync_r2_parser.add_argument(
+        "--manifest-path", type=Path, default=DEFAULT_MANIFEST_PATH,
+    )
+    sync_r2_parser.add_argument(
+        "--archive-root", type=Path, default=DEFAULT_ARCHIVE_ROOT,
+    )
+    sync_r2_parser.set_defaults(func=run_sync_r2)
 
     build_ipc_parser = subparsers.add_parser(
         "build-ipc", help="Rebase the INDEC IPC series to constant pesos."
