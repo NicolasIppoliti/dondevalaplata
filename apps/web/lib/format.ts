@@ -72,6 +72,22 @@ export function formatDateEsAr(isoDate: string): string {
 }
 
 /**
+ * Formats a fractional real (inflation-adjusted) variation, e.g. `0.032` ->
+ * `"+3,2%"`, `-0.057` -> `"−5,7%"`. Always carries an explicit sign --
+ * including a genuine `0` -- so a variation is never mistaken for an absolute
+ * figure. Uses the true Unicode minus sign (U+2212), not a hyphen, per the
+ * portal's mono/tabular data typography (design token `--stamp` colors the
+ * negative case, `--olive` the non-negative one; this function only formats
+ * the text, callers own the color).
+ */
+export function formatVariationEsAr(fraction: number, fractionDigits = 1): string {
+  const percent = fraction * 100;
+  const sign = percent < 0 ? "−" : "+";
+  const formatted = formatDecimalEsAr(Math.abs(percent), fractionDigits);
+  return `${sign}${formatted}%`;
+}
+
+/**
  * Formats a `FalloRecord.fineArs` value (`number | null`) for display.
  * `null` means no monetary fine was reported for that official/ejercicio
  * and MUST render a distinct, explicit marker -- never `"$ 0"`, which

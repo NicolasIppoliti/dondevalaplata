@@ -1,138 +1,121 @@
 import Link from "next/link";
-import { formatArsCompact, formatPeriodEsAr } from "@/lib/format";
-import { getPortalData, resolveSourceRef } from "@/lib/sources";
+import {
+  formatArsCompact,
+  formatPeriodEsAr,
+  formatVariationEsAr,
+} from "@/lib/format";
+import { getPortalData } from "@/lib/sources";
 
 const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
 
-export default function Home() {
-  const { coparticipacion, fallos, manifest } = getPortalData();
+/**
+ * "Home = afiche" (DESIGN.md): one number dominates the fold, then a row
+ * per section -- no landing-page marketing copy, no cards, no carousels.
+ * Copy for the question and section rows comes from the owner-approved
+ * design-system mockup verbatim.
+ */
+const SECTION_ROWS = [
+  {
+    question: "¿Cuánto llegó este mes?",
+    href: "/coparticipacion",
+    cta: "ver la serie →",
+  },
+  {
+    question: "¿Qué dicen los fallos del Tribunal de Cuentas?",
+    href: "/fallos",
+    cta: "ver las multas →",
+  },
+  {
+    question: "¿De dónde salen los datos?",
+    href: "/fuentes",
+    cta: "ver el archivo →",
+  },
+] as const;
 
+export default function Home() {
+  const { coparticipacion } = getPortalData();
   const coronelRosales = coparticipacion.series.find(
     (series) => series.municipioId === CORONEL_ROSALES_MUNICIPIO_ID,
   );
-  const latestPoint = coronelRosales?.points.at(-1);
-  const coparticipacionLink = resolveSourceRef(
-    "coparticipacion/transferencias-municipios",
-    manifest,
-  );
-
-  const latestEjercicio = fallos.records.reduce(
-    (max, record) => (record.ejercicio > max ? record.ejercicio : max),
-    fallos.records[0].ejercicio,
-  );
-  const latestFallo = fallos.records
-    .filter((record) => record.ejercicio === latestEjercicio)
-    .reduce((top, record) =>
-      (record.fineArs ?? 0) > (top.fineArs ?? 0) ? record : top,
-    );
-  const falloLink = resolveSourceRef(latestFallo.sourceRefs[0], manifest);
+  const points = coronelRosales?.points ?? [];
+  const latestPoint = points.at(-1);
+  const previousPoint = points.at(-2);
+  // Real (inflation-adjusted) month-over-month variation -- legitimate
+  // arithmetic coloring per DESIGN.md's neutrality rule (never a political
+  // "good/bad" judgment). Only rendered when both points actually exist, so
+  // a short series never fabricates a variation out of thin air.
+  const variation =
+    latestPoint && previousPoint && previousPoint.realArs !== 0
+      ? (latestPoint.realArs - previousPoint.realArs) / previousPoint.realArs
+      : null;
+  const previousMonthName = previousPoint
+    ? formatPeriodEsAr(previousPoint.period).split(" de ")[0]
+    : null;
+  const baseMonthLabel = formatPeriodEsAr(coparticipacion.baseMonth);
+  const dataThroughLabel = formatPeriodEsAr(coparticipacion.dataThrough);
 
   return (
-    <div className="space-y-10">
-      <section>
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
-          ¿Dónde va la plata? — Coronel Rosales
-        </h1>
-        <p className="mt-4 max-w-2xl text-slate-700">
-          Datos públicos de coparticipación municipal y fallos del Tribunal de
-          Cuentas de la Provincia de Buenos Aires referidos a Coronel Rosales.
-          Cada cifra publicada enlaza a su fuente oficial y a una copia
-          archivada del documento original. Sitio ciudadano independiente, sin
-          fines partidarios.
-        </p>
-      </section>
+    <div>
+      {/* The masthead already carries the brand visually; this heading only
+          gives the page a single accessible <h1> naming the site (rebrand
+          invariant), without repeating the wordmark inside the poster. */}
+      <h1 className="sr-only">¿Dónde va la plata? — Coronel Rosales</h1>
 
-      <section aria-label="Cifras destacadas" className="grid gap-6 sm:grid-cols-2">
-        {latestPoint ? (
-          <article className="rounded-lg border border-slate-200 p-5">
-            <h2 className="text-sm font-semibold tracking-wide text-slate-500 uppercase">
-              Coparticipación — Coronel Rosales
-            </h2>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
-              {formatArsCompact(latestPoint.realArs)}
-            </p>
-            <p className="mt-1 text-sm text-slate-600">
-              {formatPeriodEsAr(latestPoint.period)}, en pesos constantes de{" "}
-              {formatPeriodEsAr(coparticipacion.baseMonth)} (IPC INDEC nivel
-              general nacional, serie {coparticipacion.ipcSeriesId}).
-            </p>
-            <p className="mt-3 flex flex-wrap gap-x-2 text-sm">
-              <a
-                href={coparticipacionLink.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2"
-              >
-                Fuente original
-              </a>
-              <span aria-hidden="true">·</span>
-              {coparticipacionLink.archivedUrl ? (
-                <a
-                  href={coparticipacionLink.archivedUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-2"
-                >
-                  Copia archivada
-                </a>
-              ) : (
-                <span>Copia archivada no disponible</span>
-              )}
-            </p>
-            <Link
-              href="/coparticipacion"
-              className="mt-4 inline-block text-sm font-medium underline underline-offset-2"
+      {latestPoint ? (
+        <section aria-label="Cifra destacada del mes">
+          <p className="font-mono text-xs tracking-[0.14em] text-muted uppercase">
+            Coronel Rosales recibió de la Provincia en{" "}
+            {formatPeriodEsAr(latestPoint.period)}
+          </p>
+          <p className="mt-1 font-mono text-[clamp(52px,11vw,128px)] leading-[0.95] font-semibold tracking-tight text-ink tabular-nums">
+            {formatArsCompact(latestPoint.realArs)}
+          </p>
+          {variation !== null && previousMonthName ? (
+            <p
+              className={`mt-4 inline-block border-2 px-3 py-1 font-mono text-[clamp(18px,3vw,28px)] tabular-nums ${
+                variation >= 0
+                  ? "border-olive text-olive"
+                  : "border-stamp text-stamp"
+              }`}
             >
-              Ver serie completa y comparación con municipios vecinos →
-            </Link>
-          </article>
-        ) : null}
+              <span className="sr-only">Variación real: </span>
+              <span aria-hidden="true">{variation >= 0 ? "▲" : "▼"}</span>{" "}
+              {formatVariationEsAr(variation)} real vs. {previousMonthName}
+            </p>
+          ) : null}
+          <p className="mt-6 max-w-[34ch] font-quote text-[clamp(19px,2.6vw,26px)] text-muted italic">
+            ¿Alcanza para lo que dicen que alcanza? Mirá la serie completa y
+            sacá tu propia cuenta.
+          </p>
+          <p className="mt-5 font-mono text-xs text-muted">
+            Fuente: Ministerio de Economía PBA · datos hasta{" "}
+            {dataThroughLabel} · en pesos constantes de {baseMonthLabel} (IPC
+            INDEC)
+          </p>
+        </section>
+      ) : null}
 
-        <article className="rounded-lg border border-slate-200 p-5">
-          <h2 className="text-sm font-semibold tracking-wide text-slate-500 uppercase">
-            Fallos del Tribunal de Cuentas — ejercicio {latestEjercicio}
-          </h2>
-          <p className="mt-2 text-2xl font-semibold text-slate-900">
-            {formatArsCompact(latestFallo.fineArs ?? 0)}
-          </p>
-          <p className="mt-1 text-sm text-slate-600">
-            Multa a {latestFallo.official} ({latestFallo.role}), fallo
-            {latestFallo.scanned
-              ? " (documento escaneado, texto no extraído)"
-              : ""}
-            .
-          </p>
-          <p className="mt-3 flex flex-wrap gap-x-2 text-sm">
-            <a
-              href={falloLink.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-2"
-            >
-              Fuente original
-            </a>
-            <span aria-hidden="true">·</span>
-            {falloLink.archivedUrl ? (
-              <a
-                href={falloLink.archivedUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2"
-              >
-                Copia archivada
-              </a>
-            ) : (
-              <span>Copia archivada no disponible</span>
-            )}
-          </p>
-          <Link
-            href="/fallos"
-            className="mt-4 inline-block text-sm font-medium underline underline-offset-2"
+      <nav
+        aria-label="Secciones del portal"
+        className="mt-10 border-t border-rule"
+      >
+        {SECTION_ROWS.map((row) => (
+          <div
+            key={row.href}
+            className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-b border-rule py-5"
           >
-            Ver los fallos 2022-2024 →
-          </Link>
-        </article>
-      </section>
+            <h2 className="font-display text-[clamp(20px,3vw,28px)] font-semibold">
+              {row.question}
+            </h2>
+            <Link
+              href={row.href}
+              className="font-mono text-[13px] whitespace-nowrap"
+            >
+              {row.cta}
+            </Link>
+          </div>
+        ))}
+      </nav>
     </div>
   );
 }

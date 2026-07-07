@@ -5,6 +5,7 @@ import {
   formatDateEsAr,
   formatFineArs,
   formatPeriodEsAr,
+  formatVariationEsAr,
 } from "@/lib/format";
 
 describe("formatArsPlain", () => {
@@ -57,5 +58,23 @@ describe("formatFineArs", () => {
   it("still distinguishes a genuine zero fine from a null (no-fine) record", () => {
     expect(formatFineArs(0)).toBe("$ 0");
     expect(formatFineArs(0)).not.toBe(formatFineArs(null));
+  });
+});
+
+describe("formatVariationEsAr", () => {
+  it("formats a positive fraction with an explicit '+' sign and comma decimal", () => {
+    expect(formatVariationEsAr(0.032)).toBe("+3,2%");
+  });
+
+  it("formats a negative fraction with a true minus sign (U+2212), not a hyphen", () => {
+    expect(formatVariationEsAr(-0.057)).toBe("−5,7%");
+  });
+
+  it("treats zero as non-negative (explicit '+' sign, never a bare '0%')", () => {
+    expect(formatVariationEsAr(0)).toBe("+0,0%");
+  });
+
+  it("rounds to one decimal place", () => {
+    expect(formatVariationEsAr(0.01149)).toBe("+1,1%");
   });
 });
