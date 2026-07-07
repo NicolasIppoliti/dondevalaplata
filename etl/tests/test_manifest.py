@@ -6,7 +6,13 @@ failures, per the raw-data-archive spec's "Source returns 404" scenario).
 
 import json
 
-from etl.manifest import REQUIRED_FIELDS, load_manifest, save_manifest, upsert_record
+from etl.manifest import (
+    REQUIRED_FIELDS,
+    load_manifest,
+    ok_records_with_local_path,
+    save_manifest,
+    upsert_record,
+)
 
 
 def _record(**overrides: object) -> dict:
@@ -148,6 +154,24 @@ def test_upsert_still_overwrites_when_prior_status_was_already_error() -> None:
 
     assert len(updated) == 1
     assert updated[0]["notes"] == "[HTTP 500]"
+
+
+def test_ok_records_with_local_path_returns_matching_records() -> None:
+    records = [
+        _record(id="a", status="ok", archived_path="archive/a.csv"),
+        _record(id="b", status="ok", archived_path=None),
+        _record(id="c", status="error", archived_path=None),
+    ]
+    result = ok_records_with_local_path(records)
+    assert [r["id"] for r in result] == ["a"]
+
+
+def test_ok_records_with_local_path_returns_empty_when_none_qualify() -> None:
+    records = [
+        _record(id="b", status="ok", archived_path=None),
+        _record(id="c", status="error", archived_path="archive/c.pdf"),
+    ]
+    assert ok_records_with_local_path(records) == []
 
 
 def test_manifest_is_valid_json_array(tmp_path) -> None:

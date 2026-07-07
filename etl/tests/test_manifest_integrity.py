@@ -13,7 +13,7 @@ failed -- on a fresh clone that never ran the archival pipeline.
 import json
 from pathlib import Path
 
-from etl.manifest import REQUIRED_FIELDS
+from etl.manifest import REQUIRED_FIELDS, ok_records_with_local_path
 from etl.storage import sha256_of
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -80,5 +80,13 @@ def test_sha256_recomputes_for_locally_present_files() -> None:
             continue  # not present locally (fresh clone) -- skip, don't fail
         checked += 1
         assert sha256_of(local_path.read_bytes()) == record["sha256"], record["id"]
-    # Not asserting checked > 0: a fresh clone with no local archive/ is valid.
-    assert checked >= 0
+    # Not asserting checked > 0 here: a fresh clone with no local archive/
+    # is valid and this loop legitimately checks nothing in that case.
+    #
+    # But the manifest itself must still make a real, testable claim
+    # regardless of local disk state: at least one "ok" record must
+    # declare an archived_path (see ok_records_with_local_path -- unit
+    # tested in test_manifest.py). The prior `assert checked >= 0` was
+    # always true (a non-negative counter can never be negative) and
+    # caught nothing, ever, in any environment.
+    assert len(ok_records_with_local_path(records)) > 0

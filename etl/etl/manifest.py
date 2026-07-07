@@ -90,6 +90,25 @@ def resolve_archived_path(manifest_path: Path, record_id: str) -> Path:
     return archived_path
 
 
+def ok_records_with_local_path(
+    records: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Return every ``status: "ok"`` record that declares an ``archived_path``.
+
+    Used by the manifest-integrity acceptance test as a real invariant on
+    the manifest itself (independent of whether the local ``archive/``
+    tree happens to be populated on this machine): the manifest should
+    never end up with zero such records, since that would mean either no
+    source has ever archived successfully, or every "ok" record lost its
+    local-mirror path.
+    """
+    return [
+        record
+        for record in records
+        if record.get("status") == "ok" and record.get("archived_path")
+    ]
+
+
 def upsert_record(
     records: list[dict[str, Any]], record: dict[str, Any]
 ) -> list[dict[str, Any]]:
