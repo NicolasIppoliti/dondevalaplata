@@ -22,7 +22,19 @@ export function DataTable({
   formatPeriod = (period) => period,
   periodColumnLabel = "Período",
 }: DataTableProps) {
-  const periods = series[0]?.points.map((point) => point.period) ?? [];
+  // Period-keyed, not positional: a series missing a middle period (e.g.
+  // not-yet-published data for one municipio) must never shift another
+  // series' values into the wrong row. Rows are the UNION of every
+  // series' periods, so no series' data goes missing from the table
+  // either.
+  const periodSet = new Set<string>();
+  for (const s of series) {
+    for (const point of s.points) periodSet.add(point.period);
+  }
+  const periods = Array.from(periodSet).sort();
+  const valuesByPeriod = series.map(
+    (s) => new Map(s.points.map((point) => [point.period, point.value])),
+  );
 
   return (
     <table className="w-full border-collapse text-sm">
@@ -46,16 +58,22 @@ export function DataTable({
         </tr>
       </thead>
       <tbody>
-        {periods.map((period, rowIndex) => (
+        {periods.map((period) => (
           <tr key={period} className="border-b border-slate-200">
             <th scope="row" className="py-1.5 pr-4 text-left font-normal">
               {formatPeriod(period)}
             </th>
-            {series.map((s) => (
-              <td key={s.id} className="py-1.5 pr-4 text-right tabular-nums">
-                {formatValue(s.points[rowIndex]?.value ?? 0)}
-              </td>
-            ))}
+            {series.map((s, seriesIndex) => {
+              const value = valuesByPeriod[seriesIndex].get(period);
+              return (
+                <td key={s.id} className="py-1.5 pr-4 text-right tabular-nums">
+                  {/* Explicit "no data" marker -- never a fabricated "0",
+                      which would misrepresent an unpublished month as an
+                      actual zero-value transfer. */}
+                  {value === undefined ? "s/d" : formatValue(value)}
+                </td>
+              );
+            })}
           </tr>
         ))}
       </tbody>

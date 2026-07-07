@@ -58,3 +58,79 @@ describe("DataTable", () => {
     expect(columnHeaders[0].getAttribute("scope")).toBe("col");
   });
 });
+
+// Bug reproduction: series were indexed POSITIONALLY (row index into
+// series[0]'s period array) instead of by period key. A series missing a
+// middle month shifted every later value one row up and, once its shorter
+// points array ran out, fabricated a "$ 0" for the last row.
+const seriesWithGap: ChartSeriesData[] = [
+  {
+    id: "06182",
+    label: "Coronel Rosales",
+    points: [
+      { period: "2026-01", value: 10 },
+      { period: "2026-02", value: 20 },
+      { period: "2026-03", value: 30 },
+    ],
+  },
+  {
+    id: "06056",
+    label: "Bahía Blanca",
+    points: [
+      { period: "2026-01", value: 100 },
+      // 2026-02 missing (not yet published for this municipio)
+      { period: "2026-03", value: 300 },
+    ],
+  },
+];
+
+describe("DataTable — period-keyed indexing (missing middle month)", () => {
+  it("aligns cells by period key, never shifting a shorter series' values", () => {
+    render(
+      <DataTable
+        caption="Tabla con hueco"
+        series={seriesWithGap}
+        formatValue={(v) => String(v)}
+      />,
+    );
+    const table = screen.getByRole("table", { name: "Tabla con hueco" });
+    const bodyRows = table.querySelectorAll("tbody tr");
+    expect(bodyRows).toHaveLength(3); // union of periods: 3 rows, not 2
+
+    const cellsFor = (row: Element) =>
+      Array.from(row.querySelectorAll("th, td")).map((el) => el.textContent);
+
+    expect(cellsFor(bodyRows[0])).toEqual(["2026-01", "10", "100"]);
+    // The missing month must show an explicit "no data" marker, NOT the
+    // next real value shifted up, and NOT a fabricated "0".
+    expect(cellsFor(bodyRows[1])).toEqual(["2026-02", "20", "s/d"]);
+    expect(cellsFor(bodyRows[2])).toEqual(["2026-03", "30", "300"]);
+  });
+});
+
+describe("SvgChart — period-keyed indexing (missing middle month)", () => {
+  it("skips the missing point instead of shifting later points leftward", () => {
+    const { container } = render(
+      <SvgChart series={seriesWithGap} ariaLabel="Serie con hueco" />,
+    );
+    const polylines = container.querySelectorAll("polyline");
+    expect(polylines).toHaveLength(2);
+
+    const gappedPoints = polylines[1].getAttribute("points") ?? "";
+    const coords = gappedPoints.trim().split(/\s+/);
+    // Only 2 real points for the gapped series (Jan, Mar) -- no fabricated
+    // third point for the missing February.
+    expect(coords).toHaveLength(2);
+    const [firstX] = coords[0].split(",").map(Number);
+    const [secondX] = coords[1].split(",").map(Number);
+    // The second real point (March) must sit at the March x-position
+    // (index 2 of 3 canonical periods), not compressed into index 1 as if
+    // it were the series' second point.
+    expect(secondX).toBeGreaterThan(firstX);
+    const fullSeriesPoints = (polylines[0].getAttribute("points") ?? "")
+      .trim()
+      .split(/\s+/);
+    const marchXFromFullSeries = Number(fullSeriesPoints[2].split(",")[0]);
+    expect(secondX).toBeCloseTo(marchXFromFullSeries, 1);
+  });
+});

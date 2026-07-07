@@ -36,7 +36,18 @@ export function SvgChart({
   formatValue = (value) => String(value),
   formatPeriod = (period) => period,
 }: SvgChartProps) {
-  const periods = series[0]?.points.map((point) => point.period) ?? [];
+  // Period-keyed, not positional: the canonical x-axis is the UNION of
+  // every series' periods, and each series' own points are placed at
+  // THEIR period's index in that canonical list -- never at their
+  // position within that series' own (possibly shorter) points array.
+  // Otherwise a series missing a middle period would have every later
+  // point compressed one slot to the left.
+  const periodSet = new Set<string>();
+  for (const s of series) {
+    for (const point of s.points) periodSet.add(point.period);
+  }
+  const periods = Array.from(periodSet).sort();
+  const periodIndex = new Map(periods.map((period, index) => [period, index]));
   const allValues = series.flatMap((s) => s.points.map((point) => point.value));
   const minValue = Math.min(...allValues, 0);
   const maxValue = Math.max(...allValues, 0);
@@ -79,10 +90,15 @@ export function SvgChart({
             strokeLinejoin="round"
             strokeLinecap="round"
             points={s.points
-              .map(
-                (point, index) =>
-                  `${round(xForIndex(index))},${round(yForValue(point.value))}`,
-              )
+              // A period this series has no point for is simply skipped --
+              // never fabricated as a zero-value plot point.
+              .map((point) => {
+                const index = periodIndex.get(point.period);
+                return index === undefined
+                  ? null
+                  : `${round(xForIndex(index))},${round(yForValue(point.value))}`;
+              })
+              .filter((coord): coord is string => coord !== null)
               .join(" ")}
           />
         ))}
