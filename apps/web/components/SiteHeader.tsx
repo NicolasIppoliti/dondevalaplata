@@ -1,34 +1,37 @@
 import Link from "next/link";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Inicio" },
   { href: "/coparticipacion", label: "Coparticipación" },
   { href: "/fallos", label: "Fallos HTC" },
   { href: "/fuentes", label: "Fuentes" },
   { href: "/acerca", label: "Acerca de" },
 ] as const;
 
+/**
+ * Newspaper masthead (DESIGN.md "Navegación"): 2-3px ink bottom rule, brand
+ * wordmark in Fraunces with a stamp-red opening "¿" (via `::first-letter`,
+ * not a wrapping span -- splitting the brand text across elements breaks
+ * `getByText("¿Dónde va la plata?")` in the rebrand invariant test, since
+ * Testing Library matches an element's OWN direct text nodes, not its full
+ * recursive `textContent`). The brand link itself has no underline: it is
+ * a wordmark, not a body-copy link.
+ */
 export function SiteHeader() {
   return (
-    <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-4 px-6 py-4">
+    <header className="border-b-[3px] border-ink bg-paper">
+      <div className="mx-auto flex max-w-[1080px] flex-wrap items-baseline justify-between gap-x-6 gap-y-3 px-5 py-6">
         <Link
           href="/"
-          className="text-base font-semibold tracking-tight text-slate-900 hover:text-slate-700"
+          className="font-display text-[clamp(20px,3vw,28px)] font-bold tracking-tight text-ink no-underline first-letter:text-stamp hover:text-ink"
         >
           ¿Dónde va la plata?
           <span className="sr-only"> — Coronel Rosales</span>
         </Link>
         <nav aria-label="Navegación principal">
-          <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+          <ul className="flex flex-wrap gap-x-6 gap-y-2 text-[15px]">
             {NAV_ITEMS.map((item) => (
               <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="text-slate-700 underline-offset-4 hover:text-slate-950 hover:underline"
-                >
-                  {item.label}
-                </Link>
+                <Link href={item.href}>{item.label}</Link>
               </li>
             ))}
           </ul>
