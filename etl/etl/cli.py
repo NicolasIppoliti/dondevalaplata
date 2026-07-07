@@ -17,12 +17,14 @@ archive, which makes it safe to run offline and to unit test in isolation.
 from __future__ import annotations
 
 import argparse
+import json
 from collections.abc import Sequence
 from pathlib import Path
 
 from .archive import Fetcher, run_archive_all
 from .config import load_sources
 from .http_client import RequestsFetcher
+from .ipc import build_ipc
 from .manifest import load_manifest, save_manifest
 from .mcr_docs import discover_documentos
 from .mcr_docs import to_source_entries as mcr_docs_to_entries
@@ -36,6 +38,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_SOURCES_PATH = REPO_ROOT / "etl" / "sources.yaml"
 DEFAULT_MANIFEST_PATH = REPO_ROOT / "archive-manifest.json"
 DEFAULT_ARCHIVE_ROOT = REPO_ROOT / "archive"
+DEFAULT_DATA_ROOT = REPO_ROOT / "data"
 
 # From Nº31 (2023) onward, per design D4/tasks Slice 2 scope note.
 SIBOM_FROM_NUMBER = 31
@@ -159,9 +162,14 @@ def run_sync_r2(args: argparse.Namespace) -> int:
 
 
 def run_build_ipc(args: argparse.Namespace) -> int:
-    """Rebase the INDEC IPC series to constant pesos. Not yet implemented."""
-    print("etl build-ipc: not implemented yet (see Slice 3)")
-    return 1
+    """Rebase the INDEC IPC series to constant pesos, writing `data/ipc/ipc-nacional.json`."""
+    result = build_ipc(args.manifest_path)
+    output_path = args.data_root / "ipc" / "ipc-nacional.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(result, indent=2, ensure_ascii=False) + "\n"
+    output_path.write_text(payload, encoding="utf-8")
+    print(f"etl build-ipc: wrote {output_path} (base month {result['baseMonth']})")
+    return 0
 
 
 def run_build_coparticipacion(args: argparse.Namespace) -> int:
@@ -234,6 +242,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     build_ipc_parser = subparsers.add_parser(
         "build-ipc", help="Rebase the INDEC IPC series to constant pesos."
+    )
+    build_ipc_parser.add_argument(
+        "--manifest-path", type=Path, default=DEFAULT_MANIFEST_PATH,
+    )
+    build_ipc_parser.add_argument(
+        "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
     )
     build_ipc_parser.set_defaults(func=run_build_ipc)
 
