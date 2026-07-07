@@ -16,22 +16,20 @@ export function SourcesFooter({ links, note }: SourcesFooterProps) {
   return (
     <section
       aria-labelledby="fuentes-heading"
-      className="mt-12 border-t border-slate-200 pt-6 text-sm text-slate-600"
+      className="mt-12 border-t border-rule pt-6"
     >
-      <h2 id="fuentes-heading" className="font-semibold text-slate-800">
+      <h2
+        id="fuentes-heading"
+        className="font-mono text-xs tracking-[0.1em] text-muted uppercase"
+      >
         Fuentes y procedencia
       </h2>
       <ul className="mt-3 space-y-4">
         {links.map((link) => (
           <li key={link.id}>
-            <p className="text-slate-800">{link.source}</p>
-            <p className="flex flex-wrap gap-x-2">
-              <a
-                href={link.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2"
-              >
+            <p className="text-ink">{link.source}</p>
+            <p className="flex flex-wrap gap-x-2 text-sm">
+              <a href={link.sourceUrl} target="_blank" rel="noopener noreferrer">
                 Fuente original
                 <span className="sr-only"> (se abre en una pestaña nueva)</span>
               </a>
@@ -41,7 +39,6 @@ export function SourcesFooter({ links, note }: SourcesFooterProps) {
                   href={link.archivedUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline underline-offset-2"
                 >
                   Copia archivada
                   <span className="sr-only">
@@ -50,17 +47,17 @@ export function SourcesFooter({ links, note }: SourcesFooterProps) {
                   </span>
                 </a>
               ) : (
-                <span>Copia archivada no disponible</span>
+                <span className="text-muted">Copia archivada no disponible</span>
               )}
             </p>
-            <p className="text-xs text-slate-500">
+            <p className="font-mono text-[11.5px] text-muted">
               sha256 {shortHash(link.sha256)} · archivado el{" "}
               {formatDateEsAr(link.fetchedAt.slice(0, 10))}
             </p>
           </li>
         ))}
       </ul>
-      {note ? <p className="mt-4 text-slate-700">{note}</p> : null}
+      {note ? <p className="mt-4 max-w-[62ch] text-ink">{note}</p> : null}
     </section>
   );
 }

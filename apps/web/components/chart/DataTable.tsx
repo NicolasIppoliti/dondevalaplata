@@ -13,6 +13,14 @@ interface DataTableProps {
   formatValue?: (value: number) => string;
   formatPeriod?: (period: string) => string;
   periodColumnLabel?: string;
+  /**
+   * Colors each value by its arithmetic sign vs. the SAME series' previous
+   * period (olive = non-negative, stamp = negative) — a real variation of
+   * a real series, never a political judgment (DESIGN.md's chromatic
+   * neutrality rule). Off by default so existing callers keep plain ink
+   * numbers.
+   */
+  colorizeBySign?: boolean;
 }
 
 export function DataTable({
@@ -21,6 +29,7 @@ export function DataTable({
   formatValue = (value) => String(value),
   formatPeriod = (period) => period,
   periodColumnLabel = "Período",
+  colorizeBySign = false,
 }: DataTableProps) {
   // Period-keyed, not positional: a series missing a middle period (e.g.
   // not-yet-published data for one municipio) must never shift another
@@ -37,12 +46,12 @@ export function DataTable({
   );
 
   return (
-    <table className="w-full border-collapse text-sm">
-      <caption className="mb-2 text-left text-sm text-slate-600">
+    <table className="w-full border-collapse text-[15px]">
+      <caption className="mb-2 text-left font-mono text-xs tracking-[0.1em] text-muted uppercase">
         {caption}
       </caption>
       <thead>
-        <tr className="border-b border-slate-300">
+        <tr className="border-b-2 border-ink">
           <th scope="col" className="py-2 pr-4 text-left font-semibold">
             {periodColumnLabel}
           </th>
@@ -58,15 +67,27 @@ export function DataTable({
         </tr>
       </thead>
       <tbody>
-        {periods.map((period) => (
-          <tr key={period} className="border-b border-slate-200">
+        {periods.map((period, periodIndex) => (
+          <tr key={period} className="border-b border-rule">
             <th scope="row" className="py-1.5 pr-4 text-left font-normal">
               {formatPeriod(period)}
             </th>
             {series.map((s, seriesIndex) => {
               const value = valuesByPeriod[seriesIndex].get(period);
+              let signClass = "";
+              if (colorizeBySign && value !== undefined && periodIndex > 0) {
+                const previousPeriod = periods[periodIndex - 1];
+                const previousValue =
+                  valuesByPeriod[seriesIndex].get(previousPeriod);
+                if (previousValue !== undefined) {
+                  signClass = value >= previousValue ? "text-olive" : "text-stamp";
+                }
+              }
               return (
-                <td key={s.id} className="py-1.5 pr-4 text-right tabular-nums">
+                <td
+                  key={s.id}
+                  className={`py-1.5 pr-4 text-right font-mono tabular-nums ${signClass}`}
+                >
                   {/* Explicit "no data" marker -- never a fabricated "0",
                       which would misrepresent an unpublished month as an
                       actual zero-value transfer. */}
