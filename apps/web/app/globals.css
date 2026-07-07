@@ -1,24 +1,85 @@
 @import "tailwindcss";
 
 /*
- * Deliberately light-only theme (sober, institutional, civic-neutral —
- * never a party palette). Fixing color-scheme here is load-bearing: an
+ * Design system "El Recibo del Municipio" (DESIGN.md) -- newspaper/receipt
+ * editorial doctrine. Deliberately light-only (see D below): a paper
+ * texture has no dark mode, and this portal's sober, civic-neutral palette
+ * is never a party palette. Fixing color-scheme here is load-bearing: an
  * earlier `@media (prefers-color-scheme: dark)` variant, combined with an
  * unlayered `body { background: var(--background) }` rule, silently beat
- * Tailwind's layered `bg-white`/`text-slate-900` utilities on visitors whose
- * OS/browser prefers dark mode (unlayered CSS always wins over `@layer`
- * output regardless of selector specificity) — Lighthouse's headless Chrome
- * caught this as a `color-contrast` failure on every route.
+ * Tailwind's layered utilities on visitors whose OS/browser prefers dark
+ * mode (unlayered CSS always wins over `@layer` output regardless of
+ * selector specificity) -- Lighthouse's headless Chrome caught this as a
+ * `color-contrast` failure on every route.
  */
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
   color-scheme: light;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Color -- DESIGN.md "Color" table. */
+  --color-paper: #f2efe4;
+  --color-surface: #fffdf7;
+  --color-ink: #1a1a17;
+  --color-muted: #6b6558;
+  --color-stamp: #c4361e;
+  --color-olive: #2f5d3a;
+  --color-ocre: #f2d9a8;
+  --color-rule: #d8d2c0;
+
+  /* Typography -- DESIGN.md "Tipografía": four voices, one register each.
+   * `--font-sans` / `--font-mono` are Tailwind's own default namespace, so
+   * the built-in `font-sans` / `font-mono` utilities resolve to Instrument
+   * Sans (body/UI workhorse) and Spline Sans Mono (every figure, date,
+   * percentage and hash -- no exception) without any extra utility name. */
+  --font-sans: var(--font-instrument-sans);
+  --font-mono: var(--font-spline-sans-mono);
+  --font-display: var(--font-fraunces);
+  --font-quote: var(--font-newsreader);
+
+  /* Border radius -- the receipt is straight-edged. Zero everywhere,
+   * including whatever radius Tailwind's own `rounded-*` scale would
+   * otherwise apply if a utility class is used by mistake. */
+  --radius-none: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-full: 0px;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  /* Border-radius: 0 in every element, doctrine per DESIGN.md ("El recibo
+   * es recto"), regardless of which utility a future edit reaches for. */
+  * {
+    border-radius: 0;
+  }
+
+  /* Link treatment: stamp-red underline stamp, offset 3px, thickness 2px. */
+  a {
+    color: var(--color-ink);
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-stamp);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 2px;
+    transition: color 200ms ease-out;
+  }
+  a:hover {
+    color: var(--color-stamp);
+  }
+
+  /* Focus visible: 2px stamp outline, never suppressed. */
+  :focus-visible {
+    outline: 2px solid var(--color-stamp);
+    outline-offset: 2px;
+  }
 }
