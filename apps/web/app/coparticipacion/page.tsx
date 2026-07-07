@@ -140,21 +140,49 @@ export default function CoparticipacionPage() {
             &quot;Real&quot; = ya descontada la inflación, para comparar meses
             de años distintos.
           </p>
-          <div className="mt-4 h-[50vh] max-h-[480px] min-h-[280px] w-full sm:h-[420px] sm:max-h-none">
-            <SvgChart
-              series={heroRealSeries}
-              ariaLabel={`Serie mensual de Coronel Rosales, en pesos constantes de ${baseMonthLabel}; el detalle exacto está en la tabla dentro de "Ver todos los números"`}
-              formatValue={formatArsHuman}
-              formatPeriod={formatPeriodEsAr}
-              showLastPointLabel
-              showLegend={false}
-              gridLineCount={heroGridLineCount}
-              heightClassName="w-full"
-              fillHeight
-              viewBoxWidth={380}
-              viewBoxHeight={460}
-              axisUnitLabel={`Montos en pesos, ajustados por inflación (base ${baseMonthLabel})`}
-            />
+          <div className="mt-4 w-full">
+            {/* Mobile: portrait viewBox, tuned to read as a genuinely tall
+                "hero" figure on a phone screen (DESIGN.md). */}
+            <div className="h-[50vh] max-h-[480px] min-h-[280px] w-full sm:hidden">
+              <SvgChart
+                series={heroRealSeries}
+                ariaLabel={`Serie mensual de Coronel Rosales, en pesos constantes de ${baseMonthLabel}; el detalle exacto está en la tabla dentro de "Ver todos los números"`}
+                formatValue={formatArsHuman}
+                formatPeriod={formatPeriodEsAr}
+                showLastPointLabel
+                showLegend={false}
+                gridLineCount={heroGridLineCount}
+                heightClassName="w-full"
+                fillHeight
+                viewBoxWidth={380}
+                viewBoxHeight={460}
+                axisUnitLabel={`Montos en pesos, ajustados por inflación (base ${baseMonthLabel})`}
+              />
+            </div>
+            {/* Desktop/tablet (>=sm): reusing the mobile portrait viewBox
+                here would letterbox -- a wide bounded container fitting a
+                380x460 box via `preserveAspectRatio="xMidYMid meet"`
+                renders small and centered, with large empty side margins.
+                A landscape viewBox spreads the SAME series across more
+                horizontal space instead, filling the container width at
+                the same fixed height, with identical gridlines/olive
+                line/mono labels -- not a stretched/distorted mobile chart. */}
+            <div className="hidden h-[420px] w-full sm:block">
+              <SvgChart
+                series={heroRealSeries}
+                ariaLabel={`Serie mensual de Coronel Rosales, en pesos constantes de ${baseMonthLabel}; el detalle exacto está en la tabla dentro de "Ver todos los números"`}
+                formatValue={formatArsHuman}
+                formatPeriod={formatPeriodEsAr}
+                showLastPointLabel
+                showLegend={false}
+                gridLineCount={heroGridLineCount}
+                heightClassName="w-full"
+                fillHeight
+                viewBoxWidth={880}
+                viewBoxHeight={460}
+                axisUnitLabel={`Montos en pesos, ajustados por inflación (base ${baseMonthLabel})`}
+              />
+            </div>
           </div>
 
           <details className="mt-4 border border-rule p-3">

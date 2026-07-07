@@ -28,6 +28,24 @@ const DEFAULT_GRID_LINE_COUNT = 3;
 const AXIS_LABEL_FONT_SIZE = 11;
 const AXIS_LABEL_CHAR_WIDTH = AXIS_LABEL_FONT_SIZE * 0.62;
 const AXIS_LABEL_GAP = 8;
+// Default end-of-line label offset (existing behavior, unchanged for every
+// caller that doesn't set `fillHeight`): 12px straight above the last
+// point, right edge flush with the point's x.
+const LAST_POINT_LABEL_OFFSET_Y = 12;
+// Hero-only (fillHeight) end-of-line label offset: the hero chart is a
+// single, prominent series where a steep final segment (a big month-to-
+// month jump) can bring the line close enough to the default 12px offset
+// that the bold value label visually sits on top of the stroke. Nudging
+// the anchor up-and-right reads as clearly "above and beside" the point
+// instead. The rightward nudge is intentionally smaller than
+// `BASE_PADDING.right` (16px) so, combined with the unchanged
+// `textAnchor="end"` (text still extends LEFTWARD from the anchor), the
+// label can never cross the viewBox's right edge at any viewBoxWidth --
+// no extra clamping needed. The toggle ("ver también sin ajustar") chart
+// also sets `showLastPointLabel` but never `fillHeight`, so it keeps the
+// original offset untouched.
+const HERO_LAST_POINT_LABEL_OFFSET_X = 8;
+const HERO_LAST_POINT_LABEL_OFFSET_Y = 26;
 
 // Design-token colors, referenced as CSS custom properties. Kept as plain
 // constants because <stroke>/<fill> are SVG attributes, not classNames --
@@ -250,8 +268,16 @@ export function SvgChart({
               fill="var(--color-olive)"
             />
             <text
-              x={lastPointCoords.x}
-              y={lastPointCoords.y - 12}
+              x={
+                fillHeight
+                  ? lastPointCoords.x + HERO_LAST_POINT_LABEL_OFFSET_X
+                  : lastPointCoords.x
+              }
+              y={
+                fillHeight
+                  ? lastPointCoords.y - HERO_LAST_POINT_LABEL_OFFSET_Y
+                  : lastPointCoords.y - LAST_POINT_LABEL_OFFSET_Y
+              }
               textAnchor="end"
               fontSize={13}
               fontWeight={600}
