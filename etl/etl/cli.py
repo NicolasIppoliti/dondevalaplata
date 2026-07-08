@@ -7,6 +7,7 @@ Subcommands:
   build-coparticipacion Build the coparticipacion display JSON from the archive.
   build-fallos          Build the HTC fallos display JSON from the archive.
   build-transparencia   Build the ASAP transparency-score display JSON from the curated source.
+  build-cadencia        Build the live ASAP publication-cadence + deuda counter display JSON.
   build                 Run all build-* steps in sequence.
 
 ``archive`` and ``sync-r2`` are the only commands that perform network I/O
@@ -23,6 +24,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from .archive import Fetcher, run_archive_all
+from .cadencia import build_cadencia
 from .config import load_sources
 from .coparticipacion import COPARTICIPACION_CSV_MANIFEST_ID, build_coparticipacion
 from .fallos import build_fallos
@@ -45,6 +47,7 @@ DEFAULT_ARCHIVE_ROOT = REPO_ROOT / "archive"
 DEFAULT_DATA_ROOT = REPO_ROOT / "data"
 DEFAULT_FICHA_2022_PATH = REPO_ROOT / "etl" / "fallos_ficha_2022.yaml"
 DEFAULT_TRANSPARENCIA_CURATED_PATH = REPO_ROOT / "etl" / "asap_transparencia.yaml"
+DEFAULT_CADENCIA_CURATED_PATH = REPO_ROOT / "etl" / "cadencia.yaml"
 
 # From Nº31 (2023) onward, per design D4/tasks Slice 2 scope note.
 SIBOM_FROM_NUMBER = 31
@@ -232,6 +235,24 @@ def run_build_transparencia(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_build_cadencia(args: argparse.Namespace) -> int:
+    """Build `data/cadencia.json`: live ASAP publication-cadence dashboard + deuda counter.
+
+    Reads the live wp-json documentos snapshot via the manifest (must be
+    archived first via `etl archive --capability mcr-docs-snapshot`), the
+    curated cadence overlay (`etl/cadencia.yaml`), and the curated ASAP
+    score (`etl/asap_transparencia.yaml`, single source of truth for
+    got/max).
+    """
+    result = build_cadencia(args.manifest_path, args.cadencia_curated_path, args.asap_curated_path)
+    output_path = args.data_root / "cadencia.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(result, indent=2, ensure_ascii=False) + "\n"
+    output_path.write_text(payload, encoding="utf-8")
+    print(f"etl build-cadencia: wrote {output_path}")
+    return 0
+
+
 def run_build(args: argparse.Namespace) -> int:
     """Run all build-* steps in sequence. Not yet implemented."""
     print("etl build: not implemented yet (see Slice 3)")
@@ -336,6 +357,24 @@ def build_parser() -> argparse.ArgumentParser:
         "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
     )
     build_transparencia_parser.set_defaults(func=run_build_transparencia)
+
+    build_cadencia_parser = subparsers.add_parser(
+        "build-cadencia",
+        help="Build the live ASAP publication-cadence + deuda counter display JSON.",
+    )
+    build_cadencia_parser.add_argument(
+        "--manifest-path", type=Path, default=DEFAULT_MANIFEST_PATH,
+    )
+    build_cadencia_parser.add_argument(
+        "--cadencia-curated-path", type=Path, default=DEFAULT_CADENCIA_CURATED_PATH,
+    )
+    build_cadencia_parser.add_argument(
+        "--asap-curated-path", type=Path, default=DEFAULT_TRANSPARENCIA_CURATED_PATH,
+    )
+    build_cadencia_parser.add_argument(
+        "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
+    )
+    build_cadencia_parser.set_defaults(func=run_build_cadencia)
 
     build_parser_cmd = subparsers.add_parser(
         "build", help="Run all build-* steps in sequence."

@@ -1,0 +1,116 @@
+# Curated overlay for `etl build-cadencia` (data/cadencia.json).
+#
+# Follows the same doctrine as `etl/asap_transparencia.yaml`: the `got`/`max`
+# per ASAP dimension are NEVER duplicated here -- `cadencia.py` reads them
+# straight from the curated ASAP score (single source of truth, honesty
+# check already enforced by `transparencia.assert_honest`). What lives here
+# is (1) which live mcr.gob.ar/wp-json/v2/documentos title keywords identify
+# each dimension's underlying document series, so the build can derive the
+# CURRENT latest-published-period + lag live at build time, and (2) the
+# human-verified, sourced, factual explanation of each weak dimension's gap
+# (see engram topic data/gap-100-y-detalle-gasto, 4-agent research + direct
+# PDF reads, July 2026) -- never an evaluative judgment of a person or
+# administration (DESIGN.md neutrality rule).
+#
+# Live tripwire: `derive_dimension_cadence` fails loudly if the freshest
+# live-matched document for a dimension has moved to a period the curated
+# `reason`/`to_reach_10` text no longer describes accurately (see
+# `expected_latest_period_contains`) -- this is the same "never silently
+# drift" doctrine as `manifest.py`'s content-drift handling and
+# `transparencia.assert_honest`: a human must re-curate the prose once the
+# municipality actually publishes something new, the build must never keep
+# shipping stale reasoning next to fresh live data.
+
+asap_report: "Mayo 2026"
+asap_cutoff_label: "31 de marzo de 2026"
+
+killer_fact: >-
+  En el informe de noviembre 2025, estas tres dimensiones (Ejecución
+  presupuestaria trimestral, Gastos por finalidad y función, Stock de
+  deuda) estaban en el máximo -- 10 sobre 10 cada una. La caída a 5/3/3 en
+  el informe de mayo 2026 no es un problema de capacidad del municipio:
+  es un problema de cadencia de publicación. Llegar a 100 ya se demostró
+  posible.
+killer_fact_source_ref: "asap-transparencia/informe-noviembre-2025"
+
+dimensions:
+  - name: "Acceso web fácil a la información"
+    keywords: []
+    reason: "Dimensión al máximo en el informe. No depende de una serie documental trimestral, sino de que la información esté accesible en la web oficial."
+    to_reach_10: "Ya está en el máximo -- no falta nada."
+
+  - name: "Presupuesto vigente publicado"
+    keywords: ["presupuesto de gastos", "estructura programática"]
+    expected_latest_period_contains: null
+    reason: "Dimensión al máximo en el informe. El Presupuesto vigente está publicado y actualizado en la web oficial."
+    to_reach_10: "Ya está en el máximo -- no falta nada."
+
+  - name: "Situación económico-financiera (SEF) trimestral"
+    keywords:
+      - "situación económica financiera"
+      - "situación económico financiero"
+      - "balance de sumas y saldos"
+    expected_latest_period_contains: null
+    reason: "Dimensión al máximo en el informe. La SEF se publica trimestralmente sin rezago -- el último dato online ya cubre el semestre en curso."
+    to_reach_10: "Ya está en el máximo -- no falta nada."
+
+  - name: "Ejecución presupuestaria trimestral"
+    sub_series:
+      - label: "Ejecución de Gastos"
+        keywords: ["ejecución presupuestaria de gastos"]
+        exclude_keywords: ["finalidad y función"]
+        expected_latest_period_contains: "1"
+      - label: "Ejecución de Recursos"
+        keywords: ["ejecución presupuestaria de recursos"]
+        expected_latest_period_contains: "4"
+    reason: >-
+      Rezago entre las dos series de la misma dimensión: al corte del
+      informe de mayo 2026, Ejecución de Gastos ya estaba publicada al 1er
+      trimestre 2026, pero Ejecución de Recursos seguía publicada solo
+      hasta el 4to trimestre 2025 -- un trimestre de rezago entre ambas.
+    to_reach_10: >-
+      Publicar Ejecución de Recursos al mismo trimestre que Ejecución de
+      Gastos, con un rezago de a lo sumo 1 mes respecto del cierre del
+      trimestre. (+5 puntos)
+
+  - name: "Gastos por finalidad y función"
+    keywords: ["finalidad y función"]
+    expected_latest_period_contains: "4"
+    reason: >-
+      Al 31/03/2026 (corte del informe de mayo 2026), lo último publicado
+      online era el 3er trimestre 2025 -- medio año de rezago. El 4to
+      trimestre 2025 recién se publicó el 15/04/2026, después del corte,
+      así que no llegó a contar para este informe.
+    to_reach_10: >-
+      Publicar esta serie al 1er trimestre 2026, con un rezago de a lo
+      sumo 1 mes antes del próximo corte de ASAP. (+7 puntos)
+
+  - name: "Stock de deuda y perfil de vencimientos"
+    keywords: ["stock de deuda"]
+    expected_latest_period_contains: "3"
+    reason: >-
+      El municipio dejó de actualizar esta serie: el último dato publicado
+      es el 3er trimestre 2025 (cierre 30/09/2025), sin 4to trimestre 2025
+      ni 1er trimestre 2026 publicados todavía.
+    to_reach_10: >-
+      Publicar Stock de deuda al 4to trimestre 2025 y al 1er trimestre
+      2026, incluyendo perfil de vencimientos y deuda flotante. (+7
+      puntos)
+
+deuda:
+  dimension_name: "Stock de deuda y perfil de vencimientos"
+  last_period_label: "3er trimestre 2025"
+  last_period_end: "2025-09-30"
+  last_figure_ars: 46876896.86
+  last_figure_label: "$ 46.876.896,86"
+  ordenanza_ref: "Ordenanza 3638 (Acceso a la Información Pública de Coronel Rosales)"
+  ordenanza_article: "Art. 11"
+  ordenanza_note: >-
+    El Art. 11 de la Ordenanza 3638 obliga a la web oficial a publicar,
+    entre otra información, el detalle de gastos de compras y
+    contrataciones -- el stock de deuda pública es parte de esa
+    transparencia fiscal exigida por la propia normativa local.
+  source_ref: "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
+
+source_refs:
+  - "mcr-docs-snapshot/documentos"
