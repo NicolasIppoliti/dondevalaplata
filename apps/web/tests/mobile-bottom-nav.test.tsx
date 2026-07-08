@@ -13,7 +13,7 @@ afterEach(() => {
 });
 
 describe("MobileBottomNav", () => {
-  it("renders a navigation landmark with the 4 mobile tabs", () => {
+  it("renders a navigation landmark with the 5 mobile tabs (feature G2 added Gastos)", () => {
     usePathnameMock.mockReturnValue("/");
     render(<MobileBottomNav />);
     const nav = screen.getByRole("navigation", {
@@ -22,6 +22,7 @@ describe("MobileBottomNav", () => {
     expect(nav).toBeTruthy();
     expect(screen.getByRole("link", { name: "Inicio" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Plata" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Gastos" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Multas" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Transparencia" })).toBeTruthy();
   });
@@ -46,5 +47,16 @@ describe("MobileBottomNav", () => {
     expect(
       screen.getByRole("link", { name: "Multas" }).getAttribute("aria-current"),
     ).toBe("page");
+  });
+
+  it("marks Gastos active on /gastos (feature G2)", () => {
+    usePathnameMock.mockReturnValue("/gastos");
+    render(<MobileBottomNav />);
+    expect(
+      screen.getByRole("link", { name: "Gastos" }).getAttribute("aria-current"),
+    ).toBe("page");
+    expect(
+      screen.getByRole("link", { name: "Plata" }).getAttribute("aria-current"),
+    ).toBeNull();
   });
 });

@@ -273,6 +273,16 @@ describe("Home — compact deuda counter (feature G1)", () => {
   });
 });
 
+describe("Home — gasto por partida row (feature G2)", () => {
+  it("links to /gastos with the whole row tappable, min tap target", () => {
+    render(<Home />);
+    const link = screen.getByRole("link", {
+      name: /en qu[eé] gast[oó] el municipio/i,
+    });
+    expect(link.getAttribute("href")).toBe("/gastos");
+  });
+});
+
 /**
  * Fidelity slice F3 (Mockup C, mobile only): the hero card leads on small
  * screens via CSS `order` (never DOM reshuffling), a compact mobile lede

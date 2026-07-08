@@ -91,6 +91,13 @@ describe("SiteHeader — active nav item", () => {
     expect(inactive.getAttribute("aria-current")).toBeNull();
   });
 
+  it("links to /gastos (feature G2, gasto por partida explorer)", () => {
+    render(<SiteHeader activeHref="/gastos" />);
+    const gastos = screen.getByRole("link", { name: /gastos/i });
+    expect(gastos.getAttribute("href")).toBe("/gastos");
+    expect(gastos.getAttribute("aria-current")).toBe("page");
+  });
+
   it("marks no nav item active when activeHref is null (default, e.g. home)", () => {
     render(<SiteHeader />);
     const links = screen.getAllByRole("link");

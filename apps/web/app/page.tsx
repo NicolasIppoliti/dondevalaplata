@@ -90,6 +90,17 @@ const FUENTES_ROW = {
   href: "/fuentes",
 } as const;
 
+// Feature G2: same simple "fila-pregunta tappable" pattern as FUENTES_ROW --
+// no dashboard component to preview here either (the explorer itself is a
+// client island unsuited to a static home preview), just a direct link into
+// the new /gastos route.
+const GASTO_PARTIDA_ROW = {
+  question: "¿En qué gastó el municipio, partida por partida?",
+  description:
+    "El máximo detalle público del presupuesto ejecutado, buscable.",
+  href: "/gastos",
+} as const;
+
 export default function Home() {
   const { coparticipacion, fallos, transparencia, cadencia, manifest } =
     getPortalData();
@@ -795,6 +806,27 @@ export default function Home() {
             sourceLinks={deudaSourceLinks}
             compact
           />
+
+          {/* Feature G2: same simple, whole-row-is-a-link pattern as the
+              "¿De dónde salen los datos?" row below -- the explorer is a
+              client island unsuited to a static home preview, so this is
+              just a direct link into /gastos. */}
+          <Link
+            href={GASTO_PARTIDA_ROW.href}
+            className="flex min-h-11 items-center justify-between gap-4 border-t border-rule py-5 no-underline hover:bg-surface"
+          >
+            <span>
+              <h2 className="font-display text-[clamp(20px,3vw,28px)] font-semibold text-ink">
+                {GASTO_PARTIDA_ROW.question}
+              </h2>
+              <span className="mt-1 block text-sm text-ink-2">
+                {GASTO_PARTIDA_ROW.description}
+              </span>
+            </span>
+            <span aria-hidden="true" className="font-display text-2xl text-stamp">
+              ›
+            </span>
+          </Link>
 
           {/* "¿De dónde salen los datos?" stays the simple, whole-row-is-a-
               link pattern -- no dashboard component to preview, just a
