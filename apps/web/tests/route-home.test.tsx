@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import Home from "@/app/page";
-import { formatArsHuman } from "@/lib/format";
+import { formatArsHuman, splitArsUnit } from "@/lib/format";
 import { computeCoparticipacionTrend } from "@/lib/insight";
 import { getPortalData, resolveSourceRef, shortHash } from "@/lib/sources";
 
@@ -15,14 +15,20 @@ const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
  * owning the pre-existing brand/mobile-fold invariants unchanged.
  */
 describe("Home — hero dashboard (slice 2)", () => {
-  it("shows the headline figure's final formatted value immediately (CountUp never flashes a bare 0)", () => {
+  it("shows the headline figure's exact value immediately, split into amount + unit for the card scale (no fake count-up)", () => {
     const { coparticipacion } = getPortalData();
     const coronelRosales = coparticipacion.series.find(
       (s) => s.municipioId === CORONEL_ROSALES_MUNICIPIO_ID,
     );
     const latest = coronelRosales?.points.at(-1);
+    const { amount, unit } = splitArsUnit(
+      formatArsHuman(Math.round(latest!.realArs)),
+    );
     render(<Home />);
-    expect(screen.getByText(formatArsHuman(latest!.realArs))).toBeTruthy();
+    expect(screen.getByText(amount)).toBeTruthy();
+    if (unit) {
+      expect(screen.getByText(unit)).toBeTruthy();
+    }
   });
 
   it("renders a decorative sparkline of the real series next to the headline figure", () => {

@@ -11,13 +11,17 @@ const NAV_ITEMS = [
 ] as const;
 
 /**
- * Newspaper masthead (DESIGN.md "Navegación"): 2-3px ink bottom rule, brand
- * wordmark in Fraunces with a stamp-red opening "¿" (via `::first-letter`,
- * not a wrapping span -- splitting the brand text across elements breaks
+ * Newspaper masthead (DESIGN.md "Navegación"), evolved for the "dashboard
+ * cívico premium" fidelity pass (Mockup A, F1) with a square logo badge +
+ * a locality subtitle under the wordmark. Brand wordmark stays in Fraunces
+ * with a stamp-red opening "¿" (via `::first-letter`, not a wrapping span
+ * -- splitting the brand text across elements breaks
  * `getByText("¿Dónde va la plata?")` in the rebrand invariant test, since
  * Testing Library matches an element's OWN direct text nodes, not its full
- * recursive `textContent`). The brand link itself has no underline: it is
- * a wordmark, not a body-copy link.
+ * recursive `textContent`). The whole brand block is one link with an
+ * explicit `aria-label` carrying the full accessible name (badge + wordmark
+ * + subtitle read as one unit, "$" marked `aria-hidden`) -- no underline:
+ * it is a wordmark, not a body-copy link.
  *
  * `activeHref` highlights the current section's nav item. This is threaded
  * in as a plain prop (from each top-level route's own `layout.tsx`, see
@@ -43,10 +47,23 @@ export function SiteHeader({
       <div className="mx-auto flex max-w-[1080px] flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-4">
         <Link
           href="/"
-          className="font-display text-[clamp(20px,3vw,28px)] font-bold tracking-tight text-ink no-underline first-letter:text-stamp hover:text-ink"
+          className="inline-flex items-center gap-2.5 no-underline"
+          aria-label="¿Dónde va la plata? — Coronel Rosales, inicio"
         >
-          ¿Dónde va la plata?
-          <span className="sr-only"> — Coronel Rosales</span>
+          <span
+            aria-hidden="true"
+            className="grid h-[38px] w-[38px] flex-none place-items-center rounded-sm bg-ink font-mono text-xl leading-none font-semibold text-surface"
+          >
+            $
+          </span>
+          <span className="flex flex-col leading-[1.15]">
+            <strong className="font-display text-[17px] font-bold tracking-tight text-ink not-italic first-letter:text-stamp">
+              ¿Dónde va la plata?
+            </strong>
+            <small className="font-mono text-xs text-muted not-italic">
+              Coronel Rosales · Punta Alta
+            </small>
+          </span>
         </Link>
         <nav aria-label="Navegación principal" className="hidden sm:block">
           <ul className="flex flex-wrap gap-x-6 gap-y-2 text-[15px]">

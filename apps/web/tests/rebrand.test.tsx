@@ -5,6 +5,8 @@ import { render, screen, within } from "@testing-library/react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import Home from "@/app/page";
+import { formatPeriodEsAr } from "@/lib/format";
+import { getPortalData } from "@/lib/sources";
 
 /**
  * Rebrand: the portal's public name is now "¿Dónde va la plata?" (full:
@@ -98,13 +100,65 @@ describe("SiteHeader — active nav item", () => {
   });
 });
 
-describe("Home — mobile-first fold + tappable rows", () => {
-  it("shows a one-line subhead explaining what the site is, without needing to scroll", () => {
+describe("SiteHeader — brand identity (fidelity slice F1, Mockup A)", () => {
+  it("shows the square '$' logo badge before the wordmark", () => {
+    render(<SiteHeader />);
+    expect(screen.getByText("$")).toBeTruthy();
+  });
+
+  it("shows the 'Coronel Rosales · Punta Alta' subtitle under the wordmark", () => {
+    render(<SiteHeader />);
+    expect(screen.getByText("Coronel Rosales · Punta Alta")).toBeTruthy();
+  });
+});
+
+describe("Home — two-column hero (fidelity slice F1, Mockup A)", () => {
+  it("shows the eyebrow + Fraunces headline with 'plata pública' in stamp red, without needing to scroll", () => {
+    render(<Home />);
+    expect(screen.getByText("Portal vecinal independiente")).toBeTruthy();
+    const headline = screen.getByRole("heading", {
+      level: 2,
+      name: "Seguimos la plata pública de Coronel Rosales.",
+    });
+    expect(headline).toBeTruthy();
+    expect(within(headline).getByText("plata pública").tagName).toBe("SPAN");
+  });
+
+  it("shows the supporting line explaining the site's sourcing/neutrality promise", () => {
+    render(<Home />);
+    const paragraphs = screen.getAllByText(
+      (_content, node) =>
+        node?.tagName === "P" &&
+        (node.textContent ?? "").includes(
+          "Cada cifra enlaza su fuente oficial, una copia archivada y su huella",
+        ) &&
+        (node.textContent ?? "").includes(
+          "No opinamos sobre ninguna gestión: mostramos los números que se pueden chequear.",
+        ),
+    );
+    expect(paragraphs.length).toBeGreaterThan(0);
+  });
+
+  it("offers the two hero CTAs: primary 'Ver la coparticipación' + outline 'Cómo verificamos'", () => {
+    render(<Home />);
+    const primary = screen.getByRole("link", {
+      name: "Ver la coparticipación",
+    });
+    expect(primary).toHaveProperty(
+      "href",
+      expect.stringContaining("/coparticipacion"),
+    );
+    const secondary = screen.getByRole("link", { name: "Cómo verificamos" });
+    expect(secondary).toHaveProperty(
+      "href",
+      expect.stringContaining("/fuentes"),
+    );
+  });
+
+  it("shows the dashed freshness pill stating the data-lag caveat", () => {
     render(<Home />);
     expect(
-      screen.getByText(
-        "Portal vecinal independiente que sigue la plata pública de Coronel Rosales.",
-      ),
+      screen.getByText(/la Provincia publica con 2 a 3 meses de rezago/),
     ).toBeTruthy();
   });
 
@@ -123,29 +177,17 @@ describe("Home — mobile-first fold + tappable rows", () => {
     );
   });
 
-  it("offers at least one tappable index chip right under the hero number (peeks above the fold)", () => {
-    render(<Home />);
-    // Home also renders the SiteHeader nav now (for active-nav
-    // highlighting), which has its own "Fuentes" link -- scope the query
-    // to the index-chips list specifically.
-    const chips = within(screen.getByRole("list", { name: "Accesos rápidos" }));
-    expect(chips.getByRole("link", { name: "Plata que entra" })).toBeTruthy();
-    expect(chips.getByRole("link", { name: "Multas" })).toBeTruthy();
-    expect(chips.getByRole("link", { name: "Fuentes" })).toBeTruthy();
-  });
-
-  it("explains the hero number in plain language directly below it", () => {
+  it("declares the constant-pesos base month next to the headline figure (DESIGN.md 'toda cifra ajustada declara...')", () => {
+    const { coparticipacion } = getPortalData();
+    const baseMonthLabel = formatPeriodEsAr(coparticipacion.baseMonth);
     render(<Home />);
     expect(
-      screen.getByText(
-        "La coparticipación es la plata que la Provincia le gira al municipio todos los meses.",
-      ),
+      screen.getByText(`en pesos constantes de ${baseMonthLabel} (IPC INDEC)`),
     ).toBeTruthy();
   });
 
-  it("phrases the month-over-month badge in plain language (not jargon like 'real vs.')", () => {
+  it("phrases the month-over-month delta chip the way Mockup A does ('real vs. <mes>')", () => {
     render(<Home />);
-    expect(screen.getByText(/ya descontada la inflación/)).toBeTruthy();
-    expect(screen.queryByText(/real vs\./)).toBeNull();
+    expect(screen.getByText(/real vs\./)).toBeTruthy();
   });
 });

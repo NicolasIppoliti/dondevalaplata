@@ -7,38 +7,34 @@ import {
   formatArsHuman,
   formatPeriodEsAr,
   formatVariationEsAr,
+  splitArsUnit,
 } from "@/lib/format";
 import { getPortalData, resolveSourceRef, shortHash } from "@/lib/sources";
 
 const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
 
 /**
- * "Home = afiche" (DESIGN.md v2 "dashboard cívico premium"): one number
- * dominates the fold, then a row per section -- no landing-page marketing
- * copy, no carousels. Section questions are Fraunces headings per the
- * design system's doctrine that section titles ask a question; the whole
- * row is the link (not just a small "ver →" affordance), so a big
- * thumb-friendly tap target covers the entire question, with a trailing
- * chevron plus a one-line plain-language description of what's inside.
+ * Home hero (DESIGN.md v2 "dashboard cívico premium", fidelity slice F1 --
+ * see DESIGN.md decisions log): a TWO-COLUMN hero on desktop, matching the
+ * approved Mockup A composition exactly -- editorial column (eyebrow,
+ * Fraunces headline with "plata pública" in `--stamp`, supporting line,
+ * two CTAs, freshness pill) on the left, a FLOATING premium figure card on
+ * the right. Single column on mobile (grid collapses at `lg`).
  *
- * Slice 3 headline money count-up decision: the hero peso figure renders
- * `formatArsHuman(...)` directly, statically, with NO `<CountUp>` --
- * deliberately reversed from slice 1/2's original plan. A count-up on an
- * EXACT currency headline necessarily passes through intermediate values
- * that are, briefly, wrong: e.g. counting toward "$ 1.750 millones" spends
- * most of the animation showing figures like "$ 875 millones" or "$ 1.200
- * millones" that are not what the municipality actually received. On a
- * transparency portal whose entire premise is "never misrepresent a
- * figure", that is a real (if momentary) integrity problem, even though
- * the SSR/first-render value was always technically correct before this
- * slice (`useCountUp` never flashes a bare "0" -- the risk was the
- * animated PATH between mount and settle, not the start/end values).
- * `<CountUp>` stays in use exactly once elsewhere on the site: the
- * /transparencia 81/100 score (see that page's module docstring) -- a
- * RATING, not an exact peso amount, so every intermediate value while
- * counting up is still a truthful partial reading of the same rating,
- * never a misrepresented currency figure. See DESIGN.md's decisions log
- * for the same rationale recorded as a project-level decision.
+ * Slice 3's headline money count-up decision still holds: the hero peso
+ * figure renders `formatArsHuman(...)` directly, statically, with NO
+ * `<CountUp>` -- a count-up on an EXACT currency headline necessarily
+ * passes through intermediate values that are, briefly, wrong (e.g.
+ * counting toward "$ 1.750 millones" spends most of the animation showing
+ * figures that are not what the municipality actually received). F1 adds
+ * `splitArsUnit` (lib/format.ts) purely to render the "millones"/"mil
+ * millones" word at a smaller, muted scale beside the amount, matching the
+ * card's "refined scale" per the mockup -- it never re-derives or rounds
+ * the number again, so the exact-value guarantee is unchanged. `<CountUp>`
+ * stays in use exactly once elsewhere on the site: the /transparencia
+ * 81/100 score (a RATING, not an exact peso amount). See DESIGN.md's
+ * decisions log for the same rationale recorded as a project-level
+ * decision.
  */
 const SECTION_ROWS = [
   {
@@ -63,18 +59,6 @@ const SECTION_ROWS = [
   },
 ] as const;
 
-/**
- * Compact index chips right under the hero number so at least one
- * question-action is reachable above the fold on a short mobile viewport,
- * even before the full section-row nav further down. Same 3 destinations
- * as SECTION_ROWS, short labels for a single-line tap target.
- */
-const INDEX_CHIPS = [
-  { label: "Plata que entra", href: "/coparticipacion" },
-  { label: "Multas", href: "/fallos" },
-  { label: "Fuentes", href: "/fuentes" },
-] as const;
-
 export default function Home() {
   const { coparticipacion, manifest } = getPortalData();
   const coronelRosales = coparticipacion.series.find(
@@ -95,7 +79,12 @@ export default function Home() {
     ? formatPeriodEsAr(previousPoint.period).split(" de ")[0]
     : null;
   const baseMonthLabel = formatPeriodEsAr(coparticipacion.baseMonth);
-  const dataThroughLabel = formatPeriodEsAr(coparticipacion.dataThrough);
+  // "abril de 2026" -> "abril 2026": the compact freshness-pill phrasing
+  // Mockup A uses. Only a spacing/copy tweak of the same underlying,
+  // data-driven label -- never a different month.
+  const dataThroughCompactLabel = formatPeriodEsAr(
+    coparticipacion.dataThrough,
+  ).replace(" de ", " ");
   // The DATA-DRIVEN plain-language conclusion, same source as
   // /coparticipacion's leading sentence (lib/insight.ts) -- never a
   // hardcoded home-page claim.
@@ -107,6 +96,9 @@ export default function Home() {
     coparticipacion.sourceRefs[0],
     manifest,
   );
+  const { amount: heroAmount, unit: heroUnit } = latestPoint
+    ? splitArsUnit(formatArsHuman(Math.round(latestPoint.realArs)))
+    : { amount: "", unit: null };
 
   return (
     <>
@@ -116,136 +108,167 @@ export default function Home() {
       <SiteHeader activeHref={null} />
       <main
         id="main-content"
-        className="mx-auto w-full max-w-[1080px] flex-1 px-5 py-10"
+        className="mx-auto w-full max-w-[1080px] flex-1 px-5 py-10 sm:py-14"
       >
         {/* The masthead already carries the brand visually; this heading only
           gives the page a single accessible <h1> naming the site (rebrand
           invariant), without repeating the wordmark inside the poster. */}
         <h1 className="sr-only">¿Dónde va la plata? — Coronel Rosales</h1>
 
-        {/* One-line subhead, visible without scrolling: says what this site
-          IS before the hero number says what it's showing. */}
-        <p className="max-w-[46ch] text-base text-ink">
-          Portal vecinal independiente que sigue la plata pública de Coronel
-          Rosales.
-        </p>
-
-        {latestPoint ? (
-          <section aria-label="Cifra destacada del mes" className="mt-6">
-            {/* Kicker strengthened + darkened (stamp red, DESIGN.md's
-              canonical kicker color) and enlarged so it reads at arm's
-              length -- it's the sentence that resolves the title/number
-              mismatch by saying explicitly this is money that CAME IN. */}
-            <p className="font-mono text-sm font-semibold tracking-[0.1em] text-stamp uppercase sm:text-base">
-              Lo que Coronel Rosales recibió de la Provincia en{" "}
-              {formatPeriodEsAr(latestPoint.period)}
+        {/* Two-column hero: editorial column (left) + floating premium
+            figure card (right) on desktop; single column, card-first
+            visual weight preserved, on mobile. */}
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.02fr_1fr] lg:gap-12">
+          {/* LEFT: editorial column */}
+          <div>
+            <p className="font-mono text-[12.5px] font-semibold tracking-[0.09em] text-stamp uppercase">
+              Portal vecinal independiente
             </p>
-            <p className="mt-1 font-mono text-[clamp(52px,11vw,128px)] leading-[0.95] font-semibold tracking-tight text-ink tabular-nums">
-              {/* No CountUp here on purpose -- see this module's docstring
-                  "Slice 3 headline money count-up decision": an exact peso
-                  figure must never render a wrong intermediate value while
-                  animating. */}
-              {formatArsHuman(Math.round(latestPoint.realArs))}
+            <h2 className="mt-2 font-display text-[clamp(30px,6vw,52px)] font-bold leading-[1.02] tracking-tight text-ink">
+              Seguimos la <span className="text-stamp">plata pública</span> de
+              Coronel Rosales.
+            </h2>
+            <p className="mt-4 max-w-[46ch] text-[17.5px] text-ink-2">
+              Cada cifra enlaza su fuente oficial, una copia archivada y su
+              huella{" "}
+              <code className="rounded-[5px] border border-rule bg-surface-2 px-1.5 py-px font-mono text-[0.82em]">
+                sha256
+              </code>
+              . No opinamos sobre ninguna gestión: mostramos los números que
+              se pueden chequear.
             </p>
-            {variation !== null && previousMonthName ? (
-              <p
-                className={`mt-4 inline-block border-2 px-3 py-1 font-mono text-[clamp(15px,2.4vw,20px)] tabular-nums ${
-                  variation >= 0
-                    ? "border-olive text-olive"
-                    : "border-stamp text-stamp"
-                }`}
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/coparticipacion"
+                className="inline-flex min-h-11 items-center justify-center rounded-sm border-2 border-ink bg-ink px-5 font-sans text-[15px] font-semibold text-surface no-underline transition-colors hover:border-stamp hover:bg-stamp"
               >
-                <span className="sr-only">Variación real: </span>
-                <span aria-hidden="true">
-                  {variation >= 0 ? "▲" : "▼"}
-                </span>{" "}
-                {formatVariationEsAr(variation)} más que en {previousMonthName},
-                ya descontada la inflación
-              </p>
-            ) : null}
-
-            {/* Data-driven plain-language conclusion (same source as
-                /coparticipacion, lib/insight.ts) -- never hardcoded. */}
-            <p className="mt-4 max-w-[42ch] font-display text-[clamp(17px,2.4vw,20px)] font-semibold text-ink">
-              {trend.message}
+                Ver la coparticipación
+              </Link>
+              <Link
+                href="/fuentes"
+                className="inline-flex min-h-11 items-center justify-center rounded-sm border-2 border-ink px-5 font-sans text-[15px] font-semibold text-ink no-underline transition-colors hover:bg-ink hover:text-surface"
+              >
+                Cómo verificamos
+              </Link>
+            </div>
+            <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-dashed border-muted px-3 py-[5px] font-mono text-xs text-muted">
+              <span
+                aria-hidden="true"
+                className="h-[7px] w-[7px] flex-none rounded-full bg-olive"
+              />
+              Datos hasta {dataThroughCompactLabel} — la Provincia publica con
+              2 a 3 meses de rezago
             </p>
+          </div>
 
-            {points.length > 1 ? (
-              <div className="mt-4 max-w-[320px]">
-                <Sparkline
-                  points={points.map((point) => ({
-                    period: point.period,
-                    value: point.realArs,
-                  }))}
-                />
-              </div>
-            ) : null}
-
-            <p className="mt-4 max-w-[46ch] text-base text-ink">
-              La coparticipación es la plata que la Provincia le gira al
-              municipio todos los meses.
-            </p>
-
-            <ul
-              aria-label="Accesos rápidos"
-              className="mt-5 flex flex-wrap gap-3"
+          {/* RIGHT: floating premium figure card */}
+          {latestPoint ? (
+            <section
+              aria-label="Cifra destacada del mes"
+              className="rounded-lg border border-rule bg-surface p-[clamp(20px,3vw,30px)] shadow-card"
             >
-              {INDEX_CHIPS.map((chip) => (
-                <li key={chip.href}>
-                  <Link
-                    href={chip.href}
-                    className="inline-flex min-h-11 items-center border-2 border-ink px-4 font-mono text-sm text-ink no-underline hover:bg-ink hover:text-surface"
-                  >
-                    {chip.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="font-mono text-[12.5px] tracking-[0.04em] text-muted uppercase">
+                  Coparticipación recibida
+                </span>
+                <span className="font-mono text-[12.5px] text-ink-2">
+                  {formatPeriodEsAr(latestPoint.period)}
+                </span>
+              </div>
 
-            {/* Dual-link + sha256 provenance for the headline figure
-                (INVIOLABLE #2 -- every headline figure shows source, copia
-                archivada and a short sha256, never just a source name). */}
-            <p className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted">
-              <span>Fuente:</span>
-              <a
-                href={primarySourceRef.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Fuente original
-                <span className="sr-only"> (se abre en una pestaña nueva)</span>
-              </a>
-              <span aria-hidden="true">·</span>
-              {primarySourceRef.archivedUrl ? (
+              <p className="mt-1 flex flex-wrap items-baseline gap-x-2.5 gap-y-0 font-mono text-[clamp(38px,9vw,68px)] leading-[0.92] font-medium tracking-tight text-ink tabular-nums">
+                <span>{heroAmount}</span>
+                {heroUnit ? (
+                  <span className="text-[clamp(14px,2.6vw,18px)] font-medium text-muted">
+                    {heroUnit}
+                  </span>
+                ) : null}
+              </p>
+              <p className="mt-2 font-mono text-xs text-muted">
+                en pesos constantes de {baseMonthLabel} (IPC INDEC)
+              </p>
+
+              {points.length > 1 ? (
+                <div className="mt-4">
+                  <Sparkline
+                    points={points.map((point) => ({
+                      period: point.period,
+                      value: point.realArs,
+                    }))}
+                  />
+                </div>
+              ) : null}
+
+              {variation !== null && previousMonthName ? (
+                <div className="mt-3.5 flex flex-wrap items-center gap-2">
+                  <span
+                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[13px] font-semibold ${
+                      variation >= 0
+                        ? "bg-olive-tint text-olive"
+                        : "bg-stamp-tint text-stamp"
+                    }`}
+                  >
+                    <span className="sr-only">Variación real: </span>
+                    <span aria-hidden="true" className="font-bold">
+                      {variation >= 0 ? "▲" : "▼"}
+                    </span>{" "}
+                    {formatVariationEsAr(variation)} real vs.{" "}
+                    {previousMonthName}
+                  </span>
+                  <span className="font-mono text-[11.5px] text-muted">
+                    variación en plata de hoy
+                  </span>
+                </div>
+              ) : null}
+
+              {/* Data-driven plain-language conclusion (same source as
+                  /coparticipacion, lib/insight.ts) -- never hardcoded. */}
+              <p className="mt-4 border-t border-rule pt-4 font-display text-[clamp(17px,2.4vw,20px)] font-semibold text-ink">
+                {trend.message}
+              </p>
+
+              {/* Dual-link + sha256 provenance for the headline figure
+                  (INVIOLABLE #2 -- every headline figure shows source, copia
+                  archivada and a short sha256, never just a source name). */}
+              <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted">
+                <span>Fuente:</span>
                 <a
-                  href={primarySourceRef.archivedUrl}
+                  href={primarySourceRef.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Copia archivada
+                  Fuente original
                   <span className="sr-only">
                     {" "}
                     (se abre en una pestaña nueva)
                   </span>
                 </a>
-              ) : (
-                <span>Copia archivada no disponible</span>
-              )}
-              <span aria-hidden="true">·</span>
-              <span>sha256 {shortHash(primarySourceRef.sha256)}</span>
-              <span aria-hidden="true">·</span>
-              <span>datos hasta {dataThroughLabel}</span>
-              <span className="text-ink">· comparado en plata de hoy</span>
-              <span>(en pesos constantes de {baseMonthLabel}, IPC INDEC)</span>
-            </p>
-
-            <ColorLegend className="mt-6 max-w-[46ch]" headingLevel="h2" />
-          </section>
-        ) : null}
+                <span aria-hidden="true">·</span>
+                {primarySourceRef.archivedUrl ? (
+                  <a
+                    href={primarySourceRef.archivedUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Copia archivada
+                    <span className="sr-only">
+                      {" "}
+                      (se abre en una pestaña nueva)
+                    </span>
+                  </a>
+                ) : (
+                  <span>Copia archivada no disponible</span>
+                )}
+                <span aria-hidden="true">·</span>
+                <span>sha256 {shortHash(primarySourceRef.sha256)}</span>
+              </p>
+            </section>
+          ) : null}
+        </div>
 
         <nav
           aria-label="Secciones del portal"
-          className="mt-10 border-t border-rule"
+          className="mt-14 border-t border-rule sm:mt-20"
         >
           {SECTION_ROWS.map((row) => (
             <Link
@@ -270,6 +293,12 @@ export default function Home() {
             </Link>
           ))}
         </nav>
+
+        {/* Relocated out of the hero (Mockup A fidelity slice F1): the
+            neutrality explainer now lives lower on the page, near the
+            colored figures it explains (the variation chip above, the
+            section rows' arithmetic below), not inside the poster. */}
+        <ColorLegend className="mt-10" headingLevel="h2" />
       </main>
     </>
   );
