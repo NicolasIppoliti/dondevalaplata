@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { ColorLegend } from "@/components/ColorLegend";
-import { CountUp } from "@/components/CountUp";
 import { Sparkline } from "@/components/chart/Sparkline";
 import { SiteHeader } from "@/components/SiteHeader";
 import { computeCoparticipacionTrend } from "@/lib/insight";
-import { formatPeriodEsAr, formatVariationEsAr } from "@/lib/format";
+import {
+  formatArsHuman,
+  formatPeriodEsAr,
+  formatVariationEsAr,
+} from "@/lib/format";
 import { getPortalData, resolveSourceRef, shortHash } from "@/lib/sources";
 
 const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
@@ -17,6 +20,25 @@ const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
  * row is the link (not just a small "ver →" affordance), so a big
  * thumb-friendly tap target covers the entire question, with a trailing
  * chevron plus a one-line plain-language description of what's inside.
+ *
+ * Slice 3 headline money count-up decision: the hero peso figure renders
+ * `formatArsHuman(...)` directly, statically, with NO `<CountUp>` --
+ * deliberately reversed from slice 1/2's original plan. A count-up on an
+ * EXACT currency headline necessarily passes through intermediate values
+ * that are, briefly, wrong: e.g. counting toward "$ 1.750 millones" spends
+ * most of the animation showing figures like "$ 875 millones" or "$ 1.200
+ * millones" that are not what the municipality actually received. On a
+ * transparency portal whose entire premise is "never misrepresent a
+ * figure", that is a real (if momentary) integrity problem, even though
+ * the SSR/first-render value was always technically correct before this
+ * slice (`useCountUp` never flashes a bare "0" -- the risk was the
+ * animated PATH between mount and settle, not the start/end values).
+ * `<CountUp>` stays in use exactly once elsewhere on the site: the
+ * /transparencia 81/100 score (see that page's module docstring) -- a
+ * RATING, not an exact peso amount, so every intermediate value while
+ * counting up is still a truthful partial reading of the same rating,
+ * never a misrepresented currency figure. See DESIGN.md's decisions log
+ * for the same rationale recorded as a project-level decision.
  */
 const SECTION_ROWS = [
   {
@@ -119,10 +141,11 @@ export default function Home() {
               {formatPeriodEsAr(latestPoint.period)}
             </p>
             <p className="mt-1 font-mono text-[clamp(52px,11vw,128px)] leading-[0.95] font-semibold tracking-tight text-ink tabular-nums">
-              <CountUp
-                target={Math.round(latestPoint.realArs)}
-                variant="arsHuman"
-              />
+              {/* No CountUp here on purpose -- see this module's docstring
+                  "Slice 3 headline money count-up decision": an exact peso
+                  figure must never render a wrong intermediate value while
+                  animating. */}
+              {formatArsHuman(Math.round(latestPoint.realArs))}
             </p>
             {variation !== null && previousMonthName ? (
               <p
@@ -216,7 +239,7 @@ export default function Home() {
               <span>(en pesos constantes de {baseMonthLabel}, IPC INDEC)</span>
             </p>
 
-            <ColorLegend className="mt-6 max-w-[46ch]" />
+            <ColorLegend className="mt-6 max-w-[46ch]" headingLevel="h2" />
           </section>
         ) : null}
 
