@@ -1,37 +1,42 @@
 import Link from "next/link";
+import { ColorLegend } from "@/components/ColorLegend";
+import { CountUp } from "@/components/CountUp";
+import { Sparkline } from "@/components/chart/Sparkline";
 import { SiteHeader } from "@/components/SiteHeader";
-import {
-  formatArsHuman,
-  formatPeriodEsAr,
-  formatVariationEsAr,
-} from "@/lib/format";
-import { getPortalData } from "@/lib/sources";
+import { computeCoparticipacionTrend } from "@/lib/insight";
+import { formatPeriodEsAr, formatVariationEsAr } from "@/lib/format";
+import { getPortalData, resolveSourceRef, shortHash } from "@/lib/sources";
 
 const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
 
 /**
- * "Home = afiche" (DESIGN.md): one number dominates the fold, then a row
- * per section -- no landing-page marketing copy, no cards, no carousels.
- * Section questions are Fraunces headings per the design system's doctrine
- * that section titles ask a question; the whole row is the link (not just
- * a small "ver →" affordance), so a big thumb-friendly tap target covers
- * the entire question, with a trailing chevron instead of trailing text.
+ * "Home = afiche" (DESIGN.md v2 "dashboard cívico premium"): one number
+ * dominates the fold, then a row per section -- no landing-page marketing
+ * copy, no carousels. Section questions are Fraunces headings per the
+ * design system's doctrine that section titles ask a question; the whole
+ * row is the link (not just a small "ver →" affordance), so a big
+ * thumb-friendly tap target covers the entire question, with a trailing
+ * chevron plus a one-line plain-language description of what's inside.
  */
 const SECTION_ROWS = [
   {
     question: "¿Cuánto llegó este mes?",
+    description: "Coparticipación mensual, ajustada por inflación.",
     href: "/coparticipacion",
   },
   {
     question: "¿Qué dicen las multas del Tribunal de Cuentas?",
+    description: "Fallos con sanciones económicas, por ejercicio.",
     href: "/fallos",
   },
   {
     question: "¿Qué tan transparente es el municipio?",
+    description: "Índice fiscal de ASAP y qué falta para llegar a 100.",
     href: "/transparencia",
   },
   {
     question: "¿De dónde salen los datos?",
+    description: "Fuente oficial, copia archivada y sha256 de cada cifra.",
     href: "/fuentes",
   },
 ] as const;
@@ -49,7 +54,7 @@ const INDEX_CHIPS = [
 ] as const;
 
 export default function Home() {
-  const { coparticipacion } = getPortalData();
+  const { coparticipacion, manifest } = getPortalData();
   const coronelRosales = coparticipacion.series.find(
     (series) => series.municipioId === CORONEL_ROSALES_MUNICIPIO_ID,
   );
@@ -69,6 +74,17 @@ export default function Home() {
     : null;
   const baseMonthLabel = formatPeriodEsAr(coparticipacion.baseMonth);
   const dataThroughLabel = formatPeriodEsAr(coparticipacion.dataThrough);
+  // The DATA-DRIVEN plain-language conclusion, same source as
+  // /coparticipacion's leading sentence (lib/insight.ts) -- never a
+  // hardcoded home-page claim.
+  const trend = computeCoparticipacionTrend(points);
+  // Provenance for the headline figure (INVIOLABLE #2: source + copia
+  // archivada + sha256 corto on every headline figure) -- the primary
+  // coparticipación source is always the first sourceRefs id.
+  const primarySourceRef = resolveSourceRef(
+    coparticipacion.sourceRefs[0],
+    manifest,
+  );
 
   return (
     <>
@@ -103,7 +119,10 @@ export default function Home() {
               {formatPeriodEsAr(latestPoint.period)}
             </p>
             <p className="mt-1 font-mono text-[clamp(52px,11vw,128px)] leading-[0.95] font-semibold tracking-tight text-ink tabular-nums">
-              {formatArsHuman(latestPoint.realArs)}
+              <CountUp
+                target={Math.round(latestPoint.realArs)}
+                variant="arsHuman"
+              />
             </p>
             {variation !== null && previousMonthName ? (
               <p
@@ -121,6 +140,24 @@ export default function Home() {
                 ya descontada la inflación
               </p>
             ) : null}
+
+            {/* Data-driven plain-language conclusion (same source as
+                /coparticipacion, lib/insight.ts) -- never hardcoded. */}
+            <p className="mt-4 max-w-[42ch] font-display text-[clamp(17px,2.4vw,20px)] font-semibold text-ink">
+              {trend.message}
+            </p>
+
+            {points.length > 1 ? (
+              <div className="mt-4 max-w-[320px]">
+                <Sparkline
+                  points={points.map((point) => ({
+                    period: point.period,
+                    value: point.realArs,
+                  }))}
+                />
+              </div>
+            ) : null}
+
             <p className="mt-4 max-w-[46ch] text-base text-ink">
               La coparticipación es la plata que la Provincia le gira al
               municipio todos los meses.
@@ -142,14 +179,44 @@ export default function Home() {
               ))}
             </ul>
 
-            <p className="mt-5 font-mono text-xs text-muted">
-              Fuente: Ministerio de Economía PBA · datos hasta{" "}
-              {dataThroughLabel} ·{" "}
-              <span className="text-ink">comparado en plata de hoy</span>{" "}
-              <span className="text-muted">
-                (en pesos constantes de {baseMonthLabel}, IPC INDEC)
-              </span>
+            {/* Dual-link + sha256 provenance for the headline figure
+                (INVIOLABLE #2 -- every headline figure shows source, copia
+                archivada and a short sha256, never just a source name). */}
+            <p className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted">
+              <span>Fuente:</span>
+              <a
+                href={primarySourceRef.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Fuente original
+                <span className="sr-only"> (se abre en una pestaña nueva)</span>
+              </a>
+              <span aria-hidden="true">·</span>
+              {primarySourceRef.archivedUrl ? (
+                <a
+                  href={primarySourceRef.archivedUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Copia archivada
+                  <span className="sr-only">
+                    {" "}
+                    (se abre en una pestaña nueva)
+                  </span>
+                </a>
+              ) : (
+                <span>Copia archivada no disponible</span>
+              )}
+              <span aria-hidden="true">·</span>
+              <span>sha256 {shortHash(primarySourceRef.sha256)}</span>
+              <span aria-hidden="true">·</span>
+              <span>datos hasta {dataThroughLabel}</span>
+              <span className="text-ink">· comparado en plata de hoy</span>
+              <span>(en pesos constantes de {baseMonthLabel}, IPC INDEC)</span>
             </p>
+
+            <ColorLegend className="mt-6 max-w-[46ch]" />
           </section>
         ) : null}
 
@@ -163,9 +230,14 @@ export default function Home() {
               href={row.href}
               className="flex min-h-11 items-center justify-between gap-4 border-b border-rule py-5 no-underline hover:bg-surface"
             >
-              <h2 className="font-display text-[clamp(20px,3vw,28px)] font-semibold text-ink">
-                {row.question}
-              </h2>
+              <span>
+                <h2 className="font-display text-[clamp(20px,3vw,28px)] font-semibold text-ink">
+                  {row.question}
+                </h2>
+                <span className="mt-1 block text-sm text-ink-2">
+                  {row.description}
+                </span>
+              </span>
               <span
                 aria-hidden="true"
                 className="font-display text-2xl text-stamp"
