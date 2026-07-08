@@ -47,6 +47,16 @@ export default function RootLayout({
     <html
       lang="es-AR"
       className={`${fraunces.variable} ${instrumentSans.variable} ${splineSansMono.variable} ${newsreader.variable} h-full antialiased`}
+      // `THEME_INIT_SCRIPT` below sets `data-theme` on this element
+      // BEFORE first paint (`beforeInteractive`), intentionally ahead of
+      // React hydration, so a repeat visitor's stored dark-mode choice
+      // never flashes light first (see the script's own comment + the
+      // ThemeToggle/dark-mode section of DESIGN.md). React can't know
+      // about that attribute at SSR time, so it always reports a
+      // hydration mismatch on `data-theme` specifically -- this is the
+      // standard, documented fix for exactly this pattern (Next.js's own
+      // dark-mode guide), not a real markup bug.
+      suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col bg-paper pb-20 font-sans text-ink sm:pb-0">
         <Script id="theme-init" strategy="beforeInteractive">
