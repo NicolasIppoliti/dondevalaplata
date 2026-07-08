@@ -1,0 +1,11 @@
+{
+  "generatedAt": "2026-07-08T00:00:00Z",
+  "pedidos": [
+    {
+      "objeto": "Detalle de ejecución de gastos",
+      "fechaPresentado": "01-04-2026",
+      "expediente": "",
+      "estado": "en-tramite"
+    }
+  ]
+}

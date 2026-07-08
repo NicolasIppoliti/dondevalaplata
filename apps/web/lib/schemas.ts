@@ -305,3 +305,41 @@ export const proveedoresDataSchema = z.object({
 
 export type ProveedorRecord = z.infer<typeof proveedorRecordSchema>;
 export type ProveedoresData = z.infer<typeof proveedoresDataSchema>;
+
+/**
+ * Feature G4: the pedidos de acceso a la información tracker. Unlike every
+ * other `data/*.json` artifact, this is NOT produced by the ETL from an
+ * archived external source -- it is a small, hand-edited file the portal
+ * owner updates himself whenever he files a pedido under Ordenanza 3638 or
+ * receives a response. There is no `sourceRefs`/manifest provenance here on
+ * purpose (see `lib/sources.ts`'s docstring on why `pedidos` is excluded
+ * from `collectSourceRefs`/`assertSourceRefsResolve`): a self-authored
+ * tracking record isn't a claim about an external official document, so
+ * INVIOLABLE #2 (dual-link + sha256 provenance) doesn't apply to it the way
+ * it does to every other headline figure on the site. `expediente` is
+ * required (not nullable) because, per Ordenanza 3638 Art. 6, Mesa de
+ * Entradas stamps a cargo with a expediente number at the moment of filing
+ * -- a pedido only belongs in this tracker once that has happened.
+ * `fechaRespuesta`/`respuestaUrl` are optional and only meaningful once
+ * `estado` is `"respondido"`.
+ */
+export const pedidoEstadoSchema = z.enum(["presentado", "respondido", "vencido"]);
+
+export const pedidoRecordSchema = z.object({
+  objeto: z.string().min(1),
+  fechaPresentado: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  expediente: z.string().min(1),
+  estado: pedidoEstadoSchema,
+  fechaRespuesta: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  respuestaUrl: z.string().min(1).optional(),
+  notas: z.string().optional(),
+});
+
+export const pedidosDataSchema = z.object({
+  generatedAt: z.string().min(1),
+  pedidos: z.array(pedidoRecordSchema),
+});
+
+export type PedidoEstado = z.infer<typeof pedidoEstadoSchema>;
+export type PedidoRecord = z.infer<typeof pedidoRecordSchema>;
+export type PedidosData = z.infer<typeof pedidosDataSchema>;

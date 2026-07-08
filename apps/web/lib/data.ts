@@ -4,6 +4,7 @@ import cadenciaJson from "../../../data/cadencia.json";
 import coparticipacionJson from "../../../data/coparticipacion.json";
 import fallosJson from "../../../data/fallos.json";
 import gastoPartidaJson from "../../../data/gasto-partida.json";
+import pedidosJson from "../../../data/pedidos.json";
 import proveedoresJson from "../../../data/proveedores.json";
 import transparenciaJson from "../../../data/transparencia.json";
 import {
@@ -13,6 +14,7 @@ import {
   fallosDataSchema,
   gastoPartidaDataSchema,
   manifestSchema,
+  pedidosDataSchema,
   proveedoresDataSchema,
   transparenciaDataSchema,
   type AdjudicacionesData,
@@ -21,6 +23,7 @@ import {
   type FallosData,
   type GastoPartidaData,
   type Manifest,
+  type PedidosData,
   type ProveedoresData,
   type TransparenciaData,
 } from "./schemas";
@@ -74,4 +77,8 @@ export function loadProveedores(
   raw: unknown = proveedoresJson,
 ): ProveedoresData {
   return proveedoresDataSchema.parse(raw);
+}
+
+export function loadPedidos(raw: unknown = pedidosJson): PedidosData {
+  return pedidosDataSchema.parse(raw);
 }

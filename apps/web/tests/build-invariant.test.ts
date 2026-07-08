@@ -299,5 +299,10 @@ describe("getPortalData", () => {
     expect(portal.gastoPartida.reconciliation.reconciles).toBe(true);
     expect(portal.adjudicaciones.records.length).toBeGreaterThan(0);
     expect(portal.proveedores.proveedores.length).toBeGreaterThan(0);
+    // Feature G4: pedidos is present on PortalData but intentionally has
+    // no sourceRefs to validate (see lib/sources.ts's getPortalData
+    // docstring) -- it's a self-authored tracking file, not an
+    // externally-sourced claim.
+    expect(Array.isArray(portal.pedidos.pedidos)).toBe(true);
   });
 });

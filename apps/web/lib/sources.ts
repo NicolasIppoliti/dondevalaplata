@@ -5,6 +5,7 @@ import {
   loadFallos,
   loadGastoPartida,
   loadManifest,
+  loadPedidos,
   loadProveedores,
   loadTransparencia,
 } from "./data";
@@ -17,6 +18,7 @@ import type {
   GastoPartidaData,
   Manifest,
   ManifestRecord,
+  PedidosData,
   ProveedoresData,
   TransparenciaData,
 } from "./schemas";
@@ -176,12 +178,24 @@ export interface PortalData {
   gastoPartida: GastoPartidaData;
   adjudicaciones: AdjudicacionesData;
   proveedores: ProveedoresData;
+  pedidos: PedidosData;
 }
 
 /**
  * Single build-time entry point pages use to read validated portal data.
  * Runs the source-provenance build invariant as a side effect — any dangling
  * sourceRefs id fails `next build` rather than shipping a broken link.
+ *
+ * `pedidos` (feature G4) is DELIBERATELY excluded from
+ * `collectSourceRefs`/`assertSourceRefsResolve` above: unlike every other
+ * `data/*.json` artifact, it is not a claim sourced from an archived
+ * external document -- it's the portal owner's own record of pedidos he
+ * personally filed under Ordenanza 3638. There is nothing in
+ * `archive-manifest.json` for a self-authored tracking row to resolve
+ * against, so requiring `sourceRefs` on it would either force a fabricated
+ * reference or block the build for no honest reason. See
+ * `pedidoRecordSchema`'s docstring in `lib/schemas.ts` for the same
+ * decision recorded at the schema level.
  */
 export function getPortalData(): PortalData {
   const manifest = loadManifest();
@@ -192,6 +206,7 @@ export function getPortalData(): PortalData {
   const gastoPartida = loadGastoPartida();
   const adjudicaciones = loadAdjudicaciones();
   const proveedores = loadProveedores();
+  const pedidos = loadPedidos();
   assertSourceRefsResolve(
     collectSourceRefs(
       coparticipacion,
@@ -212,5 +227,6 @@ export function getPortalData(): PortalData {
     gastoPartida,
     adjudicaciones,
     proveedores,
+    pedidos,
   };
 }

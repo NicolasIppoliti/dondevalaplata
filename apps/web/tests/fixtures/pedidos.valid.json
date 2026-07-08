@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-07-08T00:00:00Z",
+  "pedidos": [
+    {
+      "objeto": "Detalle de ejecución de gastos del 1er trimestre 2026",
+      "fechaPresentado": "2026-04-01",
+      "expediente": "BBC-100/26",
+      "estado": "respondido",
+      "fechaRespuesta": "2026-05-20",
+      "respuestaUrl": "https://example.com/respuesta.pdf",
+      "notas": "Nota de prueba"
+    }
+  ]
+}

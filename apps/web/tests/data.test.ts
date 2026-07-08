@@ -14,6 +14,8 @@ import gastoPartidaMalformed from "./fixtures/gasto-partida.malformed.json";
 import adjudicacionesValid from "./fixtures/adjudicaciones.valid.json";
 import adjudicacionesMalformed from "./fixtures/adjudicaciones.malformed.json";
 import proveedoresValid from "./fixtures/proveedores.valid.json";
+import pedidosValid from "./fixtures/pedidos.valid.json";
+import pedidosMalformed from "./fixtures/pedidos.malformed.json";
 import {
   loadAdjudicaciones,
   loadCadencia,
@@ -21,6 +23,7 @@ import {
   loadFallos,
   loadGastoPartida,
   loadManifest,
+  loadPedidos,
   loadProveedores,
   loadTransparencia,
 } from "@/lib/data";
@@ -156,6 +159,24 @@ describe("loadProveedores", () => {
   });
 });
 
+describe("loadPedidos", () => {
+  it("accepts a valid pedidos fixture", () => {
+    const data = loadPedidos(pedidosValid);
+    expect(data.pedidos).toHaveLength(1);
+    expect(data.pedidos[0].estado).toBe("respondido");
+    expect(data.pedidos[0].expediente).toBe("BBC-100/26");
+  });
+
+  it("rejects a malformed pedidos fixture (bad date format, empty expediente, invalid estado)", () => {
+    expect(() => loadPedidos(pedidosMalformed)).toThrow();
+  });
+
+  it("accepts an empty pedidos array (valid seed state before any pedido is filed)", () => {
+    const data = loadPedidos({ generatedAt: "2026-07-08T00:00:00Z", pedidos: [] });
+    expect(data.pedidos).toHaveLength(0);
+  });
+});
+
 describe("loaders reading real build-time JSON with no argument", () => {
   it("loads the real archive-manifest.json, coparticipacion.json, fallos.json and transparencia.json", () => {
     expect(loadManifest().length).toBeGreaterThan(0);
@@ -180,6 +201,11 @@ describe("loaders reading real build-time JSON with no argument", () => {
     }
     const proveedores = loadProveedores();
     expect(proveedores.proveedores.length).toBeGreaterThan(0);
+  });
+
+  it("loads the real data/pedidos.json (feature G4 seed -- may be empty or an example row)", () => {
+    const pedidos = loadPedidos();
+    expect(Array.isArray(pedidos.pedidos)).toBe(true);
   });
 
   it("HONESTY TEST (real repo data): dimensions sum to the total, every got <= max", () => {

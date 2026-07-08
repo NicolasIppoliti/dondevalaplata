@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-07-08T00:00:00Z",
+  "pedidos": [
+    {
+      "objeto": "(Ejemplo) Detalle de ejecución de gastos de compras y contrataciones del 1er trimestre 2026",
+      "fechaPresentado": "2026-04-01",
+      "expediente": "EJEMPLO — sin expediente real",
+      "estado": "presentado",
+      "notas": "Este es un registro de EJEMPLO para mostrar cómo se ve el seguimiento -- no representa un pedido real presentado todavía. Reemplazá esta fila por tus propios pedidos a medida que los vayas presentando."
+    }
+  ]
+}
