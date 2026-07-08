@@ -42,12 +42,12 @@ interface FalloCardProps {
 
 export function FalloCard({ record, sourceLink, quote }: FalloCardProps) {
   return (
-    <article className="border border-rule border-l-[6px] border-l-ocre bg-surface p-6">
+    <article className="rounded-lg border border-rule border-l-[6px] border-l-ocre bg-surface p-6 shadow-card">
       <p className="font-mono text-[13px] tracking-[0.1em] text-muted uppercase">
         Ejercicio {record.ejercicio} · fallo del{" "}
         {formatDateEsAr(record.falloDate)}
         {record.scanned ? (
-          <span className="ml-2 inline-block bg-ocre px-2 py-0.5 text-[11px] tracking-[0.08em] text-ink normal-case">
+          <span className="ml-2 inline-block rounded-full border border-ocre bg-ocre-soft px-2 py-0.5 text-[11px] tracking-[0.08em] text-ink normal-case">
             documento escaneado — texto no extraído
           </span>
         ) : null}

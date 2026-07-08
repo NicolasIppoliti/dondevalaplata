@@ -37,11 +37,11 @@ export function FalloEjercicioView({ ejercicio }: FalloEjercicioViewProps) {
       <section>
         <Link
           href="/fallos"
-          className="inline-flex min-h-11 items-center font-mono text-sm"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-rule bg-surface px-3.5 font-mono text-sm text-ink no-underline shadow-control hover:bg-surface-2"
         >
           ← Todas las multas
         </Link>
-        <h1 className="mt-2 font-display text-[clamp(26px,4vw,40px)] font-semibold text-ink">
+        <h1 className="mt-4 font-display text-[clamp(26px,4vw,40px)] font-semibold text-ink">
           Multas del Tribunal de Cuentas — ejercicio {ejercicio}
         </h1>
         <p className="mt-3 max-w-[62ch] text-ink">
