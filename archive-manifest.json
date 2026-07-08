@@ -1486,5 +1486,19 @@
     "fetched_at": "2026-07-07T19:24:11Z",
     "status": "ok",
     "notes": "Mismo índice ASAP, informe anterior (Noviembre 2025): Coronel Rosales 70/100 (\"cumplimiento medio\"). Archivado para trazar la tendencia 70 -> 81 mostrada en /transparencia; no se usa ningún otro dato de este informe salvo el total y la categoría. [R2 upload pending: no credentials configured]"
+  },
+  {
+    "id": "mcr-docs-snapshot/documentos",
+    "capability": "mcr-docs-snapshot",
+    "source": "mcr.gob.ar",
+    "source_url": "https://mcr.gob.ar/wp-json/wp/v2/documentos?per_page=100",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/mcr-docs-snapshot/documentos-snapshot.json",
+    "archived_path": "archive/mcr-docs-snapshot/documentos-snapshot.json",
+    "sha256": "01b786bfa6a9fc4b059870bbef276eb1141f5d8ea54b4425ba20322f478888b1",
+    "mime": "application/json",
+    "bytes": 77647,
+    "fetched_at": "2026-07-08T15:46:56Z",
+    "status": "ok",
+    "notes": "Raw WordPress REST API listing snapshot of every \"documentos\" post (Gobierno Abierto) -- archived verbatim, sha256-pinned, so `build-cadencia` derives the live per-ASAP-dimension publish cadence (latest period + lag) from a single provenance-tracked source, distinct from the individual PDF attachments already archived one-by-one under the `mcr-docs` capability. A listing change (document added/removed) is itself detectable via manifest content-drift, same as any other archived source."
   }
 ]

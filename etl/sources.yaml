@@ -127,6 +127,22 @@ asap-transparencia:
       otro dato de este informe salvo el total y la categoría.
     filename: informe-transparencia-municipios-pba-noviembre-2025.pdf
 
+mcr-docs-snapshot:
+  - id: mcr-docs-snapshot/documentos
+    source: mcr.gob.ar
+    source_url: "https://mcr.gob.ar/wp-json/wp/v2/documentos?per_page=100"
+    mime: application/json
+    notes: >-
+      Raw WordPress REST API listing snapshot of every "documentos" post
+      (Gobierno Abierto) -- archived verbatim, sha256-pinned, so
+      `build-cadencia` derives the live per-ASAP-dimension publish cadence
+      (latest period + lag) from a single provenance-tracked source,
+      distinct from the individual PDF attachments already archived
+      one-by-one under the `mcr-docs` capability. A listing change
+      (document added/removed) is itself detectable via manifest
+      content-drift, same as any other archived source.
+    filename: documentos-snapshot.json
+
 electoral:
   - id: electoral/2023-generales
     source: argentina.gob.ar
