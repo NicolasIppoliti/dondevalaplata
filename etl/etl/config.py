@@ -16,6 +16,7 @@ KNOWN_CAPABILITIES = (
     "mcr-docs",
     "mcr-docs-snapshot",
     "asap-transparencia",
+    "poblacion-censo",
 )
 
 

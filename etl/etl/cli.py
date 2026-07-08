@@ -12,6 +12,7 @@ Subcommands:
   build-adjudicaciones  Build the SIBOM adjudicaciones + proveedores padrón JSON from the archive.
   build-deuda-historica Build the deuda pública histórica quarterly series JSON from the archive.
   build-novedades       Build the watchdog "novedades" publication-behavior log JSON.
+  build-poblacion       Build the Censo 2022 population-per-municipio display JSON.
   build                 Run all build-* steps in sequence.
 
 ``archive`` and ``sync-r2`` are the only commands that perform network I/O
@@ -40,6 +41,7 @@ from .manifest import load_manifest, save_manifest
 from .mcr_docs import discover_documentos
 from .mcr_docs import to_source_entries as mcr_docs_to_entries
 from .novedades import build_novedades
+from .poblacion import build_poblacion_censo_2022
 from .r2 import R2Store
 from .r2_sync import sync_archived_to_r2
 from .sibom import discover_bulletins, discover_sibom_actos
@@ -368,6 +370,28 @@ def run_build_novedades(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_build_poblacion(args: argparse.Namespace) -> int:
+    """Build `data/poblacion-censo-2022.json`: the Censo 2022 population
+    figure per target municipio (feature H3a), the sourced denominator for
+    the `/coparticipacion` per-cápita comparison. HONESTY GATE:
+    `build_poblacion_censo_2022` raises if any of the four target
+    municipios is missing a population figure -- this command propagates
+    that as a non-zero exit and writes NO file, rather than shipping a
+    partial per-cápita source.
+    """
+    try:
+        result = build_poblacion_censo_2022(args.manifest_path)
+    except ValueError as exc:
+        print(f"etl build-poblacion: FAILED -- {exc}")
+        return 1
+    output_path = args.data_root / "poblacion-censo-2022.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(result, indent=2, ensure_ascii=False) + "\n"
+    output_path.write_text(payload, encoding="utf-8")
+    print(f"etl build-poblacion: wrote {output_path} ({len(result['municipios'])} municipios)")
+    return 0
+
+
 def run_build(args: argparse.Namespace) -> int:
     """Run all build-* steps in sequence. Not yet implemented."""
     print("etl build: not implemented yet (see Slice 3)")
@@ -544,6 +568,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--novedades-seed-path", type=Path, default=DEFAULT_NOVEDADES_SEED_PATH,
     )
     build_novedades_parser.set_defaults(func=run_build_novedades)
+
+    build_poblacion_parser = subparsers.add_parser(
+        "build-poblacion",
+        help="Build the Censo 2022 population-per-municipio display JSON from the archive.",
+    )
+    build_poblacion_parser.add_argument(
+        "--manifest-path", type=Path, default=DEFAULT_MANIFEST_PATH,
+    )
+    build_poblacion_parser.add_argument(
+        "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
+    )
+    build_poblacion_parser.set_defaults(func=run_build_poblacion)
 
     build_parser_cmd = subparsers.add_parser(
         "build", help="Run all build-* steps in sequence."

@@ -2102,5 +2102,19 @@
     "fetched_at": "2026-07-08T17:33:15Z",
     "status": "ok",
     "notes": "Decreto Nº 115/2026 (adjudicación) -- boletin-082 [R2 upload pending: no credentials configured]"
+  },
+  {
+    "id": "poblacion-censo/proyecciones-poblacion-2010-2025",
+    "capability": "poblacion-censo",
+    "source": "catalogo.datos.gba.gob.ar",
+    "source_url": "https://catalogo.datos.gba.gob.ar/dataset/cc6d2010-6f67-4c98-8d89-af39703f46fb/resource/09d57241-8437-454a-b4ff-88330d65d60e/download/proyecciones-poblacion-2010_2025.csv",
+    "archived_url": null,
+    "archived_path": "archive/poblacion-censo/proyecciones-poblacion-2010-2025.csv",
+    "sha256": "1ed7932441c38f4ded0b7398cdce51cba6a704711c46e36c252575178941e1a7",
+    "mime": "text/csv",
+    "bytes": 55902,
+    "fetched_at": "2026-07-08T20:40:30Z",
+    "status": "ok",
+    "notes": "\"Población\" dataset, Dirección Provincial de Estadística (Ministerio de Economía de la Provincia de Buenos Aires) -- the SAME catalogo.datos.gba.gob.ar CKAN publisher already used for coparticipacion-viewer. Per-municipio series 2010-2025; the dataset's own CKAN notes (verbatim): \"Datos relativos a la población de la Provincia (Censo 2010 y Censo 2022) y su proyección\" -- only the 2010 and 2022 columns are actual Censo Nacional de Población, Hogares y Viviendas counts, every other year is a linear interpolation/projection. This build (feature H3a, per-cápita coparticipación) uses ONLY the 2022 column, filtered to the same four municipios as coparticipacion-viewer. Cross-verified at apply-time (2026-07-08): Coronel Rosales's 2022 value (67.503) and 2010 value (62.152) both match, digit for digit, an independent press report (radiofm2001.com.ar, citing La Nueva / INDEC's official \"datos definitivos del Censo 2022\" release, published 22/11/2023) -- see etl/etl/poblacion.py's module docstring for the full verification note. [R2 upload pending: no credentials configured]"
   }
 ]
