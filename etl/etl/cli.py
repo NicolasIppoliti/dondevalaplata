@@ -8,6 +8,7 @@ Subcommands:
   build-fallos          Build the HTC fallos display JSON from the archive.
   build-transparencia   Build the ASAP transparency-score display JSON from the curated source.
   build-cadencia        Build the live ASAP publication-cadence + deuda counter display JSON.
+  build-gasto-partida   Build the RAFAM gasto-por-partida explorer display JSON from the archive.
   build                 Run all build-* steps in sequence.
 
 ``archive`` and ``sync-r2`` are the only commands that perform network I/O
@@ -28,6 +29,7 @@ from .cadencia import build_cadencia
 from .config import load_sources
 from .coparticipacion import COPARTICIPACION_CSV_MANIFEST_ID, build_coparticipacion
 from .fallos import build_fallos
+from .gasto_partida import build_gasto_partida
 from .http_client import RequestsFetcher
 from .ipc import build_ipc, rebased_series_from_json
 from .manifest import load_manifest, save_manifest
@@ -253,6 +255,29 @@ def run_build_cadencia(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_build_gasto_partida(args: argparse.Namespace) -> int:
+    """Build `data/gasto-partida.json`: the RAFAM gasto-por-partida explorer tree.
+
+    Reads the archived RAFAM "Estado de Ejecución del Presupuesto de Gastos"
+    PDF via the manifest. HONESTY GATE: `build_gasto_partida` raises if the
+    parsed leaf partidas do not reconcile against the PDF's own "TOTALES
+    GENERALES" row -- this command propagates that as a non-zero exit and
+    writes NO file, rather than shipping a partially-wrong build artifact.
+    """
+    try:
+        result = build_gasto_partida(args.manifest_path)
+    except ValueError as exc:
+        print(f"etl build-gasto-partida: FAILED -- {exc}")
+        return 1
+    output_path = args.data_root / "gasto-partida.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(result, indent=2, ensure_ascii=False) + "\n"
+    output_path.write_text(payload, encoding="utf-8")
+    leaf_count = result.get("reconciliation", {}).get("leafCount", "?")
+    print(f"etl build-gasto-partida: wrote {output_path} ({leaf_count} leaf partidas, reconciled)")
+    return 0
+
+
 def run_build(args: argparse.Namespace) -> int:
     """Run all build-* steps in sequence. Not yet implemented."""
     print("etl build: not implemented yet (see Slice 3)")
@@ -375,6 +400,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
     )
     build_cadencia_parser.set_defaults(func=run_build_cadencia)
+
+    build_gasto_partida_parser = subparsers.add_parser(
+        "build-gasto-partida",
+        help="Build the RAFAM gasto-por-partida explorer display JSON from the archive.",
+    )
+    build_gasto_partida_parser.add_argument(
+        "--manifest-path", type=Path, default=DEFAULT_MANIFEST_PATH,
+    )
+    build_gasto_partida_parser.add_argument(
+        "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
+    )
+    build_gasto_partida_parser.set_defaults(func=run_build_gasto_partida)
 
     build_parser_cmd = subparsers.add_parser(
         "build", help="Run all build-* steps in sequence."

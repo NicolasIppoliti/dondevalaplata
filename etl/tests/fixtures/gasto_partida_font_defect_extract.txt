@@ -1,0 +1,11 @@
+Jurisdicción: 1110116000 - Secretarķa de Desarrollo ComunitarioApertura Programįtica:01.00.00 - Coordinación y Gestión de la Secretarķa de Desarrollo Comunitario
+110 - Tesoro Municipal
+1.0.0.0 - Gastos en personal
+1.1.0.0 - Personal permanente
+1.1.1.0 - Retribuciones del cargo 0,00 0,00 0,00 0,00 2.191.198,11 2.191.198,11 2.191.198,11 0,00
+1.1.3.0 - Retribuciones que no hacen al cargo 0,00 0,00 0,00 0,00 3.722.157,53 3.722.157,53 3.722.157,53 0,00
+1.1.4.0 - Sueldo anual complementario 0,00 0,00 0,00 0,00 36.546,88 36.546,88 36.546,88 0,00
+1.1.6.0 - Contribuciones patronales
+1.1.6.1 - Instituto de Previsión Social 0,00 0,00 0,00 0,00 628.430,35 628.430,35 307.618,05 320.812,30
+1.1.6.2 - Instituto de Obra Médico Asistencial 0,00 0,00 0,00 0,00 251.372,14 251.372,14 0,00 251.372,14
+1.1.6.3 - Aseguradora Riesgo del Trabajo 0,00 0,00 0,00 0,00 158.233,98 158.233,98 158.233,98 0,00
