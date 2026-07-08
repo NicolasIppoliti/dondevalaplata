@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { CountUp } from "@/components/CountUp";
 import { SourcesFooter } from "@/components/SourcesFooter";
-import { computeGaugeGeometry } from "@/lib/gauge";
+import { TransparenciaGauge } from "@/components/TransparenciaGauge";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
-
-const GAUGE_SIZE = 176;
 
 export const metadata: Metadata = {
   title: "Transparencia",
@@ -45,6 +42,11 @@ export const metadata: Metadata = {
  * problem: any number between 0 and 81 while counting up is still a
  * truthful partial reading of the same rating, never a misrepresented
  * currency amount.
+ *
+ * Fidelity slice F2: the ring + fraction + `<CountUp>` markup that used to
+ * live inline here now lives in `components/TransparenciaGauge.tsx`, so the
+ * home dashboard preview can reuse the EXACT same ring at a smaller `size`
+ * instead of a second hand-rolled SVG. Behavior/markup here is unchanged.
  */
 export default function TransparenciaPage() {
   const { transparencia, manifest } = getPortalData();
@@ -61,7 +63,6 @@ export default function TransparenciaPage() {
       : null;
 
   const sourceLinks = resolveSourceRefs(transparencia.sourceRefs, manifest);
-  const gauge = computeGaugeGeometry(transparencia.total, transparencia.max);
 
   return (
     <div className="space-y-10">
@@ -76,67 +77,10 @@ export default function TransparenciaPage() {
         </p>
 
         <div className="mt-6 flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-8">
-          <div
-            className="relative flex-none"
-            style={{ width: GAUGE_SIZE, height: GAUGE_SIZE }}
-          >
-            {/* The ring itself is purely decorative graphics --
-                `aria-hidden`. The fraction rendered in its center below is
-                the ONE accessible source of truth for the score (not
-                duplicated elsewhere), same "81 / 100" text this page
-                already rendered before this slice's ring, now with the
-                "81" portion animated via CountUp (a rating, not an exact
-                peso figure -- see the module docstring's "Slice 3" note).
-                CountUp's SSR/first-render already shows the FINAL value,
-                so a no-JS visitor never sees a bare "0". */}
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 120 120"
-              width={GAUGE_SIZE}
-              height={GAUGE_SIZE}
-              className="-rotate-90"
-            >
-              <circle
-                cx="60"
-                cy="60"
-                r={gauge.radius}
-                fill="none"
-                stroke="var(--color-rule)"
-                strokeWidth="13"
-              />
-              <circle
-                cx="60"
-                cy="60"
-                r={gauge.radius}
-                fill="none"
-                stroke="var(--color-ink-2)"
-                strokeWidth="13"
-                strokeLinecap="round"
-                strokeDasharray={gauge.circumference}
-                strokeDashoffset={gauge.offset}
-                className="gauge-arc"
-                style={
-                  {
-                    "--gauge-circumference": gauge.circumference,
-                    "--gauge-offset": gauge.offset,
-                  } as React.CSSProperties
-                }
-              />
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              {/* Fixed size, NOT `vw`-based: the ring itself
-                  (`GAUGE_SIZE`) is a constant 176px at every viewport, so
-                  the text must fit that same fixed inner diameter
-                  regardless of screen width. A `clamp(...,Nvw,...)` here
-                  grew past 176px's usable ~150px on wide viewports and
-                  visibly overflowed the ring (real bug caught in this
-                  slice's screenshot QA, not a hypothetical). */}
-              <p className="font-mono text-[26px] leading-none font-semibold tracking-tight text-ink tabular-nums">
-                <CountUp target={transparencia.total} variant="plain" />
-                {` / ${transparencia.max}`}
-              </p>
-            </div>
-          </div>
+          <TransparenciaGauge
+            value={transparencia.total}
+            max={transparencia.max}
+          />
 
           <p className="font-display text-xl font-semibold text-ink">
             {transparencia.category}
