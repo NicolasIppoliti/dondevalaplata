@@ -7,6 +7,7 @@ import {
   formatFineArs,
   formatPeriodEsAr,
   formatVariationEsAr,
+  splitArsUnit,
 } from "@/lib/format";
 
 describe("formatArsPlain", () => {
@@ -58,6 +59,41 @@ describe("formatArsHuman", () => {
   it("never claims more precision than 3 significant figures", () => {
     // 6.751.250.530 -> 6751,25 millones -> 3 sig figs -> 6.750 millones.
     expect(formatArsHuman(6_751_250_530)).toBe("$ 6.750 millones");
+  });
+});
+
+describe("splitArsUnit", () => {
+  // The home hero figure card (fidelity slice F1) renders the "millones"/
+  // "mil millones" unit word at a visually smaller scale beside the amount
+  // -- this pure helper splits `formatArsHuman`'s output for that purpose
+  // WITHOUT re-deriving the number, so the split value can never drift from
+  // the exact figure `formatArsHuman` already produced.
+  it("splits a 'millones' figure into amount + unit", () => {
+    expect(splitArsUnit("$ 1.750 millones")).toEqual({
+      amount: "$ 1.750",
+      unit: "millones",
+    });
+  });
+
+  it("splits a 'mil millones' figure into amount + unit", () => {
+    expect(splitArsUnit("$ 6,75 mil millones")).toEqual({
+      amount: "$ 6,75",
+      unit: "mil millones",
+    });
+  });
+
+  it("returns the whole string with a null unit below the million threshold", () => {
+    expect(splitArsUnit("$ 300.000")).toEqual({
+      amount: "$ 300.000",
+      unit: null,
+    });
+  });
+
+  it("preserves a negative sign in the amount part", () => {
+    expect(splitArsUnit("-$ 1.750 millones")).toEqual({
+      amount: "-$ 1.750",
+      unit: "millones",
+    });
   });
 });
 

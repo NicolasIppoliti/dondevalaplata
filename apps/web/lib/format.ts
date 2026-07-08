@@ -91,6 +91,28 @@ export function formatArsHuman(value: number): string {
   return `${sign}$ ${grouped} millones`;
 }
 
+/**
+ * Splits a `formatArsHuman`-formatted string into its numeric amount and
+ * trailing unit word ("millones"/"mil millones"), for callers that want to
+ * render the unit at a visually smaller/muted scale beside the amount
+ * (e.g. the home hero figure card, DESIGN.md "refined card scale") while
+ * still displaying the EXACT same value `formatArsHuman` produced -- this
+ * never re-derives or rounds the number again, it only splits the string.
+ * Returns `unit: null` (whole string as `amount`) below the one-million
+ * threshold, where `formatArsHuman` falls back to plain peso formatting
+ * with no unit word to split off.
+ */
+export function splitArsUnit(formatted: string): {
+  amount: string;
+  unit: string | null;
+} {
+  const match = formatted.match(/ (mil millones|millones)$/);
+  if (!match) {
+    return { amount: formatted, unit: null };
+  }
+  return { amount: formatted.slice(0, -match[0].length), unit: match[1] };
+}
+
 /** Formats a `"YYYY-MM"` period as `"mes de aaaa"`, e.g. `"2026-04"` -> `"abril de 2026"`. */
 export function formatPeriodEsAr(period: string): string {
   const [year, month] = period.split("-");
