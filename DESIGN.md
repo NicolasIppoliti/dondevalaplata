@@ -95,7 +95,26 @@ y documentada del dueño del proyecto:
 
 - **Base:** 4px. Escala: 2xs(2) xs(4) sm(8) md(16) lg(24) xl(32) 2xl(48) 3xl(64). Densidad: comfortable.
 - **Layout:** columna única mobile-first; contenido de lectura máx ~62ch; contenedor máx 1080px.
-- **Home = afiche, no landing:** el monto del último mes domina el fold (mono gigante), variación con signo en chip bordeado, pregunta itálica en Newsreader debajo, luego filas de sección (pregunta Fraunces + link mono "ver → "). Sin hero copy de marketing, sin carruseles.
+- **Home hero (v2.1, fidelidad a Mockup A -- ver decisión F1 abajo): DOS COLUMNAS en
+  desktop, una tarjeta flotante premium, no más el afiche de un solo número gigante.**
+  Columna izquierda (editorial): kicker mono "Portal vecinal independiente", titular
+  Fraunces "Seguimos la **plata pública** de Coronel Rosales." con "plata pública" en
+  `--stamp`, línea de apoyo (fuente + copia archivada + sha256 + promesa de
+  neutralidad), dos CTA (primario relleno `--ink` "Ver la coparticipación" + outline
+  "Cómo verificamos"), y el chip de frescura discontinuo. Columna derecha: UNA tarjeta
+  flotante (`rounded-lg border border-rule shadow-card`, misma familia que las demás
+  "tarjetas destacadas" del sitio) que contiene, apiladas: label + mes, la cifra
+  mono a escala DE TARJETA (`clamp(38px,9vw,68px)`, no el mono gigante de home v1) con
+  la unidad "millones" más chica al lado, la declaración "en pesos constantes de
+  {mes} (IPC INDEC)", un sparkline de la serie real, el chip de variación real
+  (▲/▼ + "real vs. {mes anterior}", oliva/sello), un filete divisor, la conclusión
+  Fraunces data-driven (`lib/insight.ts`), y la línea de procedencia dual-link +
+  sha256. En mobile la grilla colapsa a una sola columna (la tarjeta debajo del
+  bloque editorial) -- el refinamiento específico de mobile (proporciones, orden)
+  queda para una slice siguiente. Luego del hero siguen las filas de sección
+  (pregunta Fraunces + link mono "ver → ", sin cambios). Las "chips de acceso
+  rápido" (patrón documentado más abajo) YA NO viven en este hero -- las dos CTA
+  cubren ese rol; el patrón queda disponible para reutilizar en otra página.
 - **Radios (v2, relajado — antes "border-radius: 0 en todo").** Escala modesta y consistente:
   `--radius-sm` 8px (controles, chips), `--radius-md` 12px (tarjetas), `--radius-lg` 16px
   (drawer/sheet, tarjetas destacadas), `--radius-full` (pills, badges). Racional: el dueño pidió
@@ -138,7 +157,11 @@ y documentada del dueño del proyecto:
   en ese mecanismo). `StickyHeaderShell` es una isla de cliente chica y separada, solo responsable
   de la posición sticky y de agregar `--shadow-header` una vez que la página hizo scroll (antes:
   filete fijo de 2–3px siempre visible). El nav inline se oculta en mobile (`hidden sm:flex`); en
-  su lugar, mobile usa `MobileBottomNav`.
+  su lugar, mobile usa `MobileBottomNav`. **v2.1 (fidelidad a Mockup A, F1):** el wordmark ahora
+  lleva un badge cuadrado "$" (fondo `--ink`, mono, `radius-sm`) antes del texto, y un subtítulo
+  mono "Coronel Rosales · Punta Alta" debajo del wordmark. Todo el bloque es un único `<Link>`
+  con `aria-label` explícito (el badge es `aria-hidden`), en vez de depender del texto visible
+  para el nombre accesible.
 - **`MobileBottomNav`:** bottom tab bar sticky (injerto de la Dirección C), 4 tabs (Inicio · Plata
   · Multas · Transparencia), objetivos de toque ≥44px, `nav` con landmark + `aria-current="page"`
   en el tab activo (nunca color solo). A diferencia de `SiteHeader`, es una isla de cliente
@@ -227,3 +250,4 @@ Aprobado por el dueño 2026-07-07.
 | 2026-07-07 | Radios de borde relajados de 0 a una escala modesta (8/12/16/24/28px) | Ver sección Espaciado y layout. Body copy, tablas de datos y la fila de procedencia siguen sin radio -- son las piezas que más necesitan leerse como documento oficial, no como tarjeta de producto. |
 | 2026-07-07 | Dark mode opt-in agregado (antes doctrina "NO") | Ver sección Color. Opcional y persistido, nunca sigue `prefers-color-scheme` del SO -- light sigue siendo el default de todo visitante nuevo, así que esta relajación no cambia la experiencia por defecto de nadie. |
 | 2026-07-07 | Islas de cliente chicas autorizadas (antes doctrina cero-JS estricta) | Ver Regla INVIOLABLE #4 (reformulada, no eliminada): los DATOS siguen siendo 100% build-time -- lo que cambia es que ahora se permite JS puntual para interacción (drawer, tema, tab activo mobile, conteo, revelado al scroll), nunca para traer datos en runtime ni para reemplazar un gráfico SVG server-rendered por una librería de terceros. |
+| 2026-07-08 | **F1 — fix de fidelidad visual del home hero (desktop) + identidad del header**, contra Mockup A como spec de composición estricta | Auditoría de fidelidad detectó el home hero en producción todavía era el afiche v1 (columna única, número mono gigante, filas acordeón) pese a que Mockup A (base del rediseño v2, aprobada 2026-07-07) especifica un hero de DOS COLUMNAS con tarjeta flotante. Se reconstruyó `app/page.tsx`: columna editorial (kicker + titular Fraunces con "plata pública" en `--stamp` + línea de apoyo + dos CTA + chip de frescura) a la izquierda, una tarjeta destacada (`rounded-lg border shadow-card`, misma familia que las demás tarjetas del sitio) con la cifra a escala de tarjeta a la derecha. `SiteHeader` suma el badge cuadrado "$" y el subtítulo "Coronel Rosales · Punta Alta". `ColorLegend` se sacó del hero (no está en Mockup A) y se reubicó más abajo en la página, antes del footer -- sigue presente, solo cambia de lugar. Se agregó `splitArsUnit` (`lib/format.ts`) para separar el monto de la unidad "millones" sin volver a derivar ni redondear el número (la cifra exacta se preserva). Desviaciones deliberadas de la copia literal del mockup, explicadas en el propio commit/PR: (1) la línea de procedencia de la tarjeta conserva el texto "Fuente original" / "Copia archivada" (en vez del nombre de la fuente) porque así lo exige el test de invariante de procedencia dual-link ya existente; (2) el chip de frescura usa "abril 2026" (dato real, formateado sin "de") en vez de repetir la nota de rezago completa de `lib/data`, para calzar en una sola línea como en el mockup, sin inventar un dato nuevo. Todos los tests de invariantes preexistentes (neutralidad, procedencia dual, recencia de fallos, indexado de gráfico por período, título del rebrand, honestidad de `/transparencia`) siguen en verde; los tests que codificaban el layout VIEJO del hero (subhead de una sola oración, chips de "accesos rápidos", jerga "real vs." prohibida) se actualizaron para reflejar la composición nueva, deliberada y aprobada por el dueño -- no se debilitó ninguna regla de neutralidad/procedencia/honestidad. Mobile hero (proporciones, orden) queda para una slice siguiente (F3); F2 cablea los componentes de dashboard reales (gráfico interactivo, tarjetas de fallo, gauge) en las filas de sección que hoy siguen siendo el índice simple heredado de v1. |
