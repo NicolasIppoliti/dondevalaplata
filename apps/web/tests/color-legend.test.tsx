@@ -29,4 +29,20 @@ describe("ColorLegend", () => {
     expect(screen.getAllByText(/▲/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/▼/).length).toBeGreaterThan(0);
   });
+
+  it("defaults its own title to an <h3> (fits after a page's existing h1 -> h2 chain, e.g. /coparticipacion)", () => {
+    render(<ColorLegend />);
+    const heading = screen.getByRole("heading", {
+      name: /c[oó]mo leer los colores/i,
+    });
+    expect(heading.tagName).toBe("H3");
+  });
+
+  it('accepts headingLevel="h2" for pages where it is the first content heading after the (sr-only) h1 -- e.g. the home hero, which has no h2 above it (Lighthouse "heading-order" would otherwise fail)', () => {
+    render(<ColorLegend headingLevel="h2" />);
+    const heading = screen.getByRole("heading", {
+      name: /c[oó]mo leer los colores/i,
+    });
+    expect(heading.tagName).toBe("H2");
+  });
 });

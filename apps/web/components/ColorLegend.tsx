@@ -5,19 +5,32 @@
  * neutrality rule: green/red mark arithmetic variation of ONE series only,
  * always paired with a ▲/▼ marker (never color alone, WCAG 1.4.1), and
  * never a judgment on an administración/gestión or party. Meant to be
- * dropped next to any chart/table/score across the site (wired into page
- * content in slices 2-3; this slice ships the component itself).
+ * dropped next to any chart/table/score across the site.
+ *
+ * `headingLevel` (default `"h3"`) lets the caller keep a valid, strictly
+ * sequential heading order: on `/coparticipacion` this component sits
+ * after an existing h1->h2 chain, so the default h3 is correct there, but
+ * on the home hero it is the first content heading after the page's
+ * (sr-only) h1 -- with no h2 above it yet -- so home passes `"h2"`
+ * explicitly (a real Lighthouse "heading-order" failure otherwise).
  */
-export function ColorLegend({ className }: { className?: string }) {
+export function ColorLegend({
+  className,
+  headingLevel = "h3",
+}: {
+  className?: string;
+  headingLevel?: "h2" | "h3";
+}) {
+  const Heading = headingLevel;
   return (
     <aside
       aria-label="Cómo leer los colores"
       role="region"
       className={`rounded-lg border border-rule bg-surface p-5 shadow-card ${className ?? ""}`}
     >
-      <h3 className="font-display text-base font-semibold text-ink">
+      <Heading className="font-display text-base font-semibold text-ink">
         Cómo leer los colores
-      </h3>
+      </Heading>
       <ul className="mt-3 space-y-2 text-sm text-ink-2">
         <li className="flex items-center gap-2">
           <span
