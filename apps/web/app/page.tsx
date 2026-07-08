@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { ColorLegend } from "@/components/ColorLegend";
+import { InteractiveCoparticipacionChart } from "@/components/chart/InteractiveCoparticipacionChart";
 import { Sparkline } from "@/components/chart/Sparkline";
+import { FalloCard } from "@/components/fallos/FalloCard";
 import { SiteHeader } from "@/components/SiteHeader";
+import { TransparenciaGauge } from "@/components/TransparenciaGauge";
 import { computeCoparticipacionTrend } from "@/lib/insight";
 import {
   formatArsHuman,
@@ -9,9 +12,28 @@ import {
   formatVariationEsAr,
   splitArsUnit,
 } from "@/lib/format";
-import { getPortalData, resolveSourceRef, shortHash } from "@/lib/sources";
+import {
+  getPortalData,
+  resolveSourceRef,
+  selectFallosPreview,
+  shortHash,
+} from "@/lib/sources";
 
 const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
+
+/** Shared "ver todo →" link, reused by every dashboard card below the
+ * hero -- min-h-11 tap target, mono to match the site's data/UI-control
+ * typeface, `--stamp` on hover per the site's link-underline convention. */
+function VerTodoLink({ href }: { href: string }) {
+  return (
+    <Link
+      href={href}
+      className="inline-flex min-h-11 flex-none items-center gap-1 font-mono text-sm font-semibold text-ink no-underline hover:text-stamp"
+    >
+      Ver todo <span aria-hidden="true">→</span>
+    </Link>
+  );
+}
 
 /**
  * Home hero (DESIGN.md v2 "dashboard cívico premium", fidelity slice F1 --
@@ -35,32 +57,27 @@ const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
  * 81/100 score (a RATING, not an exact peso amount). See DESIGN.md's
  * decisions log for the same rationale recorded as a project-level
  * decision.
+ *
+ * Fidelity slice F2 (Mockup A, see DESIGN.md decisions log): the landing
+ * BELOW the hero is a dense dashboard, not a table-of-contents of plain
+ * accordion rows -- a coparticipación chart card (reuses
+ * `InteractiveCoparticipacionChart`), a real fallos grid (reuses
+ * `FalloCard`, never hidden behind a year index), and the ASAP
+ * transparencia gauge (reuses `TransparenciaGauge`). Each section keeps its
+ * question heading (Fraunces) + a "ver todo →" link to the full route.
+ * Only "¿De dónde salen los datos?" stays the old simple, whole-row-is-a-
+ * link pattern (`FUENTES_ROW` below) -- it has no dashboard component of
+ * its own to preview, just a link into /fuentes.
  */
-const SECTION_ROWS = [
-  {
-    question: "¿Cuánto llegó este mes?",
-    description: "Coparticipación mensual, ajustada por inflación.",
-    href: "/coparticipacion",
-  },
-  {
-    question: "¿Qué dicen las multas del Tribunal de Cuentas?",
-    description: "Fallos con sanciones económicas, por ejercicio.",
-    href: "/fallos",
-  },
-  {
-    question: "¿Qué tan transparente es el municipio?",
-    description: "Índice fiscal de ASAP y qué falta para llegar a 100.",
-    href: "/transparencia",
-  },
-  {
-    question: "¿De dónde salen los datos?",
-    description: "Fuente oficial, copia archivada y sha256 de cada cifra.",
-    href: "/fuentes",
-  },
-] as const;
+const FUENTES_ROW = {
+  question: "¿De dónde salen los datos?",
+  description: "Fuente oficial, copia archivada y sha256 de cada cifra.",
+  href: "/fuentes",
+} as const;
 
 export default function Home() {
-  const { coparticipacion, manifest } = getPortalData();
+  const { coparticipacion, fallos, transparencia, manifest } =
+    getPortalData();
   const coronelRosales = coparticipacion.series.find(
     (series) => series.municipioId === CORONEL_ROSALES_MUNICIPIO_ID,
   );
@@ -99,6 +116,42 @@ export default function Home() {
   const { amount: heroAmount, unit: heroUnit } = latestPoint
     ? splitArsUnit(formatArsHuman(Math.round(latestPoint.realArs)))
     : { amount: "", unit: null };
+
+  // (F2) Coparticipación dashboard card -- same real+nominal point shape
+  // /coparticipacion's own hero chart uses, so `InteractiveCoparticipacionChart`
+  // is reused as-is (already bounded to 420px desktop / ~50vh mobile).
+  const heroPoints = points.map((point) => ({
+    period: point.period,
+    real: point.realArs,
+    nominal: point.nominalArs,
+  }));
+
+  // (F2) Fallos dashboard grid -- every record of the most recent ejercicio
+  // + one representative per older ejercicio, never a whole ejercicio
+  // dropped (see `selectFallosPreview`'s own honesty-guarantee docstring).
+  const fallosPreview = selectFallosPreview(fallos);
+
+  // (F2) Transparencia dashboard card -- same dimensions/trend the
+  // /transparencia page itself derives from `data/transparencia.json`,
+  // never a hardcoded home-page claim.
+  const transparenciaGapDimensions = transparencia.dimensions.filter(
+    (dimension) => dimension.got < dimension.max,
+  );
+  const firstTransparenciaTrendPoint = transparencia.trend[0];
+  const lastTransparenciaTrendPoint =
+    transparencia.trend[transparencia.trend.length - 1];
+  const transparenciaDelta =
+    firstTransparenciaTrendPoint && lastTransparenciaTrendPoint
+      ? lastTransparenciaTrendPoint.total - firstTransparenciaTrendPoint.total
+      : null;
+  // Provenance for the score (INVIOLABLE #2 -- every headline figure shows
+  // source, copia archivada and a short sha256): the primary (most recent)
+  // ASAP report is always the first sourceRefs id, same convention as the
+  // coparticipación hero figure above.
+  const transparenciaPrimarySourceRef = resolveSourceRef(
+    transparencia.sourceRefs[0],
+    manifest,
+  );
 
   return (
     <>
@@ -266,39 +319,262 @@ export default function Home() {
           ) : null}
         </div>
 
-        <nav
-          aria-label="Secciones del portal"
-          className="mt-14 border-t border-rule sm:mt-20"
-        >
-          {SECTION_ROWS.map((row) => (
-            <Link
-              key={row.href}
-              href={row.href}
-              className="flex min-h-11 items-center justify-between gap-4 border-b border-rule py-5 no-underline hover:bg-surface"
-            >
-              <span>
-                <h2 className="font-display text-[clamp(20px,3vw,28px)] font-semibold text-ink">
-                  {row.question}
+        {/* Dashboard landing (fidelity slice F2, Mockup A): three real
+            dashboard sections -- coparticipación chart, fallos grid,
+            transparencia gauge -- each reusing an existing, already-tested
+            app component, never a re-implementation. */}
+        <div className="mt-14 space-y-14 border-t border-rule pt-12 sm:mt-20 sm:space-y-16 sm:pt-16">
+          {/* Section 1: coparticipación chart card. */}
+          <section aria-labelledby="home-coparticipacion-heading">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="font-mono text-[12px] font-semibold tracking-[0.08em] text-stamp uppercase">
+                  Coparticipación · transferencias provinciales
+                </p>
+                <h2
+                  id="home-coparticipacion-heading"
+                  className="mt-1 font-display text-[clamp(22px,3.4vw,32px)] font-semibold text-ink"
+                >
+                  ¿Cuánto llegó este mes?
                 </h2>
-                <span className="mt-1 block text-sm text-ink-2">
-                  {row.description}
-                </span>
-              </span>
-              <span
-                aria-hidden="true"
-                className="font-display text-2xl text-stamp"
-              >
-                ›
-              </span>
-            </Link>
-          ))}
-        </nav>
+                <p className="mt-1 max-w-[52ch] text-sm text-ink-2">
+                  Coparticipación mensual, ajustada por inflación.
+                </p>
+              </div>
+              <VerTodoLink href="/coparticipacion" />
+            </div>
 
-        {/* Relocated out of the hero (Mockup A fidelity slice F1): the
-            neutrality explainer now lives lower on the page, near the
-            colored figures it explains (the variation chip above, the
-            section rows' arithmetic below), not inside the poster. */}
-        <ColorLegend className="mt-10" headingLevel="h2" />
+            <div className="mt-5 rounded-lg border border-rule bg-surface p-[clamp(20px,3vw,30px)] shadow-card">
+              {/* Same data-driven conclusion the hero card leads with
+                  (lib/insight.ts) -- repeated here, at the top of the full
+                  chart preview, matching Mockup A's composition. */}
+              <p className="font-display text-[clamp(18px,2.4vw,22px)] font-semibold text-ink">
+                {trend.message}
+              </p>
+              {heroPoints.length > 0 ? (
+                <div className="mt-4">
+                  <InteractiveCoparticipacionChart
+                    points={heroPoints}
+                    baseMonthLabel={baseMonthLabel}
+                  />
+                </div>
+              ) : null}
+
+              {/* Dual-link + sha256 provenance for the chart's underlying
+                  figures (INVIOLABLE #2), same primary source as the hero
+                  card above. */}
+              <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-rule pt-4 font-mono text-xs text-muted">
+                <span>Fuente:</span>
+                <a
+                  href={primarySourceRef.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Fuente original
+                  <span className="sr-only"> (se abre en una pestaña nueva)</span>
+                </a>
+                <span aria-hidden="true">·</span>
+                {primarySourceRef.archivedUrl ? (
+                  <a
+                    href={primarySourceRef.archivedUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Copia archivada
+                    <span className="sr-only">
+                      {" "}
+                      (se abre en una pestaña nueva)
+                    </span>
+                  </a>
+                ) : (
+                  <span>Copia archivada no disponible</span>
+                )}
+                <span aria-hidden="true">·</span>
+                <span>sha256 {shortHash(primarySourceRef.sha256)}</span>
+              </p>
+            </div>
+          </section>
+
+          {/* Section 2: multas grid -- real FalloCard fichas, never hidden
+              behind a year index (the audit flagged /fallos's index-only
+              landing; the home preview shows real cards directly). */}
+          <section aria-labelledby="home-fallos-heading">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="font-mono text-[12px] font-semibold tracking-[0.08em] text-stamp uppercase">
+                  Tribunal de Cuentas · fallos
+                </p>
+                <h2
+                  id="home-fallos-heading"
+                  className="mt-1 font-display text-[clamp(22px,3.4vw,32px)] font-semibold text-ink"
+                >
+                  ¿Qué dicen las multas del Tribunal de Cuentas?
+                </h2>
+                <p className="mt-1 max-w-[52ch] text-sm text-ink-2">
+                  Fallos con sanciones económicas, por ejercicio.
+                </p>
+              </div>
+              <VerTodoLink href="/fallos" />
+            </div>
+
+            <p className="mt-4 max-w-[70ch] border-l-[5px] border-ocre bg-surface py-3 pl-4 text-sm text-ink">
+              El Tribunal de Cuentas de la Provincia revisa las cuentas de
+              cada ejercicio y puede aplicar multas a funcionarios.{" "}
+              <strong>
+                Mismo criterio, mismo formato y misma procedencia para toda
+                gestión
+              </strong>{" "}
+              — la neutralidad es estructural, no una opinión.
+            </p>
+
+            <ul className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {fallosPreview.map((record, index) => (
+                <li key={`${record.falloId}-${record.official}-${index}`}>
+                  <FalloCard
+                    record={record}
+                    sourceLink={resolveSourceRef(
+                      record.sourceRefs[0],
+                      manifest,
+                    )}
+                  />
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* Section 3: ASAP transparencia gauge card. */}
+          <section aria-labelledby="home-transparencia-heading">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="font-mono text-[12px] font-semibold tracking-[0.08em] text-stamp uppercase">
+                  Índice de Transparencia Fiscal Municipal
+                </p>
+                <h2
+                  id="home-transparencia-heading"
+                  className="mt-1 font-display text-[clamp(22px,3.4vw,32px)] font-semibold text-ink"
+                >
+                  ¿Qué tan transparente es el municipio?
+                </h2>
+                <p className="mt-1 max-w-[52ch] text-sm text-ink-2">
+                  Índice fiscal de ASAP y qué falta para llegar a 100.
+                </p>
+              </div>
+              <VerTodoLink href="/transparencia" />
+            </div>
+
+            <div className="mt-5 flex flex-col gap-6 rounded-lg border border-rule bg-surface p-[clamp(20px,3vw,30px)] shadow-card sm:flex-row sm:items-center">
+              <TransparenciaGauge
+                value={transparencia.total}
+                max={transparencia.max}
+                size={128}
+              />
+              <div>
+                <p className="font-display text-xl font-semibold text-ink">
+                  {transparencia.category}
+                </p>
+                {transparenciaDelta !== null && firstTransparenciaTrendPoint ? (
+                  <p
+                    className={`mt-1 inline-flex items-center gap-1.5 font-mono text-[13px] font-semibold ${
+                      transparenciaDelta >= 0 ? "text-olive" : "text-stamp"
+                    }`}
+                  >
+                    <span className="sr-only">Variación del puntaje: </span>
+                    <span aria-hidden="true">
+                      {transparenciaDelta >= 0 ? "▲" : "▼"}
+                    </span>
+                    {transparenciaDelta >= 0 ? "+" : ""}
+                    {transparenciaDelta} vs. {firstTransparenciaTrendPoint.reportLabel}
+                  </p>
+                ) : null}
+
+                {/* ASAP attribution -- explicit that it's a civil
+                    association (never a ministry) and that the scope is
+                    FISCAL transparency, not integral. */}
+                <p className="mt-3 max-w-[46ch] text-sm text-ink-2">
+                  Lo publica{" "}
+                  <strong className="text-ink">{transparencia.source}</strong>{" "}
+                  ({transparencia.sourceType}). Mide transparencia{" "}
+                  <strong className="text-ink">fiscal</strong>, no integral.
+                </p>
+
+                {/* Compact "qué falta" hint -- the full breakdown lives at
+                    /transparencia; this only names the count + the top
+                    pending dimension, never a judgment of any official. */}
+                {transparenciaGapDimensions.length > 0 ? (
+                  <p className="mt-2 max-w-[46ch] text-sm text-muted">
+                    Qué falta: {transparenciaGapDimensions.length} de{" "}
+                    {transparencia.dimensions.length}{" "}
+                    dimensiones fiscales, incluida &quot;
+                    {transparenciaGapDimensions[0].name}&quot;.
+                  </p>
+                ) : null}
+
+                {/* Dual-link + sha256 provenance for the score
+                    (INVIOLABLE #2). */}
+                <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted">
+                  <span>Fuente:</span>
+                  <a
+                    href={transparenciaPrimarySourceRef.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Fuente original
+                    <span className="sr-only">
+                      {" "}
+                      (se abre en una pestaña nueva)
+                    </span>
+                  </a>
+                  <span aria-hidden="true">·</span>
+                  {transparenciaPrimarySourceRef.archivedUrl ? (
+                    <a
+                      href={transparenciaPrimarySourceRef.archivedUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Copia archivada
+                      <span className="sr-only">
+                        {" "}
+                        (se abre en una pestaña nueva)
+                      </span>
+                    </a>
+                  ) : (
+                    <span>Copia archivada no disponible</span>
+                  )}
+                  <span aria-hidden="true">·</span>
+                  <span>
+                    sha256 {shortHash(transparenciaPrimarySourceRef.sha256)}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* "¿De dónde salen los datos?" stays the simple, whole-row-is-a-
+              link pattern -- no dashboard component to preview, just a
+              link into /fuentes. */}
+          <Link
+            href={FUENTES_ROW.href}
+            className="flex min-h-11 items-center justify-between gap-4 border-t border-rule py-5 no-underline hover:bg-surface"
+          >
+            <span>
+              <h2 className="font-display text-[clamp(20px,3vw,28px)] font-semibold text-ink">
+                {FUENTES_ROW.question}
+              </h2>
+              <span className="mt-1 block text-sm text-ink-2">
+                {FUENTES_ROW.description}
+              </span>
+            </span>
+            <span aria-hidden="true" className="font-display text-2xl text-stamp">
+              ›
+            </span>
+          </Link>
+
+          {/* Relocated out of the hero (Mockup A fidelity slice F1): the
+              neutrality explainer sits near the colored figures it explains
+              (the variation chip, the fallos ocre accent, the transparencia
+              trend badge above), before the footer. */}
+          <ColorLegend headingLevel="h2" />
+        </div>
       </main>
     </>
   );

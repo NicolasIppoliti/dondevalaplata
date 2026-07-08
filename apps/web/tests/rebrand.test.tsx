@@ -162,18 +162,22 @@ describe("Home — two-column hero (fidelity slice F1, Mockup A)", () => {
     ).toBeTruthy();
   });
 
-  it("makes the whole question row (not just a small cta) the link into each section", () => {
+  it("keeps the 'fuentes' row as one whole tappable link (not just a small cta)", () => {
+    // Fidelity slice F2: the OTHER three question rows became real
+    // dashboard cards (chart, fallos grid, gauge) with a separate "ver
+    // todo →" link -- see "Home — dashboard landing (fidelity slice F2)"
+    // below -- but "¿De dónde salen los datos?" stays a simple, single
+    // link row (task scope explicitly keeps it as a plain row/link).
     render(<Home />);
-    const link = screen.getByRole("link", { name: /¿Cuánto llegó este mes\?/ });
+    const link = screen.getByRole("link", {
+      name: /¿De dónde salen los datos\?/,
+    });
     expect(link.tagName).toBe("A");
-    expect(link).toHaveProperty(
-      "href",
-      expect.stringContaining("/coparticipacion"),
-    );
+    expect(link).toHaveProperty("href", expect.stringContaining("/fuentes"));
     // The Fraunces question heading lives INSIDE the link (whole row is
     // tappable), not next to a separate "ver →" link.
     expect(link.querySelector("h2")?.textContent).toContain(
-      "¿Cuánto llegó este mes?",
+      "¿De dónde salen los datos?",
     );
   });
 

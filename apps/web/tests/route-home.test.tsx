@@ -1,9 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import Home from "@/app/page";
+import { FALLO_FIELD_LABELS } from "@/components/fallos/FalloCard";
 import { formatArsHuman, splitArsUnit } from "@/lib/format";
 import { computeCoparticipacionTrend } from "@/lib/insight";
-import { getPortalData, resolveSourceRef, shortHash } from "@/lib/sources";
+import {
+  getPortalData,
+  resolveSourceRef,
+  selectFallosPreview,
+  shortHash,
+} from "@/lib/sources";
 
 const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
 
@@ -62,25 +68,180 @@ describe("Home — hero dashboard (slice 2)", () => {
     ).toBeTruthy();
   });
 
-  it("gives each tappable section row a one-line plain-language description alongside its question", () => {
+  it("gives the coparticipación dashboard card a one-line plain-language description alongside its question", () => {
     render(<Home />);
-    const link = screen.getByRole("link", {
-      name: /¿Cuánto llegó este mes\?/,
+    const region = screen.getByRole("region", {
+      name: "¿Cuánto llegó este mes?",
     });
     expect(
-      within(link).getByText(/coparticipaci[oó]n mensual/i),
+      within(region).getByText(/coparticipaci[oó]n mensual/i),
     ).toBeTruthy();
   });
 
-  it("leads with the data-driven trend conclusion sentence in the hero card (lib/insight.ts, same source as /coparticipacion)", () => {
+  it("leads with the data-driven trend conclusion sentence (lib/insight.ts, same source as /coparticipacion)", () => {
     const { coparticipacion } = getPortalData();
     const coronelRosales = coparticipacion.series.find(
       (s) => s.municipioId === CORONEL_ROSALES_MUNICIPIO_ID,
     );
-    // Re-derive the same trend the hero card should now show, using the
-    // shared lib/insight.ts helper -- never a hardcoded home-page string.
+    // Re-derive the same trend the page should now show, using the shared
+    // lib/insight.ts helper -- never a hardcoded home-page string. Fidelity
+    // slice F2 repeats this same data-driven sentence in BOTH the hero card
+    // and the coparticipación dashboard section below it (matching Mockup
+    // A), so this now allows multiple matches instead of exactly one.
     const trend = computeCoparticipacionTrend(coronelRosales?.points ?? []);
     render(<Home />);
-    expect(screen.getByText(trend.message)).toBeTruthy();
+    expect(screen.getAllByText(trend.message).length).toBeGreaterThan(0);
+  });
+});
+
+/**
+ * Fidelity slice F2 (Mockup A): the landing below the hero is now a DENSE
+ * DASHBOARD -- a coparticipación chart card, a real fallos grid, and the
+ * ASAP transparencia gauge -- composed entirely from REUSED, already-tested
+ * app components (`InteractiveCoparticipacionChart`, `FalloCard`,
+ * `TransparenciaGauge`), never a table-of-contents of plain accordion rows.
+ * Each dashboard section keeps the question heading (Fraunces) + a "ver
+ * todo →" link to its full route, per DESIGN.md's updated home-landing
+ * description. Only "¿De dónde salen los datos?" stays a simple row/link
+ * (see rebrand.test.tsx's "fuentes" row test).
+ */
+describe("Home — dashboard landing (fidelity slice F2, Mockup A)", () => {
+  it("renders the real InteractiveCoparticipacionChart (Real/Nominal toggle) inside the coparticipación section, not a static placeholder", () => {
+    render(<Home />);
+    const region = screen.getByRole("region", {
+      name: "¿Cuánto llegó este mes?",
+    });
+    expect(
+      within(region).getByRole("group", {
+        name: "Elegir cómo ver los montos",
+      }),
+    ).toBeTruthy();
+  });
+
+  it("links the coparticipación section to /coparticipacion via a 'ver todo' link", () => {
+    render(<Home />);
+    const region = screen.getByRole("region", {
+      name: "¿Cuánto llegó este mes?",
+    });
+    const link = within(region).getByRole("link", { name: /ver todo/i });
+    expect(link).toHaveProperty(
+      "href",
+      expect.stringContaining("/coparticipacion"),
+    );
+  });
+
+  it("shows real FalloCard fichas for every ejercicio in the preview selection -- never hidden behind a year index", () => {
+    const { fallos } = getPortalData();
+    const preview = selectFallosPreview(fallos);
+    render(<Home />);
+    const region = screen.getByRole("region", {
+      name: "¿Qué dicen las multas del Tribunal de Cuentas?",
+    });
+    for (const record of preview) {
+      expect(region.textContent).toContain(record.official);
+      expect(region.textContent).toContain(record.falloId);
+    }
+  });
+
+  it("keeps the identical fallo field-set on every home preview card (neutrality invariant)", () => {
+    const { fallos } = getPortalData();
+    const preview = selectFallosPreview(fallos);
+    render(<Home />);
+    const region = screen.getByRole("region", {
+      name: "¿Qué dicen las multas del Tribunal de Cuentas?",
+    });
+    for (const label of Object.values(FALLO_FIELD_LABELS)) {
+      expect(within(region).getAllByText(label)).toHaveLength(preview.length);
+    }
+  });
+
+  it("shows dual-link + sha256 provenance on every home fallos preview card", () => {
+    const { fallos } = getPortalData();
+    const preview = selectFallosPreview(fallos);
+    render(<Home />);
+    const region = screen.getByRole("region", {
+      name: "¿Qué dicen las multas del Tribunal de Cuentas?",
+    });
+    expect(
+      within(region).getAllByRole("link", { name: /fallo oficial/i }),
+    ).toHaveLength(preview.length);
+    expect(
+      within(region).getAllByRole("link", { name: /copia archivada/i }),
+    ).toHaveLength(preview.length);
+    expect(within(region).getAllByText(/sha256/)).toHaveLength(
+      preview.length,
+    );
+  });
+
+  it("links the fallos section to /fallos via a 'ver todo' link", () => {
+    render(<Home />);
+    const region = screen.getByRole("region", {
+      name: "¿Qué dicen las multas del Tribunal de Cuentas?",
+    });
+    const link = within(region).getByRole("link", { name: /ver todo/i });
+    expect(link).toHaveProperty("href", expect.stringContaining("/fallos"));
+  });
+
+  it("shows the 81/100 gauge, its category and the correct ASAP attribution (civil association, not a ministry; fiscal not integral)", () => {
+    const { transparencia } = getPortalData();
+    render(<Home />);
+    const region = screen.getByRole("region", {
+      name: "¿Qué tan transparente es el municipio?",
+    });
+    expect(region.textContent).toContain(
+      `${transparencia.total} / ${transparencia.max}`,
+    );
+    expect(within(region).getByText(transparencia.category)).toBeTruthy();
+    const text = region.textContent?.toLowerCase() ?? "";
+    expect(text).toMatch(/asociaci[oó]n civil/);
+    expect(text).toMatch(/no (es |)un ministerio/);
+    expect(text).toMatch(/transparencia fiscal/);
+    expect(text).not.toContain("capital humano");
+  });
+
+  it("shows a compact 'qué falta' hint in the transparencia preview card", () => {
+    const { transparencia } = getPortalData();
+    const gapCount = transparencia.dimensions.filter(
+      (d) => d.got < d.max,
+    ).length;
+    render(<Home />);
+    const region = screen.getByRole("region", {
+      name: "¿Qué tan transparente es el municipio?",
+    });
+    const text = region.textContent ?? "";
+    expect(text.toLowerCase()).toMatch(/qu[eé] falta/);
+    expect(text).toMatch(new RegExp(String(gapCount)));
+  });
+
+  it("shows dual-link + sha256 provenance for the transparencia score in the home preview", () => {
+    const { transparencia, manifest } = getPortalData();
+    const primaryRef = resolveSourceRef(transparencia.sourceRefs[0], manifest);
+    render(<Home />);
+    const region = screen.getByRole("region", {
+      name: "¿Qué tan transparente es el municipio?",
+    });
+    const original = within(region).getByRole("link", {
+      name: /fuente original/i,
+    });
+    expect(original).toHaveProperty("href", primaryRef.sourceUrl);
+    const archived = within(region).getByRole("link", {
+      name: /copia archivada/i,
+    });
+    expect(archived).toHaveProperty("href", primaryRef.archivedUrl);
+    expect(
+      within(region).getByText(new RegExp(shortHash(primaryRef.sha256))),
+    ).toBeTruthy();
+  });
+
+  it("links the transparencia section to /transparencia via a 'ver todo' link", () => {
+    render(<Home />);
+    const region = screen.getByRole("region", {
+      name: "¿Qué tan transparente es el municipio?",
+    });
+    const link = within(region).getByRole("link", { name: /ver todo/i });
+    expect(link).toHaveProperty(
+      "href",
+      expect.stringContaining("/transparencia"),
+    );
   });
 });
