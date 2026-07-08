@@ -63,6 +63,22 @@ const GRID_LINE_COUNT = 4;
 const AXIS_LABEL_FONT_SIZE = 11;
 const AXIS_LABEL_CHAR_WIDTH = AXIS_LABEL_FONT_SIZE * 0.62;
 const AXIS_LABEL_GAP = 8;
+// End-of-line value label background pill (fidelity slice F3 fix): on the
+// real production series, an earlier month's peak can pass directly behind
+// this label's default position on the narrow mobile viewBox (found during
+// the F3 mobile QA pass at 390px -- "Promedio 2024" landing close to the
+// April 2026 end value is a real occurrence, and the polyline itself was
+// crossing straight through the bold end label). Same character-width
+// estimation approach as the axis-label gutter above -- consistent with
+// this file's existing convention of estimating text width rather than
+// measuring the DOM (`getBBox`), which would need a post-mount effect for
+// a value that's already known at render time. Matches the approved v2
+// mockup's own `.end-lab` treatment: an `--ink` pill with `--surface` text,
+// staying legible in both themes via the token system regardless of what
+// the line does behind it.
+const END_LABEL_FONT_SIZE = 13;
+const END_LABEL_CHAR_WIDTH = END_LABEL_FONT_SIZE * 0.62;
+const END_LABEL_PAD_X = 7;
 
 function describeDelta(
   delta: MomDelta,
@@ -207,6 +223,10 @@ export function InteractiveCoparticipacionChart({
     const first = layout.coords[0];
     const referenceY = reference ? layout.scaleValueToY(reference.average) : null;
     const active = activeIndex !== null ? layout.coords[activeIndex] : null;
+    const endLabelText = formatValue(values[values.length - 1]);
+    const endLabelPillWidth =
+      Math.ceil(endLabelText.length * END_LABEL_CHAR_WIDTH) +
+      END_LABEL_PAD_X * 2;
 
     return (
       <div className={wrapClassName} key={variant}>
@@ -342,17 +362,25 @@ export function InteractiveCoparticipacionChart({
             ) : null}
 
             <circle cx={last.x} cy={last.y} r={4.5} fill="var(--color-olive)" />
+            <rect
+              x={last.x + END_LABEL_PAD_X - endLabelPillWidth}
+              y={last.y - 14 - 14}
+              width={endLabelPillWidth}
+              height={19}
+              rx={5}
+              fill="var(--color-ink)"
+            />
             <text
               data-chart-end-label
               x={last.x}
               y={last.y - 14}
               textAnchor="end"
-              fontSize={13}
+              fontSize={END_LABEL_FONT_SIZE}
               fontWeight={600}
-              fill="var(--color-ink)"
+              fill="var(--color-surface)"
               className="font-mono"
             >
-              {formatValue(values[values.length - 1])}
+              {endLabelText}
             </text>
 
             <text
