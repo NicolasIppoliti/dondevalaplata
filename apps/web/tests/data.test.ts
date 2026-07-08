@@ -9,10 +9,13 @@ import transparenciaValid from "./fixtures/transparencia.valid.json";
 import transparenciaMalformed from "./fixtures/transparencia.malformed.json";
 import cadenciaValid from "./fixtures/cadencia.valid.json";
 import cadenciaMalformed from "./fixtures/cadencia.malformed.json";
+import gastoPartidaValid from "./fixtures/gasto-partida.valid.json";
+import gastoPartidaMalformed from "./fixtures/gasto-partida.malformed.json";
 import {
   loadCadencia,
   loadCoparticipacion,
   loadFallos,
+  loadGastoPartida,
   loadManifest,
   loadTransparencia,
 } from "@/lib/data";
@@ -105,6 +108,27 @@ describe("loadCadencia", () => {
   });
 });
 
+describe("loadGastoPartida", () => {
+  it("accepts a valid gasto-partida fixture", () => {
+    const data = loadGastoPartida(gastoPartidaValid);
+    expect(data.period.label).toBe("1er trimestre 2026");
+    expect(data.jurisdicciones).toHaveLength(1);
+    expect(data.jurisdicciones[0].programas[0].objetos).toHaveLength(2);
+  });
+
+  it("rejects a malformed gasto-partida fixture", () => {
+    expect(() => loadGastoPartida(gastoPartidaMalformed)).toThrow();
+  });
+
+  it("HONESTY TEST: reconciliation.reconciles is true and diffs are within tolerance", () => {
+    const data = loadGastoPartida(gastoPartidaValid);
+    expect(data.reconciliation.reconciles).toBe(true);
+    expect(Math.abs(data.reconciliation.diffDevengadoArs)).toBeLessThanOrEqual(
+      data.reconciliation.toleranceArs,
+    );
+  });
+});
+
 describe("loaders reading real build-time JSON with no argument", () => {
   it("loads the real archive-manifest.json, coparticipacion.json, fallos.json and transparencia.json", () => {
     expect(loadManifest().length).toBeGreaterThan(0);
@@ -113,6 +137,12 @@ describe("loaders reading real build-time JSON with no argument", () => {
     const transparencia = loadTransparencia();
     expect(transparencia.total).toBe(81);
     expect(transparencia.max).toBe(100);
+  });
+
+  it("loads the real data/gasto-partida.json, HONESTY TEST: reconciliation.reconciles is true", () => {
+    const gastoPartida = loadGastoPartida();
+    expect(gastoPartida.reconciliation.reconciles).toBe(true);
+    expect(gastoPartida.jurisdicciones.length).toBeGreaterThan(0);
   });
 
   it("HONESTY TEST (real repo data): dimensions sum to the total, every got <= max", () => {

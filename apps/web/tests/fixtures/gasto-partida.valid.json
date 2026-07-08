@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-07-08T12:00:00Z",
+  "period": {
+    "ejercicio": "2026",
+    "from": "2026-01-01",
+    "to": "2026-03-31",
+    "label": "1er trimestre 2026"
+  },
+  "reconciliation": {
+    "reconciles": true,
+    "toleranceArs": 0.05,
+    "totalVigenteArs": 300.0,
+    "totalDevengadoArs": 150.0,
+    "totalPagadoArs": 100.0,
+    "sumLeafVigenteArs": 300.0,
+    "sumLeafDevengadoArs": 150.0,
+    "sumLeafPagadoArs": 100.0,
+    "diffVigenteArs": 0.0,
+    "diffDevengadoArs": 0.0,
+    "diffPagadoArs": 0.0,
+    "leafCount": 2,
+    "unverifiedLeafCount": 0
+  },
+  "sourceRefs": ["mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre"],
+  "jurisdicciones": [
+    {
+      "code": "1110101000",
+      "name": "Conducción Superior",
+      "programas": [
+        {
+          "code": "01.00.00",
+          "name": "Coordinación y gestión de políticas centrales",
+          "objetos": [
+            {
+              "code": "1.1.1.0",
+              "name": "Retribuciones del cargo",
+              "vigenteArs": 200.0,
+              "devengadoArs": 100.0,
+              "pagadoArs": 80.0,
+              "verified": true
+            },
+            {
+              "code": "1.1.3.0",
+              "name": "Retribuciones que no hacen al cargo",
+              "vigenteArs": 100.0,
+              "devengadoArs": 50.0,
+              "pagadoArs": 20.0,
+              "verified": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

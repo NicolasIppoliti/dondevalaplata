@@ -2,16 +2,19 @@ import manifestJson from "../../../archive-manifest.json";
 import cadenciaJson from "../../../data/cadencia.json";
 import coparticipacionJson from "../../../data/coparticipacion.json";
 import fallosJson from "../../../data/fallos.json";
+import gastoPartidaJson from "../../../data/gasto-partida.json";
 import transparenciaJson from "../../../data/transparencia.json";
 import {
   cadenciaDataSchema,
   coparticipacionDataSchema,
   fallosDataSchema,
+  gastoPartidaDataSchema,
   manifestSchema,
   transparenciaDataSchema,
   type CadenciaData,
   type CoparticipacionData,
   type FallosData,
+  type GastoPartidaData,
   type Manifest,
   type TransparenciaData,
 } from "./schemas";
@@ -47,4 +50,10 @@ export function loadTransparencia(
 
 export function loadCadencia(raw: unknown = cadenciaJson): CadenciaData {
   return cadenciaDataSchema.parse(raw);
+}
+
+export function loadGastoPartida(
+  raw: unknown = gastoPartidaJson,
+): GastoPartidaData {
+  return gastoPartidaDataSchema.parse(raw);
 }

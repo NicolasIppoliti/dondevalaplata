@@ -4,10 +4,12 @@ import coparticipacionValid from "./fixtures/coparticipacion.valid.json";
 import fallosValid from "./fixtures/fallos.valid.json";
 import transparenciaValid from "./fixtures/transparencia.valid.json";
 import cadenciaValid from "./fixtures/cadencia.valid.json";
+import gastoPartidaValid from "./fixtures/gasto-partida.valid.json";
 import {
   loadCadencia,
   loadCoparticipacion,
   loadFallos,
+  loadGastoPartida,
   loadManifest,
   loadTransparencia,
 } from "@/lib/data";
@@ -174,6 +176,61 @@ describe("collectSourceRefs + assertSourceRefsResolve — cadencia (optional 4th
   });
 });
 
+describe("collectSourceRefs + assertSourceRefsResolve — gasto-partida (optional 5th arg)", () => {
+  it("does not throw when every gasto-partida sourceRefs id resolves to a manifest record", () => {
+    const gastoPartida = loadGastoPartida(gastoPartidaValid);
+    const manifest = loadManifest([
+      ...manifestValid,
+      {
+        id: "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre",
+        capability: "mcr-docs",
+        source: "mcr.gob.ar",
+        source_url: "https://mcr.gob.ar/example-gastos.pdf",
+        archived_url: "https://pub-example.r2.dev/mcr-docs/example-gastos.pdf",
+        archived_path: "archive/mcr-docs/example-gastos.pdf",
+        sha256: "b43d03b7c9481673e12fbeded20cfaba7188e0bf78ca58bf42e8354980608103",
+        mime: "application/pdf",
+        bytes: 2024734,
+        fetched_at: "2026-07-07T05:30:42Z",
+        status: "ok",
+        notes: "Fixture record for tests.",
+      },
+    ]);
+    const coparticipacion = loadCoparticipacion(coparticipacionValid);
+    const fallos = loadFallos(fallosValid);
+    const ids = collectSourceRefs(
+      coparticipacion,
+      fallos,
+      undefined,
+      undefined,
+      gastoPartida,
+    );
+    expect(ids).toEqual(
+      expect.arrayContaining([
+        "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre",
+      ]),
+    );
+    expect(() => assertSourceRefsResolve(ids, manifest)).not.toThrow();
+  });
+
+  it("throws when a gasto-partida sourceRefs id has no manifest record", () => {
+    const gastoPartida = loadGastoPartida(gastoPartidaValid);
+    const manifest = loadManifest(manifestValid);
+    const coparticipacion = loadCoparticipacion(coparticipacionValid);
+    const fallos = loadFallos(fallosValid);
+    const ids = collectSourceRefs(
+      coparticipacion,
+      fallos,
+      undefined,
+      undefined,
+      gastoPartida,
+    );
+    expect(() => assertSourceRefsResolve(ids, manifest)).toThrow(
+      /mcr-docs\/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre/,
+    );
+  });
+});
+
 describe("getPortalData", () => {
   it("loads the real repo data/*.json + archive-manifest.json with every sourceRefs id resolving", () => {
     const portal = getPortalData();
@@ -182,5 +239,6 @@ describe("getPortalData", () => {
     expect(portal.fallos.records.length).toBeGreaterThan(0);
     expect(portal.transparencia.total).toBe(81);
     expect(portal.cadencia.dimensions).toHaveLength(6);
+    expect(portal.gastoPartida.reconciliation.reconciles).toBe(true);
   });
 });

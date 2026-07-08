@@ -160,3 +160,81 @@ export const cadenciaDataSchema = z.object({
 export type CadenciaDimension = z.infer<typeof cadenciaDimensionSchema>;
 export type CadenciaDeuda = z.infer<typeof cadenciaDeudaSchema>;
 export type CadenciaData = z.infer<typeof cadenciaDataSchema>;
+
+/**
+ * Feature G2: the RAFAM "gasto por partida" explorer tree. Pruned to three
+ * levels (Jurisdicción -> Programa -> Objeto leaf) -- see
+ * `etl/etl/gasto_partida.py` module docstring for the size-management
+ * rationale. Every leaf carries `verified`: whether its own row satisfied
+ * the report's arithmetic identities (Vigente = Aprobado + Modificaciones,
+ * Devengado no pagado = Devengado - Pagado) -- never fabricated.
+ */
+export const gastoPartidaObjetoSchema = z.object({
+  code: z.string().min(1),
+  name: z.string().min(1),
+  vigenteArs: z.number(),
+  devengadoArs: z.number(),
+  pagadoArs: z.number(),
+  verified: z.boolean(),
+});
+
+export const gastoPartidaProgramaSchema = z.object({
+  code: z.string().min(1),
+  name: z.string().min(1),
+  objetos: z.array(gastoPartidaObjetoSchema).min(1),
+});
+
+export const gastoPartidaJurisdiccionSchema = z.object({
+  code: z.string().min(1),
+  name: z.string().min(1),
+  programas: z.array(gastoPartidaProgramaSchema).min(1),
+});
+
+export const gastoPartidaPeriodSchema = z.object({
+  ejercicio: z.string().min(1),
+  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  label: z.string().min(1),
+});
+
+/**
+ * The build's own HONESTY GATE result (see `etl.gasto_partida.build_gasto_partida`):
+ * the sum of every leaf's Vigente/Devengado/Pagado reconciled against the
+ * PDF's own "TOTALES GENERALES" row. `reconciles` is always `true` for any
+ * artifact that made it to `data/gasto-partida.json` (the ETL build raises
+ * and refuses to write the file otherwise) -- kept in the schema/payload so
+ * the web page can display the reconciliation as visible proof, not just
+ * trust it silently.
+ */
+export const gastoPartidaReconciliationSchema = z.object({
+  reconciles: z.boolean(),
+  toleranceArs: z.number(),
+  totalVigenteArs: z.number(),
+  totalDevengadoArs: z.number(),
+  totalPagadoArs: z.number(),
+  sumLeafVigenteArs: z.number(),
+  sumLeafDevengadoArs: z.number(),
+  sumLeafPagadoArs: z.number(),
+  diffVigenteArs: z.number(),
+  diffDevengadoArs: z.number(),
+  diffPagadoArs: z.number(),
+  leafCount: z.number().nonnegative(),
+  unverifiedLeafCount: z.number().nonnegative(),
+});
+
+export const gastoPartidaDataSchema = z.object({
+  generatedAt: z.string().min(1),
+  period: gastoPartidaPeriodSchema,
+  reconciliation: gastoPartidaReconciliationSchema,
+  sourceRefs: z.array(z.string().min(1)).min(1),
+  jurisdicciones: z.array(gastoPartidaJurisdiccionSchema).min(1),
+});
+
+export type GastoPartidaObjeto = z.infer<typeof gastoPartidaObjetoSchema>;
+export type GastoPartidaPrograma = z.infer<typeof gastoPartidaProgramaSchema>;
+export type GastoPartidaJurisdiccion = z.infer<typeof gastoPartidaJurisdiccionSchema>;
+export type GastoPartidaPeriod = z.infer<typeof gastoPartidaPeriodSchema>;
+export type GastoPartidaReconciliation = z.infer<
+  typeof gastoPartidaReconciliationSchema
+>;
+export type GastoPartidaData = z.infer<typeof gastoPartidaDataSchema>;
