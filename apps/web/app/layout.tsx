@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { fraunces, instrumentSans, newsreader, splineSansMono } from "./fonts";
 import { SiteFooter } from "@/components/SiteFooter";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -12,6 +14,30 @@ export const metadata: Metadata = {
     "Datos públicos de coparticipación y fallos del Tribunal de Cuentas de Coronel Rosales, con enlaces a fuente y archivo.",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // `env(safe-area-inset-*)` (used by the mobile bottom tab bar's padding)
+  // is only non-zero with `viewport-fit=cover`.
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f2efe4" },
+    { media: "(prefers-color-scheme: dark)", color: "#17150f" },
+  ],
+};
+
+// Anti-flash theme init: reads the same `ddvlp-theme` key ThemeToggle
+// writes to, BEFORE first paint (`strategy="beforeInteractive"`), so a
+// repeat visitor who chose dark never sees a light flash. Light is the
+// default whenever nothing (or something unexpected) is stored -- this
+// never reads `prefers-color-scheme`, on purpose (see globals.css).
+const THEME_INIT_SCRIPT = `(function () {
+  try {
+    var stored = localStorage.getItem("ddvlp-theme");
+    document.documentElement.setAttribute("data-theme", stored === "dark" ? "dark" : "light");
+  } catch (e) {}
+})();`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,7 +48,10 @@ export default function RootLayout({
       lang="es-AR"
       className={`${fraunces.variable} ${instrumentSans.variable} ${splineSansMono.variable} ${newsreader.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-paper font-sans text-ink">
+      <body className="flex min-h-full flex-col bg-paper pb-20 font-sans text-ink sm:pb-0">
+        <Script id="theme-init" strategy="beforeInteractive">
+          {THEME_INIT_SCRIPT}
+        </Script>
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-ink focus:px-4 focus:py-2 focus:text-surface"
@@ -42,9 +71,17 @@ export default function RootLayout({
           app/coparticipacion/layout.tsx and siblings); the home page ("/"
           has no nested layout) renders its own with `activeHref={null}`.
           This keeps nav highlighting fully static/zero-JS.
+
+          `MobileBottomNav` below IS a client island (usePathname) -- that
+          asymmetry is intentional, see its own file comment: the desktop
+          header's active-nav is cosmetic and can stay zero-JS, but the
+          bottom tab bar is always-mounted app chrome across every route,
+          which is exactly the kind of small interactive island this
+          redesign allows.
         */}
         {children}
         <SiteFooter />
+        <MobileBottomNav />
       </body>
     </html>
   );

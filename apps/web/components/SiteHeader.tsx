@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { StickyHeaderShell } from "@/components/StickyHeaderShell";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const NAV_ITEMS = [
   { href: "/coparticipacion", label: "Coparticipación" },
@@ -24,6 +26,12 @@ const NAV_ITEMS = [
  * cosmetic nav highlight, working against the site's zero-JS doctrine, AND
  * `usePathname()` throws outside a mounted Next.js router, which is
  * exactly how `rebrand.test.tsx` renders `<SiteHeader />` directly today.
+ *
+ * The inline nav (`hidden sm:flex`) is desktop-only: mobile gets the
+ * sticky bottom tab bar instead (`components/MobileBottomNav.tsx`, wired
+ * in `app/layout.tsx`). `StickyHeaderShell` (a small client island) owns
+ * the sticky positioning + scroll shadow; everything else here stays a
+ * plain server component.
  */
 export function SiteHeader({
   activeHref = null,
@@ -31,8 +39,8 @@ export function SiteHeader({
   activeHref?: string | null;
 }) {
   return (
-    <header className="border-b-[3px] border-ink bg-paper">
-      <div className="mx-auto flex max-w-[1080px] flex-wrap items-baseline justify-between gap-x-6 gap-y-3 px-5 py-6">
+    <StickyHeaderShell>
+      <div className="mx-auto flex max-w-[1080px] flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-4">
         <Link
           href="/"
           className="font-display text-[clamp(20px,3vw,28px)] font-bold tracking-tight text-ink no-underline first-letter:text-stamp hover:text-ink"
@@ -40,7 +48,7 @@ export function SiteHeader({
           ¿Dónde va la plata?
           <span className="sr-only"> — Coronel Rosales</span>
         </Link>
-        <nav aria-label="Navegación principal">
+        <nav aria-label="Navegación principal" className="hidden sm:block">
           <ul className="flex flex-wrap gap-x-6 gap-y-2 text-[15px]">
             {NAV_ITEMS.map((item) => {
               const isActive = item.href === activeHref;
@@ -62,7 +70,8 @@ export function SiteHeader({
             })}
           </ul>
         </nav>
+        <ThemeToggle />
       </div>
-    </header>
+    </StickyHeaderShell>
   );
 }
