@@ -9,6 +9,7 @@ Subcommands:
   build-transparencia   Build the ASAP transparency-score display JSON from the curated source.
   build-cadencia        Build the live ASAP publication-cadence + deuda counter display JSON.
   build-gasto-partida   Build the RAFAM gasto-por-partida explorer display JSON from the archive.
+  build-adjudicaciones  Build the SIBOM adjudicaciones + proveedores padrón JSON from the archive.
   build                 Run all build-* steps in sequence.
 
 ``archive`` and ``sync-r2`` are the only commands that perform network I/O
@@ -37,8 +38,9 @@ from .mcr_docs import discover_documentos
 from .mcr_docs import to_source_entries as mcr_docs_to_entries
 from .r2 import R2Store
 from .r2_sync import sync_archived_to_r2
-from .sibom import discover_bulletins
+from .sibom import discover_bulletins, discover_sibom_actos
 from .sibom import to_source_entries as sibom_to_entries
+from .sibom_adjudicaciones import build_adjudicaciones, build_proveedores
 from .storage import LocalArchiveStore
 from .transparencia import build_transparencia
 
@@ -55,18 +57,29 @@ DEFAULT_CADENCIA_CURATED_PATH = REPO_ROOT / "etl" / "cadencia.yaml"
 SIBOM_FROM_NUMBER = 31
 
 
-def discover_dynamic_sources(fetcher: Fetcher) -> dict[str, list[dict]]:
+def discover_dynamic_sources(
+    fetcher: Fetcher, *, manifest_path: Path
+) -> dict[str, list[dict]]:
     """Discover the source families that are enumerated live, not hardcoded.
 
-    SIBOM (bulletins) and mcr-docs (Gobierno Abierto PDFs) are F0-archival-only
+    SIBOM bulletins and mcr-docs (Gobierno Abierto PDFs) are F0-archival-only
     in this MVP: every entry gets a manifest record, but neither family is
-    parsed into `data/*.json` or a route in the F1 UI (deferred to F2/F3).
+    parsed into `data/*.json` or a route in the F1 UI.
+
+    SIBOM adjudicación acts (``sibom-actos``, feature G3) are different: they
+    are discovered by parsing the ALREADY-ARCHIVED SIBOM bulletin PDFs
+    offline (see ``sibom.discover_sibom_actos``) and only fetch a bulletin's
+    lightweight listing page when that bulletin actually contains a
+    candidate adjudicación decree -- reusing the F0 bulletin archive rather
+    than duplicating it, and never hammering SIBOM for the (large) majority
+    of acts that are not adjudicaciones.
     """
     bulletins = discover_bulletins(fetcher, from_number=SIBOM_FROM_NUMBER)
     documentos = discover_documentos(fetcher)
     return {
         "sibom": sibom_to_entries(bulletins),
         "mcr-docs": mcr_docs_to_entries(documentos),
+        "sibom-actos": discover_sibom_actos(fetcher, manifest_path=manifest_path),
     }
 
 
@@ -75,7 +88,7 @@ def discover_dynamic_sources(fetcher: Fetcher) -> dict[str, list[dict]]:
 # HTML, mcr-docs wp-json), and per-item HEAD checks are unreliable for at
 # least SIBOM (observed to hang rather than respond). Summarize instead
 # of hammering every individual PDF twice before the real archive run.
-_BULK_DYNAMIC_CAPABILITIES = frozenset({"sibom", "mcr-docs"})
+_BULK_DYNAMIC_CAPABILITIES = frozenset({"sibom", "mcr-docs", "sibom-actos"})
 
 
 def _reachability_report(sources: dict[str, list[dict]], fetcher: Fetcher) -> list[str]:
@@ -113,7 +126,7 @@ def run_archive(args: argparse.Namespace) -> int:
     capabilities = getattr(args, "capabilities", None)
     sources = load_sources(args.sources_path)
     if not capabilities or _BULK_DYNAMIC_CAPABILITIES.intersection(capabilities):
-        sources.update(discover_dynamic_sources(fetcher))
+        sources.update(discover_dynamic_sources(fetcher, manifest_path=args.manifest_path))
 
     if capabilities:
         sources = {k: v for k, v in sources.items() if k in capabilities}
@@ -278,6 +291,35 @@ def run_build_gasto_partida(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_build_adjudicaciones(args: argparse.Namespace) -> int:
+    """Build `data/adjudicaciones.json` and `data/proveedores.json`: the
+    SIBOM adjudicaciones monitor + reconstructed proveedores padrón
+    (feature G3). Network-free -- reads exclusively from the local archive
+    (`sibom` bulletin PDFs + `sibom-actos` individual act HTML pages, see
+    `etl archive --capability sibom-actos`).
+    """
+    result = build_adjudicaciones(args.manifest_path)
+    adjudicaciones_path = args.data_root / "adjudicaciones.json"
+    adjudicaciones_path.parent.mkdir(parents=True, exist_ok=True)
+    adjudicaciones_path.write_text(
+        json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+
+    proveedores = build_proveedores(result["records"])
+    proveedores_path = args.data_root / "proveedores.json"
+    proveedores_path.write_text(
+        json.dumps(proveedores, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+
+    print(
+        f"etl build-adjudicaciones: wrote {adjudicaciones_path} "
+        f"({len(result['records'])} rows, {result['skippedCount']} actos skipped, "
+        f"window {result['windowFrom']}..{result['windowTo']}) "
+        f"and {proveedores_path} ({len(proveedores['proveedores'])} proveedores)"
+    )
+    return 0
+
+
 def run_build(args: argparse.Namespace) -> int:
     """Run all build-* steps in sequence. Not yet implemented."""
     print("etl build: not implemented yet (see Slice 3)")
@@ -412,6 +454,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
     )
     build_gasto_partida_parser.set_defaults(func=run_build_gasto_partida)
+
+    build_adjudicaciones_parser = subparsers.add_parser(
+        "build-adjudicaciones",
+        help="Build the SIBOM adjudicaciones + proveedores padrón display JSON from the archive.",
+    )
+    build_adjudicaciones_parser.add_argument(
+        "--manifest-path", type=Path, default=DEFAULT_MANIFEST_PATH,
+    )
+    build_adjudicaciones_parser.add_argument(
+        "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
+    )
+    build_adjudicaciones_parser.set_defaults(func=run_build_adjudicaciones)
 
     build_parser_cmd = subparsers.add_parser(
         "build", help="Run all build-* steps in sequence."

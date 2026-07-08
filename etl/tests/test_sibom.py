@@ -6,11 +6,21 @@ onward. This is F0-archival-only in this MVP (no ETL build/UI
 consumption) — it feeds F2/F3. Uses a fake fetcher; no network I/O here.
 """
 
+import json
 from pathlib import Path
 
-from etl.sibom import discover_bulletins, to_source_entries
+from etl.sibom import (
+    discover_bulletins,
+    discover_sibom_actos,
+    parse_decree_acts_listing,
+    to_source_entries,
+)
 
 FIXTURE_PAGE = Path(__file__).parent / "fixtures" / "sibom_page_sample.html"
+FIXTURE_CONTENTS_PAGE = (
+    Path(__file__).parent / "fixtures" / "sibom_bulletin_contents_sample.html"
+)
+FIXTURE_DECREE_524 = Path(__file__).parent / "fixtures" / "sibom_decreto_524_2023_extract.txt"
 
 
 class FakeFetcher:
@@ -64,3 +74,133 @@ def test_to_source_entries_builds_sources_yaml_shaped_dicts() -> None:
             "filename": "boletin-031.pdf",
         }
     ]
+
+
+def test_parse_decree_acts_listing_extracts_decrees_only() -> None:
+    html = FIXTURE_CONTENTS_PAGE.read_text(encoding="utf-8")
+
+    acts = parse_decree_acts_listing(html)
+
+    # The lone "resolution" entry is excluded -- only "decree"-class acts
+    # matter for adjudicación discovery (see sibom_adjudicaciones.py).
+    assert acts == [
+        {
+            "number": 523,
+            "year": "2023",
+            "content_id": "1980001",
+            "href": "/bulletins/9568/contents/1980001",
+            "extracted_version": False,
+        },
+        {
+            "number": 524,
+            "year": "2023",
+            "content_id": "1980017",
+            "href": "/bulletins/9568/contents/1980017",
+            "extracted_version": False,
+        },
+        {
+            "number": 525,
+            "year": "2023",
+            "content_id": "1980032",
+            "href": "/bulletins/9568/contents/1980032",
+            "extracted_version": True,
+        },
+    ]
+
+
+class _FakeListingFetcher:
+    """Serves the bulletin contents-listing page for /bulletins/9568."""
+
+    def __init__(self) -> None:
+        self.calls: list[str] = []
+
+    def get(self, url: str, *, timeout: float, headers: dict[str, str]):
+        from etl.archive import FetchResponse
+
+        self.calls.append(url)
+        assert url == "https://sibom.slyt.gba.gob.ar/bulletins/9568"
+        return FetchResponse(200, FIXTURE_CONTENTS_PAGE.read_bytes())
+
+
+def test_discover_sibom_actos_resolves_candidate_act_urls(tmp_path) -> None:
+    manifest_path = tmp_path / "archive-manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            [
+                {
+                    "id": "sibom/boletin-036",
+                    "capability": "sibom",
+                    "source": "sibom.slyt.gba.gob.ar",
+                    "source_url": "https://sibom.slyt.gba.gob.ar/bulletins/9568.pdf",
+                    "archived_url": "https://example.com/boletin-036.pdf",
+                    "archived_path": "archive/sibom/boletin-036.pdf",
+                    "sha256": "deadbeef",
+                    "mime": "application/pdf",
+                    "bytes": 123,
+                    "fetched_at": "2026-01-01T00:00:00Z",
+                    "status": "ok",
+                    "notes": "",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    fixture_text = FIXTURE_DECREE_524.read_text(encoding="utf-8")
+    fetcher = _FakeListingFetcher()
+
+    entries = discover_sibom_actos(
+        fetcher,
+        manifest_path=manifest_path,
+        text_extractor=lambda _path: fixture_text,
+    )
+
+    assert len(entries) == 1
+    entry = entries[0]
+    assert entry["id"] == "sibom-actos/boletin-036-decreto-524-2023"
+    assert entry["source_url"] == "https://sibom.slyt.gba.gob.ar/bulletins/9568/contents/1980017"
+    assert entry["mime"] == "text/html"
+    assert fetcher.calls == ["https://sibom.slyt.gba.gob.ar/bulletins/9568"]
+
+
+def test_discover_sibom_actos_skips_candidates_not_confirmed_by_listing(tmp_path) -> None:
+    """If the PDF-text candidate's decree number isn't found on the listing
+    page (format drift, a stub act, etc.), never guess a URL -- skip it.
+    """
+    manifest_path = tmp_path / "archive-manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            [
+                {
+                    "id": "sibom/boletin-036",
+                    "capability": "sibom",
+                    "source": "sibom.slyt.gba.gob.ar",
+                    "source_url": "https://sibom.slyt.gba.gob.ar/bulletins/9568.pdf",
+                    "archived_url": "https://example.com/boletin-036.pdf",
+                    "archived_path": "archive/sibom/boletin-036.pdf",
+                    "sha256": "deadbeef",
+                    "mime": "application/pdf",
+                    "bytes": 123,
+                    "fetched_at": "2026-01-01T00:00:00Z",
+                    "status": "ok",
+                    "notes": "",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+    # A decree number (999/2023) the fixture listing page does not contain.
+    unmatched_text = (
+        "Decreto Nº 999/2023\nCoronel Rosales, 01/01/2023\nVisto\nx\nDECRETA\n"
+        'ARTICULO 1º: Adjudicar a la firma "ACME SA" por la suma de PESOS UN MIL '
+        "($ 1.000,00.-).-"
+    )
+    fetcher = _FakeListingFetcher()
+
+    entries = discover_sibom_actos(
+        fetcher,
+        manifest_path=manifest_path,
+        text_extractor=lambda _path: unmatched_text,
+    )
+
+    assert entries == []

@@ -12,6 +12,7 @@ KNOWN_CAPABILITIES = (
     "ipc",
     "electoral",
     "sibom",
+    "sibom-actos",
     "mcr-docs",
     "mcr-docs-snapshot",
     "asap-transparencia",

@@ -1,0 +1,349 @@
+{
+  "generatedAt": "2026-07-08T17:35:40Z",
+  "proveedores": [
+    {
+      "proveedor": "RIMSOL S.A",
+      "totalArs": 721556789,
+      "count": 2,
+      "firstDate": "2024-11-19",
+      "lastDate": "2025-02-07",
+      "decretoRefs": [
+        "600/2024",
+        "46/2025"
+      ]
+    },
+    {
+      "proveedor": "COMADAR SRL",
+      "totalArs": 650126380,
+      "count": 1,
+      "firstDate": "2025-12-15",
+      "lastDate": "2025-12-15",
+      "decretoRefs": [
+        "622/2025"
+      ]
+    },
+    {
+      "proveedor": "COMADAR S.R.L",
+      "totalArs": 616049550,
+      "count": 5,
+      "firstDate": "2024-07-04",
+      "lastDate": "2026-03-18",
+      "decretoRefs": [
+        "324/2024",
+        "643/2024",
+        "351/2025",
+        "98/2026",
+        "115/2026"
+      ]
+    },
+    {
+      "proveedor": "EQUIPOS DE SERVICIOS PORTUARIOS RUMAX S.R.L",
+      "totalArs": 183377670,
+      "count": 1,
+      "firstDate": "2024-12-04",
+      "lastDate": "2024-12-04",
+      "decretoRefs": [
+        "639/2024"
+      ]
+    },
+    {
+      "proveedor": "OMAR MARCIANO EBERS",
+      "totalArs": 125158814,
+      "count": 5,
+      "firstDate": "2022-08-12",
+      "lastDate": "2025-07-07",
+      "decretoRefs": [
+        "405/2022",
+        "426/2022",
+        "42/2024",
+        "87/2024",
+        "278/2025"
+      ]
+    },
+    {
+      "proveedor": "Carreteras 2000 S.A",
+      "totalArs": 110175400,
+      "count": 1,
+      "firstDate": "2024-12-11",
+      "lastDate": "2024-12-11",
+      "decretoRefs": [
+        "644/2024"
+      ]
+    },
+    {
+      "proveedor": "Obras Abedul SRL",
+      "totalArs": 65275153,
+      "count": 1,
+      "firstDate": "2023-08-01",
+      "lastDate": "2023-08-01",
+      "decretoRefs": [
+        "425/2023"
+      ]
+    },
+    {
+      "proveedor": "GUTASA SERVICIOS INTEGRALES S.A",
+      "totalArs": 35165497,
+      "count": 3,
+      "firstDate": "2022-06-01",
+      "lastDate": "2023-08-02",
+      "decretoRefs": [
+        "249/2022",
+        "429/2023",
+        "430/2023"
+      ]
+    },
+    {
+      "proveedor": "Talleres B.J",
+      "totalArs": 34690040,
+      "count": 1,
+      "firstDate": "2023-01-19",
+      "lastDate": "2023-01-19",
+      "decretoRefs": [
+        "29/2023"
+      ]
+    },
+    {
+      "proveedor": "AGROINDUSTRIALES S.A",
+      "totalArs": 32732088,
+      "count": 1,
+      "firstDate": "2023-01-03",
+      "lastDate": "2023-01-03",
+      "decretoRefs": [
+        "7/2023"
+      ]
+    },
+    {
+      "proveedor": "Segusur S.H",
+      "totalArs": 28451473,
+      "count": 1,
+      "firstDate": "2024-10-07",
+      "lastDate": "2024-10-07",
+      "decretoRefs": [
+        "503/2024"
+      ]
+    },
+    {
+      "proveedor": "FLEMIX S.A",
+      "totalArs": 19864968,
+      "count": 1,
+      "firstDate": "2024-09-30",
+      "lastDate": "2024-09-30",
+      "decretoRefs": [
+        "489/2024"
+      ]
+    },
+    {
+      "proveedor": "SEDARRI SERGIO ARIEL",
+      "totalArs": 17760000,
+      "count": 1,
+      "firstDate": "2023-09-07",
+      "lastDate": "2023-09-07",
+      "decretoRefs": [
+        "524/2023"
+      ]
+    },
+    {
+      "proveedor": "Turitour S.A",
+      "totalArs": 16180000,
+      "count": 2,
+      "firstDate": "2022-09-29",
+      "lastDate": "2024-10-23",
+      "decretoRefs": [
+        "506/2022",
+        "547/2024"
+      ]
+    },
+    {
+      "proveedor": "Ro Bot S.A",
+      "totalArs": 8456820,
+      "count": 1,
+      "firstDate": "2023-05-08",
+      "lastDate": "2023-05-08",
+      "decretoRefs": [
+        "194/2023"
+      ]
+    },
+    {
+      "proveedor": "AYT Computers SRL",
+      "totalArs": 7185000,
+      "count": 1,
+      "firstDate": "2022-06-07",
+      "lastDate": "2022-06-07",
+      "decretoRefs": [
+        "269/2022"
+      ]
+    },
+    {
+      "proveedor": "Sergio Ariel Sedarri",
+      "totalArs": 6682365,
+      "count": 1,
+      "firstDate": "2022-09-28",
+      "lastDate": "2022-09-28",
+      "decretoRefs": [
+        "501/2022"
+      ]
+    },
+    {
+      "proveedor": "Bernardo Lew SRL",
+      "totalArs": 6674540,
+      "count": 1,
+      "firstDate": "2024-09-05",
+      "lastDate": "2024-09-05",
+      "decretoRefs": [
+        "432/2024"
+      ]
+    },
+    {
+      "proveedor": "Ana María Corfield",
+      "totalArs": 4712500,
+      "count": 1,
+      "firstDate": "2024-09-16",
+      "lastDate": "2024-09-16",
+      "decretoRefs": [
+        "445/2024"
+      ]
+    },
+    {
+      "proveedor": "Grupo Idemat S.A",
+      "totalArs": 4494600,
+      "count": 1,
+      "firstDate": "2023-05-11",
+      "lastDate": "2023-05-11",
+      "decretoRefs": [
+        "209/2023"
+      ]
+    },
+    {
+      "proveedor": "SEGUSUR SH",
+      "totalArs": 3515839,
+      "count": 2,
+      "firstDate": "2022-05-10",
+      "lastDate": "2023-05-08",
+      "decretoRefs": [
+        "205/2022",
+        "194/2023"
+      ]
+    },
+    {
+      "proveedor": "RO-BOT S.R.L",
+      "totalArs": 2556689,
+      "count": 1,
+      "firstDate": "2022-05-10",
+      "lastDate": "2022-05-10",
+      "decretoRefs": [
+        "205/2022"
+      ]
+    },
+    {
+      "proveedor": "Fracisti Mónica",
+      "totalArs": 2439710,
+      "count": 1,
+      "firstDate": "2024-10-07",
+      "lastDate": "2024-10-07",
+      "decretoRefs": [
+        "503/2024"
+      ]
+    },
+    {
+      "proveedor": "Paola Romero",
+      "totalArs": 2180000,
+      "count": 1,
+      "firstDate": "2022-09-22",
+      "lastDate": "2022-09-22",
+      "decretoRefs": [
+        "476/2022"
+      ]
+    },
+    {
+      "proveedor": "INSEL CLIMA S.A",
+      "totalArs": 1636500,
+      "count": 1,
+      "firstDate": "2022-10-21",
+      "lastDate": "2022-10-21",
+      "decretoRefs": [
+        "554/2022"
+      ]
+    },
+    {
+      "proveedor": "Juan Manuel Gómez",
+      "totalArs": 1625215,
+      "count": 2,
+      "firstDate": "2022-10-24",
+      "lastDate": "2023-08-14",
+      "decretoRefs": [
+        "555/2022",
+        "453/2023"
+      ]
+    },
+    {
+      "proveedor": "STI Computación S.A",
+      "totalArs": 1529940,
+      "count": 1,
+      "firstDate": "2022-05-30",
+      "lastDate": "2022-05-30",
+      "decretoRefs": [
+        "241/2022"
+      ]
+    },
+    {
+      "proveedor": "Ujhelyi Claudio Daniel",
+      "totalArs": 1400935,
+      "count": 1,
+      "firstDate": "2022-09-22",
+      "lastDate": "2022-09-22",
+      "decretoRefs": [
+        "480/2022"
+      ]
+    },
+    {
+      "proveedor": "Matferco SRL",
+      "totalArs": 1350000,
+      "count": 1,
+      "firstDate": "2024-05-31",
+      "lastDate": "2024-05-31",
+      "decretoRefs": [
+        "234/2024"
+      ]
+    },
+    {
+      "proveedor": "CARUSO SPORT",
+      "totalArs": 1202990,
+      "count": 1,
+      "firstDate": "2022-09-09",
+      "lastDate": "2022-09-09",
+      "decretoRefs": [
+        "458/2022"
+      ]
+    },
+    {
+      "proveedor": "PROVEER PCM SRL",
+      "totalArs": 1030348,
+      "count": 1,
+      "firstDate": "2022-08-04",
+      "lastDate": "2022-08-04",
+      "decretoRefs": [
+        "383/2022"
+      ]
+    },
+    {
+      "proveedor": "FERRIMED SRL",
+      "totalArs": 759138,
+      "count": 1,
+      "firstDate": "2022-05-10",
+      "lastDate": "2022-05-10",
+      "decretoRefs": [
+        "205/2022"
+      ]
+    },
+    {
+      "proveedor": "María Ángela SUAREZ",
+      "totalArs": 592900,
+      "count": 1,
+      "firstDate": "2022-06-21",
+      "lastDate": "2022-06-21",
+      "decretoRefs": [
+        "288/2022"
+      ]
+    }
+  ]
+}

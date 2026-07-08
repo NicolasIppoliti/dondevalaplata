@@ -38,7 +38,7 @@ def test_run_archive_dry_run_does_not_write_manifest(tmp_path, monkeypatch) -> N
         return []
 
     monkeypatch.setattr(cli, "run_archive_all", fake_run_archive_all)
-    monkeypatch.setattr(cli, "discover_dynamic_sources", lambda fetcher: {})
+    monkeypatch.setattr(cli, "discover_dynamic_sources", lambda fetcher, **kwargs: {})
 
     args = argparse.Namespace(
         dry_run=True,
@@ -68,7 +68,7 @@ def test_run_archive_calls_run_archive_all_when_not_dry_run(tmp_path, monkeypatc
         return [{"id": "x", "status": "ok"}]
 
     monkeypatch.setattr(cli, "run_archive_all", fake_run_archive_all)
-    monkeypatch.setattr(cli, "discover_dynamic_sources", lambda fetcher: {})
+    monkeypatch.setattr(cli, "discover_dynamic_sources", lambda fetcher, **kwargs: {})
 
     args = argparse.Namespace(
         dry_run=False,
@@ -98,7 +98,7 @@ def test_run_archive_scopes_to_requested_capabilities_only(tmp_path, monkeypatch
         return []
 
     monkeypatch.setattr(cli, "run_archive_all", fake_run_archive_all)
-    monkeypatch.setattr(cli, "discover_dynamic_sources", lambda fetcher: {})
+    monkeypatch.setattr(cli, "discover_dynamic_sources", lambda fetcher, **kwargs: {})
 
     args = argparse.Namespace(
         dry_run=False,
