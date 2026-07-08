@@ -1,31 +1,98 @@
 @import "tailwindcss";
 
 /*
- * Design system "El Recibo del Municipio" (DESIGN.md) -- newspaper/receipt
- * editorial doctrine. Deliberately light-only (see D below): a paper
- * texture has no dark mode, and this portal's sober, civic-neutral palette
- * is never a party palette. Fixing color-scheme here is load-bearing: an
- * earlier `@media (prefers-color-scheme: dark)` variant, combined with an
- * unlayered `body { background: var(--background) }` rule, silently beat
- * Tailwind's layered utilities on visitors whose OS/browser prefers dark
- * mode (unlayered CSS always wins over `@layer` output regardless of
- * selector specificity) -- Lighthouse's headless Chrome caught this as a
- * `color-contrast` failure on every route.
+ * Design system v2 -- "Dashboard cívico premium" (DESIGN.md, redesign
+ * approved by the owner 2026-07-07). Evolves the original zero-JS "El
+ * Recibo" doctrine into a modernized skin: elevation, modest radii, an
+ * optional dark palette. Light stays the DEFAULT and is what every visitor
+ * gets unless they explicitly opt into dark via `ThemeToggle`
+ * (localStorage-persisted) -- the OS `prefers-color-scheme` is
+ * intentionally never read for this, so a visitor's browser/OS setting can
+ * never silently flip the paper palette on its own. `app/layout.tsx`'s
+ * inline `beforeInteractive` script reads the same stored choice before
+ * first paint, so there is no light->dark flash on repeat visits.
+ *
+ * Raw palette tokens live as plain custom properties on `:root` (light)
+ * and are re-mapped under `[data-theme="dark"]` (dark). `@theme inline`
+ * below points every Tailwind utility (`bg-paper`, `text-ink`, `shadow-card`,
+ * etc.) at those SAME custom properties via `var(...)`, rather than baking
+ * in a static value -- that indirection is what makes flipping
+ * `data-theme` on `<html>` re-theme every utility instantly, with no
+ * `dark:` variant needed on any individual element.
  */
 :root {
   color-scheme: light;
+
+  --paper: #f2efe4;
+  --paper-2: #ece7d8;
+  --surface: #fffdf7;
+  --surface-2: #f8f4e9;
+  --ink: #1a1a17;
+  --ink-2: #43413a;
+  --muted: #6b6558;
+  --stamp: #c4361e;
+  --stamp-tint: #f7e6e1;
+  --olive: #2f5d3a;
+  --olive-tint: #e6eee2;
+  --ocre: #f2d9a8;
+  --ocre-soft: #f6e7c4;
+  --rule: #d8d2c0;
+  --rule-soft: #e6e0d0;
+
+  --elev-card:
+    0 1px 2px rgba(26, 26, 23, 0.05), 0 8px 24px -14px rgba(26, 26, 23, 0.22);
+  --elev-control: 0 1px 2px rgba(26, 26, 23, 0.06);
+  --elev-header:
+    0 1px 2px rgba(26, 26, 23, 0.06), 0 6px 16px -10px rgba(26, 26, 23, 0.18);
+}
+
+/* Dark palette: warm charcoal, reduced saturation -- never a second "loud"
+ * theme, still the same civic-neutral register as light. Opt-in only. */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --paper: #17150f;
+  --paper-2: #1c1912;
+  --surface: #201d15;
+  --surface-2: #262218;
+  --ink: #f3efe4;
+  --ink-2: #d3cdbc;
+  --muted: #9a9284;
+  --stamp: #e77a63;
+  --stamp-tint: #33201b;
+  --olive: #7cbf8b;
+  --olive-tint: #1b2a1e;
+  --ocre: #e6c583;
+  --ocre-soft: #2e2717;
+  --rule: #38342a;
+  --rule-soft: #2c281f;
+
+  --elev-card:
+    0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px -16px rgba(0, 0, 0, 0.7);
+  --elev-control: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --elev-header:
+    0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 20px -12px rgba(0, 0, 0, 0.55);
 }
 
 @theme inline {
-  /* Color -- DESIGN.md "Color" table. */
-  --color-paper: #f2efe4;
-  --color-surface: #fffdf7;
-  --color-ink: #1a1a17;
-  --color-muted: #6b6558;
-  --color-stamp: #c4361e;
-  --color-olive: #2f5d3a;
-  --color-ocre: #f2d9a8;
-  --color-rule: #d8d2c0;
+  /* Color -- DESIGN.md "Color" table, plus the elevation surfaces/tints
+   * this redesign adds (--*-2, --*-tint, --*-soft). Every entry points at
+   * the raw `:root` / `[data-theme="dark"]` custom property above. */
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-stamp: var(--stamp);
+  --color-stamp-tint: var(--stamp-tint);
+  --color-olive: var(--olive);
+  --color-olive-tint: var(--olive-tint);
+  --color-ocre: var(--ocre);
+  --color-ocre-soft: var(--ocre-soft);
+  --color-rule: var(--rule);
+  --color-rule-soft: var(--rule-soft);
 
   /* Typography -- DESIGN.md "Tipografía": four voices, one register each.
    * `--font-sans` / `--font-mono` are Tailwind's own default namespace, so
@@ -37,17 +104,27 @@
   --font-display: var(--font-fraunces);
   --font-quote: var(--font-newsreader);
 
-  /* Border radius -- the receipt is straight-edged. Zero everywhere,
-   * including whatever radius Tailwind's own `rounded-*` scale would
-   * otherwise apply if a utility class is used by mistake. */
+  /* Border radius -- v2 DELIBERATELY RELAXES the original "border-radius:0
+   * everywhere" doctrine for this redesign (owner-approved 2026-07-07, see
+   * DESIGN.md decisions log): modest, consistent rounding on cards,
+   * controls and overlays. Still restrained -- never full pill-only
+   * decoration divorced from the receipt's straight-edge DNA, and body
+   * copy / tables / provenance rows stay unrounded. */
   --radius-none: 0px;
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-xl: 0px;
-  --radius-2xl: 0px;
-  --radius-3xl: 0px;
-  --radius-full: 0px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-3xl: 28px;
+  --radius-full: 999px;
+
+  /* Elevation -- new in v2. Soft, low-contrast shadows (never the heavy
+   * drop-shadows of a generic SaaS dashboard) that read as "raised paper",
+   * not "floating glass". */
+  --shadow-card: var(--elev-card);
+  --shadow-control: var(--elev-control);
+  --shadow-header: var(--elev-header);
 }
 
 @layer base {
@@ -56,12 +133,10 @@
     color: var(--color-ink);
     font-size: 17px;
     line-height: 1.55;
-  }
-
-  /* Border-radius: 0 in every element, doctrine per DESIGN.md ("El recibo
-   * es recto"), regardless of which utility a future edit reaches for. */
-  * {
-    border-radius: 0;
+    /* Smooth cross-fade when ThemeToggle flips data-theme. */
+    transition:
+      background-color 200ms ease-out,
+      color 200ms ease-out;
   }
 
   /* Link treatment: stamp-red underline stamp, offset 3px, thickness 2px. */
@@ -81,5 +156,26 @@
   :focus-visible {
     outline: 2px solid var(--color-stamp);
     outline-offset: 2px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Respect reduced-motion system-wide: every transition/animation
+   * (theme cross-fade, drawer slide, header shadow, scroll-reveal,
+   * count-up) collapses to effectively instant. Motion primitives also
+   * check `prefers-reduced-motion` in JS (see lib/hooks/useCountUp.ts and
+   * components/ScrollReveal.tsx) for the cases where skipping the
+   * animation ENTIRELY (not just shortening it) is the correct behavior. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
