@@ -1,22 +1,62 @@
-# Sistema de Diseño — "El Recibo del Municipio"
+# Sistema de Diseño — "Dashboard cívico premium" (sobre ADN "El Recibo del Municipio")
 
 Fuente de verdad de diseño de **¿Dónde va la plata? — Coronel Rosales**.
 Todo cambio visual o de UI se decide acá. No desviarse sin aprobación explícita del dueño del proyecto.
+
+**v2 (2026-07-07, aprobado por el dueño del proyecto):** rediseño moderno/interactivo.
+Base = Dirección A "Dashboard cívico premium" (contención tipo Linear/Stripe, mantiene el ADN
+papel+tinta+sello), injertando las piezas mobile de la Dirección C (bottom tab-bar, bottom-sheet,
+explicador "Cómo leer los colores"). Ver el registro de decisiones al final para el detalle de
+qué cambió, por qué, y qué **NO** cambió. Las reglas marcadas **INVIOLABLE** sobreviven este y
+cualquier rediseño futuro sin excepción.
+
+## Reglas INVIOLABLES (sobreviven todo rediseño)
+
+Estas reglas NO se relajan con este ni ningún rediseño futuro sin una nueva aprobación explícita
+y documentada del dueño del proyecto:
+
+1. **Neutralidad cromática.** Un color jamás "opina" sobre una gestión, partido o funcionario.
+   Verde/rojo **solo** para variación aritmética real de una misma serie en el tiempo, y
+   **siempre** acompañados de una marca ▲/▼ — nunca color solo (WCAG 1.4.1, uso de color). Toda
+   tabla con celdas en rojo lleva la leyenda "En rojo: cayó respecto del período anterior." Ver
+   componente "Cómo leer los colores" (Dirección C), ahora reusable en todo el sitio.
+2. **Procedencia verificable.** Toda cifra titular muestra fuente + "copia archivada" + sha256
+   corto. Si un dato no tiene esas tres cosas, no se publica.
+3. **es-AR en copy visible; inglés en código.** Identificadores, comentarios y nombres de
+   componentes en inglés; toda copia visible al usuario en español rioplatense.
+4. **Datos en build-time.** Ninguna cifra se pide en runtime. La interactividad son islas de
+   cliente chicas y puntuales (drawer, count-up, scroll-reveal, tema, nav activo mobile) — nunca
+   una librería de gráficos pesada ni un fetch de datos en el navegador.
+5. **Accesibilidad ≥ 90 (objetivo 100).** Todo elemento interactivo operable por teclado,
+   focus-visible siempre encendido, `prefers-reduced-motion` respetado por cada primitiva de
+   motion, jerarquía de encabezados intacta.
 
 ## Contexto de producto
 
 - **Qué es:** portal cívico de transparencia — muestra cuánta plata recibe y gasta el municipio de Coronel Rosales, con fuentes oficiales archivadas y verificables (sha256).
 - **Para quién:** vecinos comunes, no técnicos, mayormente en Android de gama media/baja, de día y al sol.
-- **Tipo de proyecto:** sitio editorial de datos (más diario que dashboard). Estático, sin JS en las cifras.
+- **Tipo de proyecto (v2):** producto de datos interactivo con ADN editorial — el dato sigue
+  siendo protagonista (titular de diario), pero ahora vive en un shell de app moderno (header
+  sticky, bottom-nav mobile, drawers) en vez de una página de diario 100% estática. Los datos
+  siguen siendo build-time; lo que cambia es la capa de interacción (islas de cliente chicas), no
+  la fuente de la verdad.
 - **Tensión de marca:** la marca es una pregunta filosa; el contenido es estrictamente neutral. La forma grita, el contenido no.
 - **Lo memorable (gobierna todo):** *"acá están los números que nadie muestra"* — el número es el protagonista, tratado como titular de diario.
 
 ## Dirección estética
 
-- **Dirección:** editorial-documental — "tapa de diario impresa en papel de recibo". Ni SaaS, ni gobierno digital (anti-referente: presupuestoabierto.gob.ar y sus tarjetas arcoíris).
-- **Nivel de decoración:** mínimo — la tipografía y el número hacen todo el trabajo. Si algo no es número, tabla o texto, no entra.
-- **Mood:** algo que se puede *chequear*, no algo que hay que *admirar*. "Parece el recibo que me clavaron a mí — pero de la municipalidad."
-- **Referentes:** ProPublica (seriedad editorial), Chequeado (display gigante como marca de sección), OWID (gráfico+tabla).
+- **Dirección (v2):** "dashboard cívico premium" — contención tipo producto de datos serio
+  (Linear/Stripe), sobre la MISMA base papel+tinta+sello (nunca SaaS genérico, nunca gobierno
+  digital — anti-referente sigue siendo presupuestoabierto.gob.ar y sus tarjetas arcoíris). En
+  mobile, injerta el lenguaje de app de la Dirección C: tarjetas más redondeadas, bottom tab-bar,
+  bottom-sheet.
+- **Nivel de decoración (v2, relajado):** la tipografía y el número siguen haciendo la mayoría
+  del trabajo, pero ahora se permite elevación sutil (sombras suaves, nunca "vidrio flotante"),
+  radios modestos y micro-motion con propósito (conteo, revelado al scroll, drawer). Sigue sin
+  entrar decoración puramente ornamental (ilustraciones, gradientes de marca, iconografía
+  decorativa sin función).
+- **Mood:** algo que se puede *chequear*, no algo que hay que *admirar*. "Parece el recibo que me clavaron a mí — pero de la municipalidad", ahora en una app que se siente cuidada y rápida.
+- **Referentes:** ProPublica (seriedad editorial), Chequeado (display gigante como marca de sección), OWID (gráfico+tabla), + Linear/Stripe (restricción de un dashboard de producto moderno) y la Dirección C interna (mobile app-feel).
 
 ## Tipografía
 
@@ -32,28 +72,44 @@ Todo cambio visual o de UI se decide acá. No desviarse sin aprobación explíci
 
 ## Color
 
-| Token | Hex | Uso |
-|---|---|---|
-| `--paper` | `#F2EFE4` | Fondo global (papel crudo — menos fatiga al sol que blanco puro) |
-| `--surface` | `#FFFDF7` | Tarjetas / frames sobre el papel |
-| `--ink` | `#1A1A17` | Texto primario (tinta) |
-| `--muted` | `#6B6558` | Texto secundario — **solo en cuerpos ≥16px o mono ≥12px** (límite AA) |
-| `--stamp` | `#C4361E` | Acento único: subrayado de links, kickers, signo de la marca. Rojo sello administrativo, NO rojo alarma |
-| `--olive` | `#2F5D3A` | Subas reales (por encima de inflación) |
-| `--ocre` | `#F2D9A8` | Resaltado documental (fallos, marcador "escaneado"). Resalta, no juzga |
-| `--rule` | `#D8D2C0` | Filetes, bordes, grillas de gráfico |
+| Token | Hex (light) | Hex (dark) | Uso |
+|---|---|---|---|
+| `--paper` | `#F2EFE4` | `#17150F` | Fondo global |
+| `--paper-2` | `#ECE7D8` | `#1C1912` | Fondo de zonas secundarias (footer) |
+| `--surface` | `#FFFDF7` | `#201D15` | Tarjetas / frames sobre el papel |
+| `--surface-2` | `#F8F4E9` | `#262218` | Superficie elevada dos niveles (hover de fila, chips) |
+| `--ink` | `#1A1A17` | `#F3EFE4` | Texto primario |
+| `--ink-2` | `#43413A` | `#D3CDBC` | Texto secundario de mayor peso que `--muted` |
+| `--muted` | `#6B6558` | `#9A9284` | Texto terciario — **solo en cuerpos ≥16px o mono ≥12px** (límite AA), en ambos temas |
+| `--stamp` | `#C4361E` | `#E77A63` | Acento único: subrayado de links, kickers, signo de la marca, caídas aritméticas. Rojo sello administrativo, NO rojo alarma |
+| `--olive` | `#2F5D3A` | `#7CBF8B` | Subas aritméticas reales (por encima de inflación) |
+| `--ocre` | `#F2D9A8` | `#E6C583` | Resaltado documental (fallos, marcador "escaneado", ítem pendiente). Resalta, no juzga |
+| `--rule` | `#D8D2C0` | `#38342A` | Filetes, bordes, grillas de gráfico |
 
-- **Caídas reales:** `--stamp` (mismo rojo del acento; en contexto de tabla/serie se lee como negativo).
-- **Regla de neutralidad cromática (INVIOLABLE):** jamás un color que "opine" sobre una gestión, partido o funcionario. Sin semáforos buena/mala gestión. Verde/rojo solo para variación aritmética real de una serie.
-- **Dark mode: NO — doctrina, no omisión.** El recibo de papel no tiene modo oscuro. Un solo sistema cromático, bien hecho.
+- **Caídas reales:** `--stamp` (mismo rojo del acento; en contexto de tabla/serie se lee como negativo). **INVIOLABLE**: siempre acompañado de una marca ▲/▼, nunca color solo (WCAG 1.4.1).
+- **Regla de neutralidad cromática (INVIOLABLE):** jamás un color que "opine" sobre una gestión, partido o funcionario. Sin semáforos buena/mala gestión. Verde/rojo solo para variación aritmética real de una serie. Ver `ColorLegend` ("Cómo leer los colores").
+- **Elevación (v2, nuevo):** sombras suaves de "papel elevado", nunca vidrio flotante genérico — `--shadow-card` (tarjetas), `--shadow-control` (botones/chips), `--shadow-header` (header al hacer scroll). Siempre de bajo contraste; la profundidad principal sigue siendo los filetes (`--rule`), la sombra es un acento adicional, no el mecanismo primario.
+- **Dark mode (v2, relajado — antes doctrina "NO"):** paleta charcoal cálida, saturación reducida (ver tabla), **opcional** vía `ThemeToggle` (persistido en `localStorage`, nunca sigue `prefers-color-scheme` del SO). **Light sigue siendo el DEFAULT** para todo visitante nuevo. Racional del cambio: la doctrina original ("el recibo de papel no tiene modo oscuro") seguía siendo válida estéticamente, pero el dueño priorizó una app que se sienta moderna incluso de noche/en modo oscuro del sistema operativo del visitante, sin forzarlo — de ahí que sea opt-in explícito y no automático. Aprobado por el dueño 2026-07-07.
 
 ## Espaciado y layout
 
 - **Base:** 4px. Escala: 2xs(2) xs(4) sm(8) md(16) lg(24) xl(32) 2xl(48) 3xl(64). Densidad: comfortable.
 - **Layout:** columna única mobile-first; contenido de lectura máx ~62ch; contenedor máx 1080px.
 - **Home = afiche, no landing:** el monto del último mes domina el fold (mono gigante), variación con signo en chip bordeado, pregunta itálica en Newsreader debajo, luego filas de sección (pregunta Fraunces + link mono "ver → "). Sin hero copy de marketing, sin carruseles.
-- **Border-radius: 0 en todo.** El recibo es recto. Sin sombras difusas; profundidad = filetes (`--rule`) y bordes de 1–2px.
-- **Navegación:** header con filete inferior de 2–3px `--ink` (cabecera de diario). Links subrayados con `text-decoration-color: var(--stamp)`, offset 3px, grosor 2px.
+- **Radios (v2, relajado — antes "border-radius: 0 en todo").** Escala modesta y consistente:
+  `--radius-sm` 8px (controles, chips), `--radius-md` 12px (tarjetas), `--radius-lg` 16px
+  (drawer/sheet, tarjetas destacadas), `--radius-full` (pills, badges). Racional: el dueño pidió
+  una dirección "más marketinera, moderna, intuitiva" y autorizó explícitamente relajar la
+  doctrina recta del recibo; los radios se mantienen MODESTOS a propósito (nunca `2xl`/`3xl`
+  genéricos de SaaS) para no perder la identidad de "documento", solo suavizarla. Body copy,
+  tablas de datos y la fila de procedencia (fuente/archivo/sha256) **siguen sin radio** — son las
+  piezas que más necesitan leerse como documento, no como tarjeta de producto. Aprobado por el
+  dueño 2026-07-07.
+- **Navegación (v2):** header sticky con sombra sutil solo al hacer scroll (`StickyHeaderShell`,
+  ver Motion) en vez del filete fijo de 2–3px `--ink` original. Links subrayados con
+  `text-decoration-color: var(--stamp)`, offset 3px, grosor 2px (sin cambios). En mobile, el nav
+  inline del header se oculta (`hidden sm:flex`) y se reemplaza por una bottom tab-bar sticky
+  (`MobileBottomNav`, injerto de la Dirección C) — ver Componentes canónicos.
 
 ## Componentes canónicos
 
@@ -75,13 +131,85 @@ Todo cambio visual o de UI se decide acá. No desviarse sin aprobación explíci
 - **Barra de progreso de cumplimiento (cero JS):** para trazar un puntaje en el tiempo (ej. la tendencia 70→81 de `/transparencia`) sin un componente de gráfico completo: `<div>`s planos, ancho proporcional (`style={{width: "N%"}}`) sobre un track `--rule`, relleno `--olive` porque es una variación aritmética real de la MISMA serie en el tiempo (mismo precedente que el chip de variación real de coparticipación) -- nunca para comparar entre gestiones o personas. Un valor por fila, con el label y el número al lado en mono; siempre acompañado de la oración equivalente en prosa (nunca solo el gráfico).
 - **Ítem pendiente documental (dimensión "qué falta"):** reutiliza el token `--ocre` "resalta, no juzga" (mismo usado en la tarjeta de fallo y el badge "documento escaneado") con borde izquierdo 5px, para listar sub-puntajes por debajo del máximo de una fuente externa (ej. dimensiones fiscales de ASAP) -- nunca `--stamp`/rojo-alarma, porque no es una falla imputable a una persona o gestión, es un ítem objetivo de una metodología publicada.
 
+### Componentes del app shell (v2, slice 1)
+
+- **`SiteHeader` + `StickyHeaderShell`:** el header sigue siendo un Server Component (el nav
+  activo se sigue resolviendo por `layout.tsx` de sección, ver "Nav activo" arriba — sin cambios
+  en ese mecanismo). `StickyHeaderShell` es una isla de cliente chica y separada, solo responsable
+  de la posición sticky y de agregar `--shadow-header` una vez que la página hizo scroll (antes:
+  filete fijo de 2–3px siempre visible). El nav inline se oculta en mobile (`hidden sm:flex`); en
+  su lugar, mobile usa `MobileBottomNav`.
+- **`MobileBottomNav`:** bottom tab bar sticky (injerto de la Dirección C), 4 tabs (Inicio · Plata
+  · Multas · Transparencia), objetivos de toque ≥44px, `nav` con landmark + `aria-current="page"`
+  en el tab activo (nunca color solo). A diferencia de `SiteHeader`, es una isla de cliente
+  genuina (`usePathname()`) — se acepta explícitamente para este slice porque es chrome siempre
+  montado en cada ruta, exactamente el tipo de isla chica que este rediseño autoriza. Respeta
+  `env(safe-area-inset-bottom)` y el body agrega padding inferior (`pb-20 sm:pb-0`) para que el
+  contenido nunca quede tapado.
+- **`ThemeToggle`:** botón `aria-pressed`, persiste en `localStorage` (`ddvlp-theme`), nunca lee
+  `prefers-color-scheme`. Ver sección Color.
+- **`Drawer` (Sheet):** overlay reusable — drawer desde la derecha en desktop, bottom-sheet en
+  mobile, ambos vía breakpoints CSS (sin ramificación por JS). Focus trap real (Tab/Shift+Tab
+  ciclan manualmente dentro del panel), ESC cierra, click en backdrop cierra, scroll del body
+  bloqueado mientras está abierto, foco vuelve al disparador al cerrar, drag-down-to-dismiss en
+  mobile. Cerrado = `aria-hidden`+`inert`, genuinely fuera del árbol de accesibilidad aunque siga
+  montado (para permitir la transición de salida). Este slice entrega el primitivo; las tablas
+  completas + metodología que va a alojar llegan en los slices 2-3.
+- **`ColorLegend` ("Cómo leer los colores"):** explicador reusable (injerto de la Dirección C) que
+  declara la regla de neutralidad cromática en lenguaje llano, con las marcas ▲/▼ visibles, no
+  solo color. Pensado para vivir junto a cualquier gráfico/tabla/puntaje (se cablea en contenido
+  de página en slices 2-3; este slice entrega el componente).
+- **`CountUp` (+ `useCountUp`):** conteo ascendente para cifras héroe (monto del home,
+  puntaje 81/100 de `/transparencia`). SSR y primer render de cliente muestran el valor FINAL
+  directamente (nunca "0" para un visitante sin JS); la animación 0→valor es una mejora
+  progresiva post-montaje. `prefers-reduced-motion` la salta por completo. Ver Motion.
+- **`ScrollReveal`:** revelado al hacer scroll, CSS-first con mejora JS. Por defecto (SSR, sin JS,
+  o si `IntersectionObserver` no existe) el contenido está SIEMPRE visible. Con JS + motion
+  permitido, se "arma" (fade+offset) recién en el próximo frame de animación y se revela al
+  entrar en viewport, con un timeout de seguridad que fuerza el revelado igual si el observer
+  nunca dispara. Ver Motion.
+
 ## Motion
 
-- **Enfoque:** mínimo-funcional. CSS puro (`transition` 150–250ms ease-out en hover/focus de links y botones). Nada de animación de entrada, scroll-driven ni parallax.
+**v2 (relajado — antes "mínimo-funcional, nada de animación de entrada, scroll-driven ni
+parallax").** Racional del cambio: el dueño pidió una dirección más moderna/intuitiva y autorizó
+explícitamente drawers, count-up y revelado al scroll. La relajación es deliberada y acotada —
+sigue sin haber una librería de animación de terceros, scroll-jacking, ni parallax decorativo.
+Aprobado por el dueño 2026-07-07.
+
+- **Transiciones base:** CSS puro, 150–300ms ease-out, en hover/focus de links/botones, cambio de
+  tema (`color`/`background-color`), header sticky (sombra), y drawer/sheet (`transform`,
+  `opacity`).
+- **Primitivas de motion con lógica (JS, con red de seguridad):**
+  - `useCountUp`/`CountUp` — ver Componentes del app shell arriba.
+  - `ScrollReveal` — ver Componentes del app shell arriba. El bug que motivó su diseño: un
+    revelado basado solo en `IntersectionObserver` puede fallar en disparar bajo ciertas
+    posiciones de scroll y dejar contenido real permanentemente oculto — de ahí el timeout de
+    seguridad obligatorio en cualquier primitiva de motion nueva que oculte contenido
+    condicionalmente.
+- **`prefers-reduced-motion: reduce`:** honrado en dos niveles — (1) una regla CSS global colapsa
+  toda `transition`/`animation` a ~instantánea, (2) cada primitiva de motion en JS (`useCountUp`,
+  `ScrollReveal`) además chequea el media query y **salta la animación por completo** (no solo la
+  acorta) cuando aplica, porque en esos casos el estado "sin animar" es semánticamente el correcto
+  (mostrar el valor final ya, no ocultar contenido y esperar).
+- **Sigue prohibido:** librerías de gráficos/animación pesadas de terceros, cualquier fetch de
+  datos en runtime disparado por scroll, parallax decorativo, scroll-jacking.
 
 ## Accesibilidad
 
-- AA mínimo en todo par texto/fondo (muted solo ≥16px). Focus visible: outline 2px `--stamp`. Lighthouse a11y ≥ 90 (hoy: 100 — no retroceder).
+- AA mínimo en todo par texto/fondo (muted solo ≥16px, en ambos temas). Focus visible: outline 2px
+  `--stamp`, nunca suprimido. Lighthouse a11y ≥ 90 (hoy: 100 — no retroceder).
+- **Dark mode y contraste (v2):** la paleta dark se validó para mantener el mismo piso AA que
+  light en los pares texto/fondo de la tabla de Color — no es una inversión automática de
+  colores, son valores elegidos a mano por token.
+- **Overlays (v2):** `Drawer` es `role="dialog"` + `aria-modal` + `aria-labelledby`, con foco
+  atrapado real y cerrado = fuera del árbol de accesibilidad (`aria-hidden`+`inert`), no solo
+  visualmente oculto.
+- **Navegación mobile (v2):** `MobileBottomNav` es un landmark `nav` propio con
+  `aria-current="page"` en el tab activo; en cualquier viewport dado solo un nav (header o
+  bottom-bar) queda expuesto al árbol de accesibilidad, nunca los dos a la vez.
+- **Motion:** `prefers-reduced-motion` respetado tanto en CSS global como en cada primitiva JS —
+  ver Motion arriba.
 
 ## Registro de decisiones
 
@@ -94,3 +222,8 @@ Todo cambio visual o de UI se decide acá. No desviarse sin aprobación explíci
 | 2026-07-07 | Nav activo vía `layout.tsx` por sección, no `usePathname()` | `usePathname()` exige un Client Component solo para un resaltado cosmético (contra la doctrina cero-JS) y además lanza una excepción fuera de un router de Next montado — exactamente cómo este repo renderiza `SiteHeader`/páginas en los tests. Cada sección de primer nivel tiene su propio `layout.tsx` que le pasa `activeHref` a `SiteHeader`; el home ("/") no tiene layout anidado y se renderiza a sí mismo con `activeHref={null}`. Verificado contra un `next build` real (`aria-current="page"` presente en el HTML generado), no solo en jsdom. |
 | 2026-07-07 | Gráfico héroe: `viewBox` paisaje propio (`880×460`) desde `sm`, en vez de escalar el `viewBox` portrait mobile | El portrait `380×460` (pensado para `~50vh` en un teléfono) dentro de un contenedor ancho de escritorio hacía *letterboxing* — chico y centrado, con márgenes vacíos grandes a los costados. Como el sitio es cero-JS/server-rendered, no hay forma de medir el viewport en runtime; se renderizan ambas variantes (mobile y desktop) en el HTML y se alternan con `sm:hidden` / `hidden sm:block` (mismo patrón cero-JS ya usado en la comparación de vecinos), no con detección por JS. |
 | 2026-07-07 | Nueva sección `/transparencia` (Índice de Transparencia Fiscal Municipal, ASAP) | Corrección de atribución: el índice lo publica ASAP (asociación civil/profesional), NUNCA "Ministerio de Capital Humano" (esa atribución original era incorrecta -- Capital Humano no publica ningún índice municipal). La sección es explícita en tres cosas a la vez, siempre visibles, nunca solo en la letra chica: (1) quién lo publica y que NO es un ministerio, (2) que mide transparencia FISCAL, no integral (compras/salarios/DDJJ/actas/datos abiertos quedan fuera), (3) que un 100 acá no equivale a transparencia integral. Trend 70(nov 2025)→81(may 2026) coloreado `--olive` por ser variación aritmética real de la misma serie (mismo precedente que el badge de coparticipación), nunca un juicio sobre gestión/persona. Ver nuevos patrones "Cifra de cumplimiento", "Barra de progreso de cumplimiento" e "Ítem pendiente documental" en Componentes canónicos. |
+| 2026-07-07 | **v2 — rediseño "Dashboard cívico premium"** aprobado por el dueño | El dueño pidió una dirección "más marketinera, moderna, intuitiva" y autorizó explícitamente JS/drawers/tablas interactivas. Se evaluaron 3 direcciones (mockups en `mock-dashboard.html`=A, `mock-appvibrant.html`=C, `mock-editorial.html`=B, descartada por leer como startup y costar credibilidad en un portal de transparencia). Elegida: base A (contención tipo Linear/Stripe sobre el ADN papel+tinta+sello) injertando las piezas mobile de C (bottom tab-bar, bottom-sheet, "Cómo leer los colores"). Las reglas INVIOLABLES (neutralidad + marca ▲/▼, procedencia sha256, es-AR, a11y ≥90, datos build-time) se preservan explícitamente y quedan documentadas en su propia sección al tope de este archivo. |
+| 2026-07-07 | Slice 1 del rediseño: fundación + app shell + primitivas interactivas compartidas | Entregado: tokens de tema (elevación, radios modestos, dark mode opt-in), `useCountUp`/`CountUp`, `ScrollReveal`, `StickyHeaderShell` + `ThemeToggle` cableados en `SiteHeader`, `MobileBottomNav` cableado en `app/layout.tsx`, `Drawer` (primitivo reusable, aún no cableado a contenido de página), `ColorLegend` (componente reusable, aún no cableado a contenido de página). El contenido de página (gráficos, tarjetas de fallo, tablas) queda **sin cambios** este slice a propósito -- se rediseña en los slices 2-3, que también cablean `Drawer`/`ColorLegend` a las páginas reales. Todos los tests de invariantes preexistentes (neutralidad, procedencia dual, recencia de fallos, indexado de gráfico por período, título del rebrand, honestidad de `/transparencia`) siguen en verde sin modificación. |
+| 2026-07-07 | Radios de borde relajados de 0 a una escala modesta (8/12/16/24/28px) | Ver sección Espaciado y layout. Body copy, tablas de datos y la fila de procedencia siguen sin radio -- son las piezas que más necesitan leerse como documento oficial, no como tarjeta de producto. |
+| 2026-07-07 | Dark mode opt-in agregado (antes doctrina "NO") | Ver sección Color. Opcional y persistido, nunca sigue `prefers-color-scheme` del SO -- light sigue siendo el default de todo visitante nuevo, así que esta relajación no cambia la experiencia por defecto de nadie. |
+| 2026-07-07 | Islas de cliente chicas autorizadas (antes doctrina cero-JS estricta) | Ver Regla INVIOLABLE #4 (reformulada, no eliminada): los DATOS siguen siendo 100% build-time -- lo que cambia es que ahora se permite JS puntual para interacción (drawer, tema, tab activo mobile, conteo, revelado al scroll), nunca para traer datos en runtime ni para reemplazar un gráfico SVG server-rendered por una librería de terceros. |
