@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ColorLegend } from "@/components/ColorLegend";
 import { DataTable } from "@/components/chart/DataTable";
-import { SvgChart } from "@/components/chart/SvgChart";
+import { InteractiveCoparticipacionChart } from "@/components/chart/InteractiveCoparticipacionChart";
+import { DrawerTrigger } from "@/components/DrawerTrigger";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { computeCoparticipacionTrend } from "@/lib/insight";
 import { formatArsHuman, formatArsPlain, formatPeriodEsAr } from "@/lib/format";
@@ -16,15 +18,19 @@ export const metadata: Metadata = {
 const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
 
 /**
- * Page hierarchy inverted per DESIGN.md's "coparticipación page surgery":
+ * Page hierarchy inverted per DESIGN.md's "coparticipación page surgery"
+ * (slice 2 evolves this from static SVG + `<details>` to a real client
+ * island, see DESIGN.md's slice 2 decision log):
  * (a) a plain-language, DATA-DRIVEN conclusion sentence leads (never a
  *     hardcoded claim -- see lib/insight.ts);
- * (b) one BIG chart, Coronel Rosales' real (inflation-adjusted) series
- *     only, with the nominal series and the neighbor comparison behind
- *     zero-JS <details> toggles;
+ * (b) one BIG, INTERACTIVE chart (`InteractiveCoparticipacionChart`,
+ *     client island) -- Coronel Rosales only, real series by default,
+ *     with a Real/Nominal segmented control replacing the old separate
+ *     "ver también sin ajustar" static toggle-chart;
  * (c) every table and methodology note stays fully intact, just collapsed
- *     behind a single closed-by-default "Ver todos los números" <details>
- *     -- nothing is removed, only deprioritized behind one tap.
+ *     behind a single closed-by-default "Ver todos los números" Drawer
+ *     (slice 1 primitive) -- nothing is removed, only deprioritized
+ *     behind one tap.
  *
  * Neighbor-comparison integrity decision (D8, see DESIGN.md decisions
  * log): a per-capita ("$ por habitante") comparison would be the honest
@@ -49,38 +55,11 @@ export default function CoparticipacionPage() {
   const points = coronelRosales?.points ?? [];
   const trend = computeCoparticipacionTrend(points);
 
-  const heroRealSeries = coronelRosales
-    ? [
-        {
-          id: `${coronelRosales.municipioId}-real`,
-          label: "Coronel Rosales — real",
-          points: points.map((point) => ({
-            period: point.period,
-            value: point.realArs,
-          })),
-        },
-      ]
-    : [];
-  const heroCompareSeries = coronelRosales
-    ? [
-        {
-          id: `${coronelRosales.municipioId}-real`,
-          label: "Real (ajustado por inflación)",
-          points: points.map((point) => ({
-            period: point.period,
-            value: point.realArs,
-          })),
-        },
-        {
-          id: `${coronelRosales.municipioId}-nominal`,
-          label: "Nominal (sin ajustar)",
-          points: points.map((point) => ({
-            period: point.period,
-            value: point.nominalArs,
-          })),
-        },
-      ]
-    : [];
+  const heroPoints = points.map((point) => ({
+    period: point.period,
+    real: point.realArs,
+    nominal: point.nominalArs,
+  }));
 
   const adjustedSeries = coparticipacion.series.map((series) => ({
     id: series.municipioId,
@@ -103,12 +82,6 @@ export default function CoparticipacionPage() {
   const dataThroughLabel = formatPeriodEsAr(coparticipacion.dataThrough);
   const sourceLinks = resolveSourceRefs(coparticipacion.sourceRefs, manifest);
 
-  // >=1 intermediate gridline per calendar year present, so the Y axis
-  // reads as a real timeline instead of just a min/mid/max sketch.
-  const yearsPresent = new Set(points.map((point) => point.period.slice(0, 4)))
-    .size;
-  const heroGridLineCount = Math.max(3, yearsPresent + 2);
-
   return (
     <div className="space-y-10">
       <section>
@@ -130,87 +103,43 @@ export default function CoparticipacionPage() {
         </p>
       </section>
 
-      {/* (b) BIG chart -- Coronel Rosales real series only, by default. */}
-      {heroRealSeries.length > 0 ? (
+      {/* (b) BIG chart -- Coronel Rosales, interactive, real series by
+          default -- hover/touch tooltip, keyboard nav (arrows/Home/End),
+          crosshair, labelled end point, dashed reference line, and a
+          Real/Nominal segmented control (supersedes the old separate
+          "ver también sin ajustar" static toggle-chart: switching series
+          now happens IN the hero chart itself). */}
+      {heroPoints.length > 0 ? (
         <section aria-labelledby="serie-hero-heading">
           <h2 id="serie-hero-heading" className="sr-only">
-            Serie real de Coronel Rosales
+            Serie de Coronel Rosales
           </h2>
           <p className="max-w-[62ch] text-sm text-muted">
             &quot;Real&quot; = ya descontada la inflación, para comparar meses
             de años distintos.
           </p>
-          <div className="mt-4 w-full">
-            {/* Mobile: portrait viewBox, tuned to read as a genuinely tall
-                "hero" figure on a phone screen (DESIGN.md). */}
-            <div className="h-[50vh] max-h-[480px] min-h-[280px] w-full sm:hidden">
-              <SvgChart
-                series={heroRealSeries}
-                ariaLabel={`Serie mensual de Coronel Rosales, en pesos constantes de ${baseMonthLabel}; el detalle exacto está en la tabla dentro de "Ver todos los números"`}
-                formatValue={formatArsHuman}
-                formatPeriod={formatPeriodEsAr}
-                showLastPointLabel
-                showLegend={false}
-                gridLineCount={heroGridLineCount}
-                heightClassName="w-full"
-                fillHeight
-                viewBoxWidth={380}
-                viewBoxHeight={460}
-                axisUnitLabel={`Montos en pesos, ajustados por inflación (base ${baseMonthLabel})`}
-              />
-            </div>
-            {/* Desktop/tablet (>=sm): reusing the mobile portrait viewBox
-                here would letterbox -- a wide bounded container fitting a
-                380x460 box via `preserveAspectRatio="xMidYMid meet"`
-                renders small and centered, with large empty side margins.
-                A landscape viewBox spreads the SAME series across more
-                horizontal space instead, filling the container width at
-                the same fixed height, with identical gridlines/olive
-                line/mono labels -- not a stretched/distorted mobile chart. */}
-            <div className="hidden h-[420px] w-full sm:block">
-              <SvgChart
-                series={heroRealSeries}
-                ariaLabel={`Serie mensual de Coronel Rosales, en pesos constantes de ${baseMonthLabel}; el detalle exacto está en la tabla dentro de "Ver todos los números"`}
-                formatValue={formatArsHuman}
-                formatPeriod={formatPeriodEsAr}
-                showLastPointLabel
-                showLegend={false}
-                gridLineCount={heroGridLineCount}
-                heightClassName="w-full"
-                fillHeight
-                viewBoxWidth={880}
-                viewBoxHeight={460}
-                axisUnitLabel={`Montos en pesos, ajustados por inflación (base ${baseMonthLabel})`}
-              />
-            </div>
+          <div className="mt-4">
+            <InteractiveCoparticipacionChart
+              points={heroPoints}
+              baseMonthLabel={baseMonthLabel}
+            />
           </div>
 
-          <details className="mt-4 border border-rule p-3">
-            <summary className="cursor-pointer font-mono text-xs tracking-[0.08em] text-muted uppercase">
-              ver también sin ajustar
-            </summary>
-            <div className="mt-4">
-              <SvgChart
-                series={heroCompareSeries}
-                ariaLabel={`Serie mensual de Coronel Rosales, real vs. nominal (sin ajustar por inflación)`}
-                formatValue={formatArsHuman}
-                formatPeriod={formatPeriodEsAr}
-                showLastPointLabel
-              />
-            </div>
-          </details>
+          <ColorLegend className="mt-6" />
         </section>
       ) : null}
 
       {/* (c) Everything else -- both tables + methodology + the neighbor
-          comparison -- collapsed behind ONE native, zero-JS <details>,
-          closed by default. Nothing here is removed, only deprioritized. */}
-      <details className="border-t border-rule pt-6">
-        <summary className="cursor-pointer font-display text-lg font-semibold text-ink">
-          Ver todos los números
-        </summary>
-
-        <div className="mt-6 space-y-10">
+          comparison -- collapsed behind ONE Drawer (slice 1 primitive),
+          closed by default. Nothing here is removed, only deprioritized
+          behind one tap ("Ver todos los números"). */}
+      <div className="border-t border-rule pt-6">
+        <DrawerTrigger
+          triggerLabel="Ver todos los números"
+          title="Coparticipación — todos los números"
+          description={`en pesos constantes de ${baseMonthLabel} · datos hasta ${dataThroughLabel}`}
+        >
+        <div className="space-y-10">
           <section aria-labelledby="comparacion-heading">
             <h2
               id="comparacion-heading"
@@ -297,7 +226,8 @@ export default function CoparticipacionPage() {
             </p>
           </section>
         </div>
-      </details>
+        </DrawerTrigger>
+      </div>
 
       <SourcesFooter links={sourceLinks} />
     </div>
