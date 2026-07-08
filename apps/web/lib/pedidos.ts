@@ -12,6 +12,24 @@ import type { PedidoRecord } from "./schemas";
  */
 export const PLAZO_HABIL_DIAS = 30;
 
+/**
+ * Formats a `Date` as a local-calendar-day ISO string (`"YYYY-MM-DD"`),
+ * using the VISITOR's own local date components (`getFullYear`/
+ * `getMonth`/`getDate`), never UTC -- this is meant to answer "what day is
+ * it for the person looking at this page right now", which is the whole
+ * point of computing it client-side instead of baking a build-time date
+ * into the static HTML. See `components/pedidos/PedidosTracker.tsx` and
+ * `components/pedidos/PedidoGenerator.tsx`, which both call this from a
+ * `useEffect` (never during the initial/SSR render) for exactly that
+ * reason.
+ */
+export function toISODateLocal(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function parseIsoDateUTC(iso: string): Date {
   const [year, month, day] = iso.split("-").map(Number);
   return new Date(Date.UTC(year, month - 1, day));

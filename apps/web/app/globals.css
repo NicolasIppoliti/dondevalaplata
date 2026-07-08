@@ -204,3 +204,28 @@
 .gauge-arc {
   animation: gauge-fill 1.1s cubic-bezier(0.22, 0.8, 0.25, 1) both;
 }
+
+/*
+ * Feature G4 print stylesheet (`/pedidos`): clicking "Imprimir" on the
+ * generated pedido letter calls `window.print()`, which triggers the
+ * browser's own print dialog -- this rule makes sure that printout shows
+ * ONLY the letter text (`.print-area`, the `<pre>` in
+ * `PedidoGenerator.tsx`), never the site chrome (header, bottom nav, form
+ * controls, buttons) around it. Classic "hide everything, then re-reveal
+ * one subtree" isolation, no JS involved.
+ */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    padding: 24px;
+  }
+}

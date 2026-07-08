@@ -4,8 +4,16 @@ import {
   countBusinessDaysBetween,
   PLAZO_HABIL_DIAS,
   summarizePedidos,
+  toISODateLocal,
 } from "@/lib/pedidos";
 import type { PedidoRecord } from "@/lib/schemas";
+
+describe("toISODateLocal", () => {
+  it("formats a Date's local calendar day as YYYY-MM-DD, zero-padded", () => {
+    expect(toISODateLocal(new Date(2026, 0, 5))).toBe("2026-01-05");
+    expect(toISODateLocal(new Date(2026, 10, 23))).toBe("2026-11-23");
+  });
+});
 
 /**
  * Feature G4: pure business-day math for the Ordenanza 3638 Art. 8 plazo
