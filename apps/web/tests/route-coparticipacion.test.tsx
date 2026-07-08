@@ -61,8 +61,13 @@ describe("/coparticipacion page", () => {
     );
     render(<Page />);
     openDetailDrawer();
+    // 3 tables share this row shape: per-cápita (H3a), adjusted (real), and
+    // nominal -- each with one row per period, no padded/fabricated rows.
+    const tableCount = screen.getAllByRole("table").length;
     const rowHeaders = screen.getAllByRole("rowheader");
-    expect(rowHeaders.length).toBe((coronelRosales?.points.length ?? 0) * 2);
+    expect(rowHeaders.length).toBe(
+      (coronelRosales?.points.length ?? 0) * tableCount,
+    );
   });
 });
 
@@ -126,6 +131,78 @@ describe("/coparticipacion — inverted hierarchy (conclusion first, big chart, 
     render(<Page />);
     expect(
       screen.getByRole("region", { name: /c[oó]mo leer los colores/i }),
+    ).toBeTruthy();
+  });
+});
+
+describe("/coparticipacion — per-cápita neighbor comparison (feature H3a)", () => {
+  it("shows a per-cápita comparison citing Censo 2022 (INDEC) as the population source", () => {
+    render(<Page />);
+    openDetailDrawer();
+    expect(
+      screen.getByRole("heading", { name: "Comparación por habitante" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/Coparticipación por habitante \(Censo 2022, INDEC\)/),
+    ).toBeTruthy();
+  });
+
+  it("lists all 4 municipios in the per-cápita table, never silently truncating one", () => {
+    const { coparticipacion } = getPortalData();
+    render(<Page />);
+    openDetailDrawer();
+    const perCapitaHeading = screen.getByRole("heading", {
+      name: "Comparación por habitante",
+    });
+    const perCapitaSection = perCapitaHeading.closest("section");
+    expect(perCapitaSection).toBeTruthy();
+    const columnHeaders = Array.from(
+      perCapitaSection?.querySelectorAll("th[scope=col]") ?? [],
+    ).map((th) => th.textContent);
+    for (const series of coparticipacion.series) {
+      expect(columnHeaders).toContain(series.municipio);
+    }
+  });
+
+  it("keeps the original absolute-pesos comparison available, now pointing to the per-cápita section", () => {
+    render(<Page />);
+    openDetailDrawer();
+    expect(
+      screen.getByText(
+        /Cifras absolutas, no ajustadas por población.*Bahía Blanca tiene varias veces más habitantes que Coronel Rosales/,
+      ),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/Ver la comparación por habitante arriba/),
+    ).toBeTruthy();
+  });
+
+  it("Coronel Rosales's per-cápita figure equals its real coparticipación divided by its Censo 2022 population", () => {
+    const { coparticipacion, poblacionCenso } = getPortalData();
+    const coronelRosales = coparticipacion.series.find(
+      (series) => series.municipioId === "06182",
+    );
+    const poblacion = poblacionCenso.municipios.find(
+      (m) => m.municipioId === "06182",
+    )?.poblacion;
+    const lastPoint = coronelRosales?.points[coronelRosales.points.length - 1];
+    const expectedPerCapita = Math.round(
+      (lastPoint?.realArs ?? 0) / (poblacion ?? 1),
+    );
+    render(<Page />);
+    openDetailDrawer();
+    const grouped = expectedPerCapita
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    expect(screen.getAllByText(`$ ${grouped}`).length).toBeGreaterThan(0);
+  });
+});
+
+describe("/coparticipacion — share card button (feature H3b)", () => {
+  it("offers a Compartir button near the hero chart for the coparticipación fact", () => {
+    render(<Page />);
+    expect(
+      screen.getByRole("button", { name: /compartir/i }),
     ).toBeTruthy();
   });
 });

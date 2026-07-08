@@ -371,6 +371,34 @@ export type DeudaHistoricaPoint = z.infer<typeof deudaHistoricaPointSchema>;
 export type DeudaHistoricaData = z.infer<typeof deudaHistoricaDataSchema>;
 
 /**
+ * Feature H3a: the Censo 2022 population per municipio
+ * (`etl/etl/poblacion.py`, `data/poblacion-censo-2022.json`) -- the sourced
+ * denominator for the `/coparticipacion` per-cápita comparison (the honest
+ * fix for comparing coparticipación in absolute pesos across municipios of
+ * very different size, see DESIGN.md's decision log entry for D8/H3).
+ * `poblacion` is a single point-in-time constant per municipio (the census
+ * has no monthly series); every `coparticipacion` period for that
+ * municipio divides by the SAME figure.
+ */
+export const poblacionCensoMunicipioSchema = z.object({
+  municipioId: z.string().min(1),
+  municipio: z.string().min(1),
+  poblacion: z.number().positive(),
+});
+
+export const poblacionCensoDataSchema = z.object({
+  generatedAt: z.string().min(1),
+  censusYear: z.number().int(),
+  sourceRefs: z.array(z.string().min(1)).min(1),
+  municipios: z.array(poblacionCensoMunicipioSchema).min(1),
+});
+
+export type PoblacionCensoMunicipio = z.infer<
+  typeof poblacionCensoMunicipioSchema
+>;
+export type PoblacionCensoData = z.infer<typeof poblacionCensoDataSchema>;
+
+/**
  * Feature H2b: the watchdog "novedades" publication-behavior log
  * (`etl/etl/novedades.py`, `data/novedades.json`). Every event carries an
  * explicit `kind` so the UI always labels which events are hand-curated

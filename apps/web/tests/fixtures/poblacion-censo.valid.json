@@ -1,0 +1,11 @@
+{
+  "generatedAt": "2026-07-08T20:40:43Z",
+  "censusYear": 2022,
+  "sourceRefs": ["poblacion-censo/proyecciones-poblacion-2010-2025"],
+  "municipios": [
+    { "municipioId": "06182", "municipio": "Coronel Rosales", "poblacion": 67503 },
+    { "municipioId": "06056", "municipio": "Bahía Blanca", "poblacion": 336557 },
+    { "municipioId": "06553", "municipio": "Monte Hermoso", "poblacion": 8465 },
+    { "municipioId": "06875", "municipio": "Villarino", "poblacion": 32717 }
+  ]
+}

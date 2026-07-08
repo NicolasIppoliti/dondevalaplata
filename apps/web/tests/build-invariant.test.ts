@@ -8,6 +8,7 @@ import gastoPartidaValid from "./fixtures/gasto-partida.valid.json";
 import adjudicacionesValid from "./fixtures/adjudicaciones.valid.json";
 import deudaHistoricaValid from "./fixtures/deuda-historica.valid.json";
 import novedadesValid from "./fixtures/novedades.valid.json";
+import poblacionCensoValid from "./fixtures/poblacion-censo.valid.json";
 import {
   loadAdjudicaciones,
   loadCadencia,
@@ -17,6 +18,7 @@ import {
   loadGastoPartida,
   loadManifest,
   loadNovedades,
+  loadPoblacionCenso2022,
   loadTransparencia,
 } from "@/lib/data";
 import {
@@ -402,6 +404,65 @@ describe("collectSourceRefs + assertSourceRefsResolve — novedades (optional 8t
   });
 });
 
+describe("collectSourceRefs + assertSourceRefsResolve — poblacion-censo (optional 9th arg)", () => {
+  it("does not throw when every poblacion-censo sourceRef resolves to a manifest record", () => {
+    const poblacionCenso = loadPoblacionCenso2022(poblacionCensoValid);
+    const manifest = loadManifest([
+      ...manifestValid,
+      ...poblacionCenso.sourceRefs.map((id) => ({
+        id,
+        capability: "poblacion-censo",
+        source: "catalogo.datos.gba.gob.ar",
+        source_url: `https://catalogo.datos.gba.gob.ar/${id}`,
+        archived_url: `https://pub-example.r2.dev/${id}.csv`,
+        archived_path: `archive/${id}.csv`,
+        sha256: "1ed7932441c38f4ded0b7398cdce51cba6a704711c46e36c252575178941e1a7",
+        mime: "text/csv",
+        bytes: 55902,
+        fetched_at: "2026-07-08T20:40:30Z",
+        status: "ok",
+        notes: "Fixture record for tests.",
+      })),
+    ]);
+    const coparticipacion = loadCoparticipacion(coparticipacionValid);
+    const fallos = loadFallos(fallosValid);
+    const ids = collectSourceRefs(
+      coparticipacion,
+      fallos,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      poblacionCenso,
+    );
+    expect(ids).toEqual(expect.arrayContaining(poblacionCenso.sourceRefs));
+    expect(() => assertSourceRefsResolve(ids, manifest)).not.toThrow();
+  });
+
+  it("throws when a poblacion-censo sourceRef has no manifest record", () => {
+    const poblacionCenso = loadPoblacionCenso2022(poblacionCensoValid);
+    const manifest = loadManifest(manifestValid);
+    const coparticipacion = loadCoparticipacion(coparticipacionValid);
+    const fallos = loadFallos(fallosValid);
+    const ids = collectSourceRefs(
+      coparticipacion,
+      fallos,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      poblacionCenso,
+    );
+    expect(() => assertSourceRefsResolve(ids, manifest)).toThrow(
+      /poblacion-censo\//,
+    );
+  });
+});
+
 describe("getPortalData", () => {
   it("loads the real repo data/*.json + archive-manifest.json with every sourceRefs id resolving", () => {
     const portal = getPortalData();
@@ -422,5 +483,8 @@ describe("getPortalData", () => {
     // fully sourced.
     expect(portal.deudaHistorica.series).toHaveLength(3);
     expect(portal.novedades.events.length).toBeGreaterThan(0);
+    // Feature H3a: Censo 2022 population per municipio, sourced and
+    // resolved, powering the /coparticipacion per-cápita comparison.
+    expect(portal.poblacionCenso.municipios.length).toBeGreaterThan(0);
   });
 });

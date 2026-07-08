@@ -20,6 +20,8 @@ import deudaHistoricaValid from "./fixtures/deuda-historica.valid.json";
 import deudaHistoricaMalformed from "./fixtures/deuda-historica.malformed.json";
 import novedadesValid from "./fixtures/novedades.valid.json";
 import novedadesMalformed from "./fixtures/novedades.malformed.json";
+import poblacionCensoValid from "./fixtures/poblacion-censo.valid.json";
+import poblacionCensoMalformed from "./fixtures/poblacion-censo.malformed.json";
 import {
   loadAdjudicaciones,
   loadCadencia,
@@ -30,6 +32,7 @@ import {
   loadManifest,
   loadNovedades,
   loadPedidos,
+  loadPoblacionCenso2022,
   loadProveedores,
   loadTransparencia,
 } from "@/lib/data";
@@ -212,6 +215,22 @@ describe("loadNovedades", () => {
   });
 });
 
+describe("loadPoblacionCenso2022", () => {
+  it("accepts a valid poblacion-censo fixture", () => {
+    const data = loadPoblacionCenso2022(poblacionCensoValid);
+    expect(data.censusYear).toBe(2022);
+    expect(data.municipios).toHaveLength(4);
+    const coronelRosales = data.municipios.find(
+      (m) => m.municipioId === "06182",
+    );
+    expect(coronelRosales?.poblacion).toBe(67503);
+  });
+
+  it("rejects a malformed poblacion-censo fixture (string censusYear, negative poblacion)", () => {
+    expect(() => loadPoblacionCenso2022(poblacionCensoMalformed)).toThrow();
+  });
+});
+
 describe("loaders reading real build-time JSON with no argument", () => {
   it("loads the real archive-manifest.json, coparticipacion.json, fallos.json and transparencia.json", () => {
     expect(loadManifest().length).toBeGreaterThan(0);
@@ -280,6 +299,22 @@ describe("loaders reading real build-time JSON with no argument", () => {
     expect(novedades.events.length).toBeGreaterThan(0);
     for (const event of novedades.events) {
       expect(["seeded", "auto-detected", "auto-stale"]).toContain(event.kind);
+    }
+  });
+
+  it("loads the real data/poblacion-censo-2022.json (feature H3a): the same 4 municipios as coparticipacion", () => {
+    const poblacionCenso = loadPoblacionCenso2022();
+    const coparticipacion = loadCoparticipacion();
+    expect(poblacionCenso.censusYear).toBe(2022);
+    const poblacionIds = poblacionCenso.municipios
+      .map((m) => m.municipioId)
+      .sort();
+    const coparticipacionIds = coparticipacion.series
+      .map((s) => s.municipioId)
+      .sort();
+    expect(poblacionIds).toEqual(coparticipacionIds);
+    for (const municipio of poblacionCenso.municipios) {
+      expect(municipio.poblacion).toBeGreaterThan(0);
     }
   });
 });

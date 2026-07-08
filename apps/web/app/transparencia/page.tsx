@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { CadenceDashboard } from "@/components/CadenceDashboard";
 import { DeudaCounter } from "@/components/DeudaCounter";
 import { DeudaHistoricaChart } from "@/components/deuda-historica/DeudaHistoricaChart";
+import { ShareButton } from "@/components/ShareButton";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { TransparenciaGauge } from "@/components/TransparenciaGauge";
+import { getShareFact, shareTextFor, shareUrlFor } from "@/lib/shareFacts";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
 export const metadata: Metadata = {
@@ -55,6 +57,11 @@ export default function TransparenciaPage() {
   const { transparencia, cadencia, deudaHistorica, manifest } = getPortalData();
   const { dimensions, trend } = transparencia;
 
+  // Feature H3b: one-tap SHARE for the two "sharp facts" this page leads
+  // with (deuda counter, transparencia score) -- see lib/shareFacts.ts.
+  const deudaFact = getShareFact("deuda");
+  const transparenciaFact = getShareFact("transparencia");
+
   const fullMarkDimensions = dimensions.filter((d) => d.got >= d.max);
   const gapDimensions = dimensions.filter((d) => d.got < d.max);
 
@@ -94,6 +101,16 @@ export default function TransparenciaPage() {
           </p>
         </div>
 
+        {transparenciaFact ? (
+          <div className="mt-4">
+            <ShareButton
+              url={shareUrlFor(transparenciaFact)}
+              title={transparenciaFact.headline}
+              text={shareTextFor(transparenciaFact)}
+            />
+          </div>
+        ) : null}
+
         <div className="mt-6 max-w-[74ch] rounded-md border border-ocre border-l-[5px] bg-ocre-soft p-4">
           <h2 className="font-sans text-sm font-bold text-ink">
             Quién publica este puntaje — y qué mide
@@ -114,6 +131,13 @@ export default function TransparenciaPage() {
         sourceLinks={deudaSourceLinks}
         historicoHref="#deuda-historica-heading"
       />
+      {deudaFact ? (
+        <ShareButton
+          url={shareUrlFor(deudaFact)}
+          title={deudaFact.headline}
+          text={shareTextFor(deudaFact)}
+        />
+      ) : null}
 
       <DeudaHistoricaChart
         deudaHistorica={deudaHistorica}

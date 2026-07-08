@@ -3,9 +3,14 @@ import Script from "next/script";
 import { fraunces, instrumentSans, newsreader, splineSansMono } from "./fonts";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  // Resolves relative Open Graph/Twitter image URLs (e.g. the H3b
+  // `/compartir/[fact]/opengraph-image.tsx` cards) to absolute URLs
+  // against the real production domain.
+  metadataBase: new URL(SITE_URL),
   title: {
     template: "%s — ¿Dónde va la plata? — Coronel Rosales",
     default: "¿Dónde va la plata? — Coronel Rosales",

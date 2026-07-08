@@ -190,4 +190,10 @@ describe("/transparencia page", () => {
     const link = screen.getByRole("link", { name: /serie hist[oó]rica/i });
     expect(link.getAttribute("href")).toBe("#deuda-historica-heading");
   });
+
+  it("offers Compartir buttons for the deuda and transparencia facts (feature H3b)", () => {
+    render(<Page />);
+    const shareButtons = screen.getAllByRole("button", { name: /compartir/i });
+    expect(shareButtons.length).toBeGreaterThanOrEqual(2);
+  });
 });

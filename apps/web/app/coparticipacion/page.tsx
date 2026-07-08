@@ -4,9 +4,12 @@ import { ColorLegend } from "@/components/ColorLegend";
 import { DataTable } from "@/components/chart/DataTable";
 import { InteractiveCoparticipacionChart } from "@/components/chart/InteractiveCoparticipacionChart";
 import { DrawerTrigger } from "@/components/DrawerTrigger";
+import { ShareButton } from "@/components/ShareButton";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { computeCoparticipacionTrend } from "@/lib/insight";
 import { formatArsHuman, formatArsPlain, formatPeriodEsAr } from "@/lib/format";
+import { computePerCapitaSeries } from "@/lib/perCapita";
+import { getShareFact, shareTextFor, shareUrlFor } from "@/lib/shareFacts";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
 export const metadata: Metadata = {
@@ -33,21 +36,22 @@ const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
  *     behind one tap.
  *
  * Neighbor-comparison integrity decision (D8, see DESIGN.md decisions
- * log): a per-capita ("$ por habitante") comparison would be the honest
- * fix for today's absolute-pesos comparison (Bahía Blanca is several
- * times more populous than Coronel Rosales), but this build has no
- * archived, sha256-verified INDEC Censo 2022 population source --
- * `getPortalData()`'s source-provenance invariant would reject a
- * `sourceRefs` id with no matching manifest record, and inventing
- * population figures without an archived source would violate the same
- * "never fabricate" doctrine that governs every other figure on this
- * site. Falls back instead to: default view is Coronel Rosales only (the
- * hero chart), and the absolute-pesos comparison moves inside the
- * collapsed section with an explicit caveat instead of being presented as
- * apples-to-apples.
+ * log): a per-capita ("$ por habitante") comparison is the honest fix for
+ * comparing municipios of very different size (Bahía Blanca is several
+ * times more populous than Coronel Rosales) -- this used to be blocked on
+ * having no archived, sha256-verified INDEC Censo 2022 population source
+ * (`getPortalData()`'s source-provenance invariant rejects any
+ * `sourceRefs` id with no matching manifest record, and this site never
+ * fabricates a figure without an archived source). Feature H3a resolved
+ * that: `data/poblacion-censo-2022.json` (`etl/etl/poblacion.py`) is now
+ * a sourced, cross-verified Censo 2022 population per municipio, so the
+ * per-cápita comparison (`lib/perCapita.ts`) is computed and rendered
+ * below, inside the "Ver todos los números" drawer, alongside the
+ * original absolute-pesos comparison (kept, with its existing caveat, as
+ * a secondary raw-totals reference).
  */
 export default function CoparticipacionPage() {
-  const { coparticipacion, manifest } = getPortalData();
+  const { coparticipacion, manifest, poblacionCenso } = getPortalData();
 
   const coronelRosales = coparticipacion.series.find(
     (series) => series.municipioId === CORONEL_ROSALES_MUNICIPIO_ID,
@@ -77,10 +81,17 @@ export default function CoparticipacionPage() {
       value: point.nominalArs,
     })),
   }));
+  const perCapitaSeries = computePerCapitaSeries(coparticipacion, poblacionCenso);
 
   const baseMonthLabel = formatPeriodEsAr(coparticipacion.baseMonth);
   const dataThroughLabel = formatPeriodEsAr(coparticipacion.dataThrough);
-  const sourceLinks = resolveSourceRefs(coparticipacion.sourceRefs, manifest);
+  const sourceLinks = resolveSourceRefs(
+    [...coparticipacion.sourceRefs, ...poblacionCenso.sourceRefs],
+    manifest,
+  );
+
+  // Feature H3b: one-tap SHARE for "coparticipación del último mes".
+  const coparticipacionFact = getShareFact("coparticipacion");
 
   return (
     <div className="space-y-10">
@@ -125,6 +136,16 @@ export default function CoparticipacionPage() {
             />
           </div>
 
+          {coparticipacionFact ? (
+            <div className="mt-4">
+              <ShareButton
+                url={shareUrlFor(coparticipacionFact)}
+                title={coparticipacionFact.headline}
+                text={shareTextFor(coparticipacionFact)}
+              />
+            </div>
+          ) : null}
+
           <ColorLegend className="mt-6" />
         </section>
       ) : null}
@@ -140,6 +161,42 @@ export default function CoparticipacionPage() {
           description={`en pesos constantes de ${baseMonthLabel} · datos hasta ${dataThroughLabel}`}
         >
         <div className="space-y-10">
+          <section aria-labelledby="comparacion-per-capita-heading">
+            <h2
+              id="comparacion-per-capita-heading"
+              className="font-display text-xl font-semibold text-ink"
+            >
+              Comparación por habitante
+            </h2>
+            <p className="mt-1 max-w-[62ch] text-sm text-muted">
+              Coparticipación mensual dividida por la población de cada
+              municipio — la forma justa de comparar, porque Bahía Blanca
+              tiene varias veces más habitantes que Coronel Rosales. Valores
+              en pesos constantes de {baseMonthLabel}.
+            </p>
+            <p className="mt-3 max-w-[62ch] text-sm text-ink">
+              Coparticipación por habitante (Censo 2022, INDEC).
+            </p>
+            <p className="mt-3 font-mono text-[11px] text-muted sm:hidden">
+              Desliza para ver los 4 municipios →
+            </p>
+            <div className="mt-3 overflow-x-auto">
+              <DataTable
+                caption={`Coparticipación mensual por habitante, en pesos constantes de ${baseMonthLabel} (Censo 2022, INDEC)`}
+                series={perCapitaSeries}
+                formatValue={formatArsPlain}
+                formatFullPrecision={formatArsPlain}
+                formatPeriod={formatPeriodEsAr}
+                colorizeBySign
+              />
+            </div>
+            <p className="mt-3 max-w-[62ch] text-xs text-muted">
+              Población: Censo Nacional de Población, Hogares y Viviendas
+              2022 (INDEC), vía la Dirección Provincial de Estadística
+              (Provincia de Buenos Aires).
+            </p>
+          </section>
+
           <section aria-labelledby="comparacion-heading">
             <h2
               id="comparacion-heading"
@@ -152,14 +209,14 @@ export default function CoparticipacionPage() {
               INDEC nivel general nacional, serie {coparticipacion.ipcSeriesId}
               ).
             </p>
-            {/* Neighbor-comparison integrity fix (fallback path): no
-                verifiable, archived population source exists in this build
-                (see module docstring), so this stays an absolute-pesos
-                comparison with an explicit caveat instead of a fabricated
-                per-capita figure. */}
+            {/* Neighbor-comparison integrity fix (H3a, see module
+                docstring): this stays an absolute-pesos comparison with an
+                explicit caveat -- the fair, per-inhabitant comparison now
+                lives in the section right above. */}
             <p className="mt-3 max-w-[62ch] border-l-[5px] border-ocre bg-surface py-3 pl-4 text-sm text-ink">
               Cifras absolutas, no ajustadas por población — Bahía Blanca tiene
-              varias veces más habitantes que Coronel Rosales.
+              varias veces más habitantes que Coronel Rosales. Ver la
+              comparación por habitante arriba para una comparación justa.
             </p>
             <p className="mt-3 font-mono text-[11px] text-muted sm:hidden">
               Desliza para ver los 4 municipios →

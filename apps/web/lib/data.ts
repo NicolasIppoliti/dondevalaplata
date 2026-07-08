@@ -7,6 +7,7 @@ import fallosJson from "../../../data/fallos.json";
 import gastoPartidaJson from "../../../data/gasto-partida.json";
 import novedadesJson from "../../../data/novedades.json";
 import pedidosJson from "../../../data/pedidos.json";
+import poblacionCensoJson from "../../../data/poblacion-censo-2022.json";
 import proveedoresJson from "../../../data/proveedores.json";
 import transparenciaJson from "../../../data/transparencia.json";
 import {
@@ -19,6 +20,7 @@ import {
   manifestSchema,
   novedadesDataSchema,
   pedidosDataSchema,
+  poblacionCensoDataSchema,
   proveedoresDataSchema,
   transparenciaDataSchema,
   type AdjudicacionesData,
@@ -30,6 +32,7 @@ import {
   type Manifest,
   type NovedadesData,
   type PedidosData,
+  type PoblacionCensoData,
   type ProveedoresData,
   type TransparenciaData,
 } from "./schemas";
@@ -97,4 +100,10 @@ export function loadDeudaHistorica(
 
 export function loadNovedades(raw: unknown = novedadesJson): NovedadesData {
   return novedadesDataSchema.parse(raw);
+}
+
+export function loadPoblacionCenso2022(
+  raw: unknown = poblacionCensoJson,
+): PoblacionCensoData {
+  return poblacionCensoDataSchema.parse(raw);
 }
