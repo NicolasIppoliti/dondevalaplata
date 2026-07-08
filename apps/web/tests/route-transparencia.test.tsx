@@ -22,8 +22,17 @@ describe("/transparencia page", () => {
   });
 
   it("shows the headline score and its category", () => {
-    render(<Page />);
-    expect(screen.getByText("81 / 100")).toBeTruthy();
+    // Slice 3: the score fraction now legitimately spans two DOM nodes --
+    // `<CountUp>`'s own wrapping `<span>` (a "use client" boundary
+    // requirement, see components/CountUp.tsx) renders "81", followed by a
+    // sibling text node " / 100". `getByText`'s default matcher only
+    // concatenates an element's DIRECT text-node children (not full
+    // recursive textContent), so it can no longer find a single element
+    // whose OWN text equals "81 / 100" -- `container.textContent` keeps
+    // the assertion exactly as strict (still the literal substring "81 /
+    // 100"), just via full recursive text instead.
+    const { container } = render(<Page />);
+    expect(container.textContent).toContain("81 / 100");
     expect(screen.getByText("Alto cumplimiento")).toBeTruthy();
   });
 
