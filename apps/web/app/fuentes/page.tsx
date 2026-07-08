@@ -74,7 +74,10 @@ export default function FuentesPage() {
         </p>
       </section>
 
-      <section aria-labelledby="metodologia-heading">
+      <section
+        aria-labelledby="metodologia-heading"
+        className="rounded-lg border border-rule bg-surface p-6 shadow-card"
+      >
         <h2
           id="metodologia-heading"
           className="font-display text-xl font-semibold text-ink"
@@ -109,7 +112,7 @@ export default function FuentesPage() {
         >
           Preservación de las fuentes
         </h2>
-        <p className="mt-2 max-w-[62ch] border-l-[5px] border-ocre bg-surface py-3 pl-4 text-sm text-ink">
+        <p className="mt-2 max-w-[62ch] rounded-md border border-ocre border-l-[5px] bg-ocre-soft py-3 pl-4 text-sm text-ink">
           Cada fuente se descarga, se verifica con un hash SHA-256 y se guarda
           en un bucket público de Cloudflare R2, que es la copia archivada
           canónica enlazada en el índice de abajo; los documentos de texto
@@ -138,8 +141,11 @@ export default function FuentesPage() {
             CAPABILITY_INTROS[capability] ??
             "Fuentes archivadas de esta categoría.";
           return (
-            <details key={capability} className="border border-rule">
-              <summary className="flex cursor-pointer items-center justify-between gap-3 p-4 font-display text-lg font-semibold text-ink">
+            <details
+              key={capability}
+              className="group rounded-lg border border-rule bg-surface shadow-card"
+            >
+              <summary className="flex min-h-11 list-none cursor-pointer items-center justify-between gap-3 p-4 font-display text-lg font-semibold text-ink [&::-webkit-details-marker]:hidden">
                 {/* Accessible heading for screen-reader "jump between
                     headings" navigation -- kept sr-only so sighted users
                     see the label ONCE (in the summary itself). Overriding
@@ -147,7 +153,25 @@ export default function FuentesPage() {
                     native expanded/collapsed disclosure announcement, so a
                     separate element is used rather than an ARIA override. */}
                 <h3 className="sr-only">{label}</h3>
-                <span aria-hidden="true">{label}</span>
+                <span aria-hidden="true" className="flex items-center gap-2.5">
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    className="flex-none text-muted transition-transform duration-200 group-open:rotate-90"
+                  >
+                    <path
+                      d="M9 6l6 6-6 6"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  {label}
+                </span>
                 <span className="font-mono text-sm font-normal text-muted">
                   ({records.length})
                 </span>

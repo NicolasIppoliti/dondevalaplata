@@ -23,7 +23,10 @@ export default function AcercaPage() {
         </p>
       </section>
 
-      <section aria-labelledby="neutralidad-heading">
+      <section
+        aria-labelledby="neutralidad-heading"
+        className="rounded-lg border border-rule bg-surface p-6 shadow-card"
+      >
         <h2
           id="neutralidad-heading"
           className="font-display text-xl font-semibold text-ink"
@@ -42,7 +45,10 @@ export default function AcercaPage() {
         </p>
       </section>
 
-      <section aria-labelledby="datos-personales-heading">
+      <section
+        aria-labelledby="datos-personales-heading"
+        className="rounded-lg border border-rule bg-surface p-6 shadow-card"
+      >
         <h2
           id="datos-personales-heading"
           className="font-display text-xl font-semibold text-ink"
