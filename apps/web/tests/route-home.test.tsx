@@ -273,6 +273,16 @@ describe("Home — compact deuda counter (feature G1)", () => {
   });
 });
 
+describe("Home — presupuesto vs. ejecución por área row (feature H1)", () => {
+  it("links to /gastos#cumplen-heading with the whole row tappable", () => {
+    render(<Home />);
+    const link = screen.getByRole("link", {
+      name: /cumplen lo que prometieron/i,
+    });
+    expect(link.getAttribute("href")).toBe("/gastos#cumplen-heading");
+  });
+});
+
 describe("Home — gasto por partida row (feature G2)", () => {
   it("links to /gastos with the whole row tappable, min tap target", () => {
     render(<Home />);

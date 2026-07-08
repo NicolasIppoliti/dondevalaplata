@@ -101,6 +101,17 @@ const GASTO_PARTIDA_ROW = {
   href: "/gastos",
 } as const;
 
+// Feature H1: same simple "fila-pregunta tappable" pattern -- links into
+// the "¿Cumplen lo que prometieron?" section on /gastos (`#cumplen-heading`)
+// rather than a new top-level route: see the decision recorded in
+// `app/gastos/page.tsx`'s own docstring (same reconciled dataset as G2,
+// re-grouped by área, no new nav destination for it).
+const PRESUPUESTO_EJECUCION_ROW = {
+  question: "¿Cumplen lo que prometieron?",
+  description: "Presupuesto vs. ejecución real, área por área.",
+  href: "/gastos#cumplen-heading",
+} as const;
+
 // Feature G3: same simple "fila-pregunta tappable" pattern -- the
 // adjudicaciones explorer is also a client island unsuited to a static home
 // preview. The description below is data-driven (real row count + proveedor
@@ -836,6 +847,28 @@ export default function Home() {
             sourceLinks={deudaSourceLinks}
             compact
           />
+
+          {/* Feature H1: same simple, whole-row-is-a-link pattern -- links
+              straight into the "¿Cumplen lo que prometieron?" section on
+              /gastos via its own anchor, ahead of the full partida
+              explorer row below (summary first, drill-down second, same
+              order as the two sections on /gastos itself). */}
+          <Link
+            href={PRESUPUESTO_EJECUCION_ROW.href}
+            className="flex min-h-11 items-center justify-between gap-4 border-t border-rule py-5 no-underline hover:bg-surface"
+          >
+            <span>
+              <h2 className="font-display text-[clamp(20px,3vw,28px)] font-semibold text-ink">
+                {PRESUPUESTO_EJECUCION_ROW.question}
+              </h2>
+              <span className="mt-1 block text-sm text-ink-2">
+                {PRESUPUESTO_EJECUCION_ROW.description}
+              </span>
+            </span>
+            <span aria-hidden="true" className="font-display text-2xl text-stamp">
+              ›
+            </span>
+          </Link>
 
           {/* Feature G2: same simple, whole-row-is-a-link pattern as the
               "¿De dónde salen los datos?" row below -- the explorer is a

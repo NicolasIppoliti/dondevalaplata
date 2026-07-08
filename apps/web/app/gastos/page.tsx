@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GastoPartidaExplorer } from "@/components/gasto-partida/GastoPartidaExplorer";
+import { PresupuestoEjecucionSection } from "@/components/presupuesto-ejecucion/PresupuestoEjecucionSection";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { formatArsPlain } from "@/lib/format";
+import { buildAreaEjecucion } from "@/lib/presupuestoEjecucion";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
 export const metadata: Metadata = {
@@ -37,10 +39,27 @@ export const metadata: Metadata = {
  * reconciles against the PDF's own "TOTALES GENERALES" row (see
  * `build_gasto_partida`'s honesty gate) -- the reconciliation figures are
  * surfaced here as visible proof, not just trusted silently.
+ *
+ * Feature H1: "¿Cumplen lo que prometieron?" -- Presupuesto vs. Ejecución
+ * por área. **Decision** (the task offered a choice: a new `/presupuesto`
+ * route, or a prominent section here): a section on THIS page wins,
+ * because (1) it is the SAME reconciled dataset re-grouped one level up
+ * (Jurisdicción/área instead of Objeto del Gasto), not a new source or a
+ * new ETL artifact, so it belongs next to the detail it summarizes rather
+ * than behind a second nav destination for the same underlying data; (2)
+ * `MobileBottomNav` is already at 7 tabs and needed a `truncate` fix at
+ * that count (see G4's decision log entry in DESIGN.md) -- adding an 8th
+ * tab for a view of the SAME data G2 already exposes would revisit that
+ * fragility for no real information gain. `PresupuestoEjecucionSection`
+ * renders ABOVE the partida explorer (summary first, drill-down after);
+ * the home page links to it directly via its own row + `#cumplen-heading`
+ * anchor (see `app/page.tsx`), so it stays one tap away without a new nav
+ * item.
  */
 export default function GastosPage() {
   const { gastoPartida, manifest } = getPortalData();
   const { period, reconciliation, jurisdicciones } = gastoPartida;
+  const areas = buildAreaEjecucion(jurisdicciones);
 
   return (
     <div className="space-y-8">
@@ -91,11 +110,19 @@ export default function GastosPage() {
         </p>
       </section>
 
+      <PresupuestoEjecucionSection areas={areas} />
+
       <section aria-labelledby="explorador-heading">
-        <h2 id="explorador-heading" className="sr-only">
-          Explorador de partidas
+        <h2 id="explorador-heading" className="font-display text-xl font-semibold text-ink">
+          Ver el detalle completo, partida por partida
         </h2>
-        <GastoPartidaExplorer jurisdicciones={jurisdicciones} />
+        <p className="mt-1.5 max-w-[64ch] text-sm text-muted">
+          El mismo dato de arriba, abierto hasta el objeto del gasto más
+          desagregado que la Municipalidad publica.
+        </p>
+        <div className="mt-4">
+          <GastoPartidaExplorer jurisdicciones={jurisdicciones} />
+        </div>
       </section>
 
       <SourcesFooter
