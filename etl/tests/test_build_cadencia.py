@@ -15,7 +15,6 @@ from pathlib import Path
 import pytest
 
 from etl.cadencia import DOCUMENTOS_SNAPSHOT_MANIFEST_ID, build_cadencia
-from etl.manifest import load_manifest
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 MANIFEST_PATH = REPO_ROOT / "archive-manifest.json"
@@ -23,16 +22,21 @@ CADENCIA_CURATED_PATH = REPO_ROOT / "etl" / "cadencia.yaml"
 ASAP_CURATED_PATH = REPO_ROOT / "etl" / "asap_transparencia.yaml"
 FIXED_NOW = datetime(2026, 7, 8, 12, 0, 0, tzinfo=UTC)
 
-_snapshot_archived = any(
-    r["id"] == DOCUMENTOS_SNAPSHOT_MANIFEST_ID and r.get("status") == "ok"
-    for r in (load_manifest(MANIFEST_PATH) if MANIFEST_PATH.exists() else [])
+_REAL_DOCUMENTOS_SNAPSHOT_PATH = (
+    REPO_ROOT / "archive" / "mcr-docs-snapshot" / "documentos-snapshot.json"
 )
 
 # The archive isn't git-versioned by design (R2 is the canonical store) --
 # skip the whole module on a fresh clone/CI runner instead of erroring on a
-# missing file, same convention as test_build_fallos.py.
+# missing file, same convention as test_build_fallos.py /
+# test_build_gasto_partida.py. Checking the LOCAL FILE (not just the
+# committed archive-manifest.json's "ok" status) matters: the manifest is
+# versioned and legitimately says "ok" even when the actual archived blob
+# under archive/ (gitignored, see design D3/W1) is absent on a fresh CI
+# checkout -- a status-only check would have skipped nothing in CI and
+# crashed with FileNotFoundError instead.
 pytestmark = pytest.mark.skipif(
-    not _snapshot_archived,
+    not _REAL_DOCUMENTOS_SNAPSHOT_PATH.exists(),
     reason=(
         "requires the locally archived mcr-docs-snapshot documentos listing -- "
         "run `uv run etl archive --capability mcr-docs-snapshot` locally first"
