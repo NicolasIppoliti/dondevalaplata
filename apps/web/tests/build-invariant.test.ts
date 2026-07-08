@@ -6,13 +6,17 @@ import transparenciaValid from "./fixtures/transparencia.valid.json";
 import cadenciaValid from "./fixtures/cadencia.valid.json";
 import gastoPartidaValid from "./fixtures/gasto-partida.valid.json";
 import adjudicacionesValid from "./fixtures/adjudicaciones.valid.json";
+import deudaHistoricaValid from "./fixtures/deuda-historica.valid.json";
+import novedadesValid from "./fixtures/novedades.valid.json";
 import {
   loadAdjudicaciones,
   loadCadencia,
   loadCoparticipacion,
+  loadDeudaHistorica,
   loadFallos,
   loadGastoPartida,
   loadManifest,
+  loadNovedades,
   loadTransparencia,
 } from "@/lib/data";
 import {
@@ -288,6 +292,116 @@ describe("collectSourceRefs + assertSourceRefsResolve — adjudicaciones (option
   });
 });
 
+describe("collectSourceRefs + assertSourceRefsResolve — deuda-historica (optional 7th arg)", () => {
+  it("does not throw when every deuda-historica sourceRef resolves to a manifest record", () => {
+    const deudaHistorica = loadDeudaHistorica(deudaHistoricaValid);
+    const manifest = loadManifest([
+      ...manifestValid,
+      ...deudaHistorica.sourceRefs.map((id) => ({
+        id,
+        capability: "mcr-docs",
+        source: "mcr.gob.ar",
+        source_url: `https://mcr.gob.ar/${id}`,
+        archived_url: `https://pub-example.r2.dev/${id}.pdf`,
+        archived_path: `archive/${id}.pdf`,
+        sha256: "689df97fe6f383a136d6a74c88cecce910b8e3f72e1385aa4e8253338aa723a4",
+        mime: "application/pdf",
+        bytes: 8000,
+        fetched_at: "2026-07-08T20:09:21Z",
+        status: "ok",
+        notes: "Fixture record for tests.",
+      })),
+    ]);
+    const coparticipacion = loadCoparticipacion(coparticipacionValid);
+    const fallos = loadFallos(fallosValid);
+    const ids = collectSourceRefs(
+      coparticipacion,
+      fallos,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      deudaHistorica,
+    );
+    expect(ids).toEqual(expect.arrayContaining(deudaHistorica.sourceRefs));
+    expect(() => assertSourceRefsResolve(ids, manifest)).not.toThrow();
+  });
+
+  it("throws when a deuda-historica sourceRef has no manifest record", () => {
+    const deudaHistorica = loadDeudaHistorica(deudaHistoricaValid);
+    const manifest = loadManifest(manifestValid);
+    const coparticipacion = loadCoparticipacion(coparticipacionValid);
+    const fallos = loadFallos(fallosValid);
+    const ids = collectSourceRefs(
+      coparticipacion,
+      fallos,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      deudaHistorica,
+    );
+    expect(() => assertSourceRefsResolve(ids, manifest)).toThrow(
+      /stock-de-deuda-y-perfil-de-vencimientos/,
+    );
+  });
+});
+
+describe("collectSourceRefs + assertSourceRefsResolve — novedades (optional 8th arg)", () => {
+  it("does not throw when every novedades sourceRef resolves to a manifest record", () => {
+    const novedades = loadNovedades(novedadesValid);
+    const manifest = loadManifest([
+      ...manifestValid,
+      ...novedades.sourceRefs.map((id) => ({
+        id,
+        capability: "mcr-docs",
+        source: "mcr.gob.ar",
+        source_url: `https://mcr.gob.ar/${id}`,
+        archived_url: `https://pub-example.r2.dev/${id}.pdf`,
+        archived_path: `archive/${id}.pdf`,
+        sha256: "689df97fe6f383a136d6a74c88cecce910b8e3f72e1385aa4e8253338aa723a5",
+        mime: "application/pdf",
+        bytes: 8000,
+        fetched_at: "2026-07-08T20:10:04Z",
+        status: "ok",
+        notes: "Fixture record for tests.",
+      })),
+    ]);
+    const coparticipacion = loadCoparticipacion(coparticipacionValid);
+    const fallos = loadFallos(fallosValid);
+    const ids = collectSourceRefs(
+      coparticipacion,
+      fallos,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      novedades,
+    );
+    expect(ids).toEqual(expect.arrayContaining(novedades.sourceRefs));
+    expect(() => assertSourceRefsResolve(ids, manifest)).not.toThrow();
+  });
+
+  it("throws when a novedades sourceRef has no manifest record", () => {
+    const novedades = loadNovedades(novedadesValid);
+    const manifest = loadManifest(manifestValid);
+    const coparticipacion = loadCoparticipacion(coparticipacionValid);
+    const fallos = loadFallos(fallosValid);
+    const ids = collectSourceRefs(
+      coparticipacion,
+      fallos,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      novedades,
+    );
+    expect(() => assertSourceRefsResolve(ids, manifest)).toThrow(/mcr-docs\//);
+  });
+});
+
 describe("getPortalData", () => {
   it("loads the real repo data/*.json + archive-manifest.json with every sourceRefs id resolving", () => {
     const portal = getPortalData();
@@ -304,5 +418,9 @@ describe("getPortalData", () => {
     // docstring) -- it's a self-authored tracking file, not an
     // externally-sourced claim.
     expect(Array.isArray(portal.pedidos.pedidos)).toBe(true);
+    // Feature H2: deuda histórica (3 quarters) + novedades feed, both
+    // fully sourced.
+    expect(portal.deudaHistorica.series).toHaveLength(3);
+    expect(portal.novedades.events.length).toBeGreaterThan(0);
   });
 });

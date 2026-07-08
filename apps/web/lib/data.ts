@@ -2,8 +2,10 @@ import manifestJson from "../../../archive-manifest.json";
 import adjudicacionesJson from "../../../data/adjudicaciones.json";
 import cadenciaJson from "../../../data/cadencia.json";
 import coparticipacionJson from "../../../data/coparticipacion.json";
+import deudaHistoricaJson from "../../../data/deuda-historica.json";
 import fallosJson from "../../../data/fallos.json";
 import gastoPartidaJson from "../../../data/gasto-partida.json";
+import novedadesJson from "../../../data/novedades.json";
 import pedidosJson from "../../../data/pedidos.json";
 import proveedoresJson from "../../../data/proveedores.json";
 import transparenciaJson from "../../../data/transparencia.json";
@@ -11,18 +13,22 @@ import {
   adjudicacionesDataSchema,
   cadenciaDataSchema,
   coparticipacionDataSchema,
+  deudaHistoricaDataSchema,
   fallosDataSchema,
   gastoPartidaDataSchema,
   manifestSchema,
+  novedadesDataSchema,
   pedidosDataSchema,
   proveedoresDataSchema,
   transparenciaDataSchema,
   type AdjudicacionesData,
   type CadenciaData,
   type CoparticipacionData,
+  type DeudaHistoricaData,
   type FallosData,
   type GastoPartidaData,
   type Manifest,
+  type NovedadesData,
   type PedidosData,
   type ProveedoresData,
   type TransparenciaData,
@@ -81,4 +87,14 @@ export function loadProveedores(
 
 export function loadPedidos(raw: unknown = pedidosJson): PedidosData {
   return pedidosDataSchema.parse(raw);
+}
+
+export function loadDeudaHistorica(
+  raw: unknown = deudaHistoricaJson,
+): DeudaHistoricaData {
+  return deudaHistoricaDataSchema.parse(raw);
+}
+
+export function loadNovedades(raw: unknown = novedadesJson): NovedadesData {
+  return novedadesDataSchema.parse(raw);
 }

@@ -2,9 +2,11 @@ import {
   loadAdjudicaciones,
   loadCadencia,
   loadCoparticipacion,
+  loadDeudaHistorica,
   loadFallos,
   loadGastoPartida,
   loadManifest,
+  loadNovedades,
   loadPedidos,
   loadProveedores,
   loadTransparencia,
@@ -13,11 +15,13 @@ import type {
   AdjudicacionesData,
   CadenciaData,
   CoparticipacionData,
+  DeudaHistoricaData,
   FalloRecord,
   FallosData,
   GastoPartidaData,
   Manifest,
   ManifestRecord,
+  NovedadesData,
   PedidosData,
   ProveedoresData,
   TransparenciaData,
@@ -78,6 +82,8 @@ export function collectSourceRefs(
   cadencia?: CadenciaData,
   gastoPartida?: GastoPartidaData,
   adjudicaciones?: AdjudicacionesData,
+  deudaHistorica?: DeudaHistoricaData,
+  novedades?: NovedadesData,
 ): string[] {
   const ids = new Set<string>();
   for (const id of coparticipacion.sourceRefs) ids.add(id);
@@ -105,6 +111,16 @@ export function collectSourceRefs(
   if (adjudicaciones) {
     for (const id of adjudicaciones.sourceRefs) ids.add(id);
     for (const record of adjudicaciones.records) ids.add(record.sourceRef);
+  }
+  if (deudaHistorica) {
+    for (const id of deudaHistorica.sourceRefs) ids.add(id);
+    for (const point of deudaHistorica.series) ids.add(point.sourceRef);
+  }
+  if (novedades) {
+    for (const id of novedades.sourceRefs) ids.add(id);
+    for (const event of novedades.events) {
+      for (const id of event.sourceRefs) ids.add(id);
+    }
   }
   return [...ids];
 }
@@ -179,6 +195,8 @@ export interface PortalData {
   adjudicaciones: AdjudicacionesData;
   proveedores: ProveedoresData;
   pedidos: PedidosData;
+  deudaHistorica: DeudaHistoricaData;
+  novedades: NovedadesData;
 }
 
 /**
@@ -207,6 +225,8 @@ export function getPortalData(): PortalData {
   const adjudicaciones = loadAdjudicaciones();
   const proveedores = loadProveedores();
   const pedidos = loadPedidos();
+  const deudaHistorica = loadDeudaHistorica();
+  const novedades = loadNovedades();
   assertSourceRefsResolve(
     collectSourceRefs(
       coparticipacion,
@@ -215,6 +235,8 @@ export function getPortalData(): PortalData {
       cadencia,
       gastoPartida,
       adjudicaciones,
+      deudaHistorica,
+      novedades,
     ),
     manifest,
   );
@@ -228,5 +250,7 @@ export function getPortalData(): PortalData {
     adjudicaciones,
     proveedores,
     pedidos,
+    deudaHistorica,
+    novedades,
   };
 }

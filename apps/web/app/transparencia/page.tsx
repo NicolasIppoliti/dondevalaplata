@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CadenceDashboard } from "@/components/CadenceDashboard";
 import { DeudaCounter } from "@/components/DeudaCounter";
+import { DeudaHistoricaChart } from "@/components/deuda-historica/DeudaHistoricaChart";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { TransparenciaGauge } from "@/components/TransparenciaGauge";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
@@ -51,7 +52,7 @@ export const metadata: Metadata = {
  * instead of a second hand-rolled SVG. Behavior/markup here is unchanged.
  */
 export default function TransparenciaPage() {
-  const { transparencia, cadencia, manifest } = getPortalData();
+  const { transparencia, cadencia, deudaHistorica, manifest } = getPortalData();
   const { dimensions, trend } = transparencia;
 
   const fullMarkDimensions = dimensions.filter((d) => d.got >= d.max);
@@ -65,6 +66,10 @@ export default function TransparenciaPage() {
       : null;
 
   const deudaSourceLinks = resolveSourceRefs(cadencia.deuda.sourceRefs, manifest);
+  const deudaHistoricaSourceLinks = resolveSourceRefs(
+    deudaHistorica.series.map((point) => point.sourceRef),
+    manifest,
+  );
 
   return (
     <div className="space-y-10">
@@ -104,7 +109,17 @@ export default function TransparenciaPage() {
         </div>
       </section>
 
-      <DeudaCounter deuda={cadencia.deuda} sourceLinks={deudaSourceLinks} />
+      <DeudaCounter
+        deuda={cadencia.deuda}
+        sourceLinks={deudaSourceLinks}
+        historicoHref="#deuda-historica-heading"
+      />
+
+      <DeudaHistoricaChart
+        deudaHistorica={deudaHistorica}
+        deuda={cadencia.deuda}
+        sourceLinks={deudaHistoricaSourceLinks}
+      />
 
       {firstTrendPoint && lastTrendPoint && delta !== null ? (
         <section aria-labelledby="tendencia-heading">

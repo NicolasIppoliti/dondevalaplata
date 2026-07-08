@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-07-08T20:10:04Z",
+  "events": [
+    {
+      "id": "bad-kind",
+      "kind": "rumor",
+      "date": "2026-07-01",
+      "title": "Título",
+      "detail": null,
+      "sourceRefs": []
+    }
+  ],
+  "sourceRefs": []
+}

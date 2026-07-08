@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "/pedidos", label: "Pedidos" },
   { href: "/fallos", label: "Multas del Tribunal de Cuentas" },
   { href: "/transparencia", label: "Transparencia" },
+  { href: "/novedades", label: "Novedades" },
   { href: "/fuentes", label: "Fuentes" },
   { href: "/acerca", label: "Acerca de" },
 ] as const;

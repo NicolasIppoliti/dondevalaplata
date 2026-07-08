@@ -132,6 +132,15 @@ const PEDIDOS_ROW = {
   href: "/pedidos",
 } as const;
 
+// Feature H2b: same simple "fila-pregunta tappable" pattern as G2/G3/G4 --
+// the watchdog feed is a simple, growing log, not a dashboard component
+// suited to a static home preview. The description below is data-driven
+// (real event count from data/novedades.json), never a hardcoded claim.
+const NOVEDADES_ROW = {
+  question: "¿Qué publicó el municipio últimamente?",
+  href: "/novedades",
+} as const;
+
 export default function Home() {
   const {
     coparticipacion,
@@ -140,6 +149,7 @@ export default function Home() {
     cadencia,
     adjudicaciones,
     proveedores,
+    novedades,
     manifest,
   } = getPortalData();
   const deudaSourceLinks = resolveSourceRefs(
@@ -196,6 +206,9 @@ export default function Home() {
 
   // (G3) Adjudicaciones home row: real counts, never a hardcoded claim.
   const adjudicacionesRowDescription = `${adjudicaciones.records.length} adjudicaciones publicadas, ${proveedores.proveedores.length} proveedores identificados.`;
+
+  // (H2b) Novedades home row: real event count, never a hardcoded claim.
+  const novedadesRowDescription = `${novedades.events.length} eventos registrados -- qué se publicó y qué sigue sin actualizar.`;
 
   // (F2) Fallos dashboard grid -- every record of the most recent ejercicio
   // + one representative per older ejercicio, never a whole ejercicio
@@ -926,6 +939,26 @@ export default function Home() {
               </h2>
               <span className="mt-1 block text-sm text-ink-2">
                 {PEDIDOS_ROW.description}
+              </span>
+            </span>
+            <span aria-hidden="true" className="font-display text-2xl text-stamp">
+              ›
+            </span>
+          </Link>
+
+          {/* Feature H2b: same simple, whole-row-is-a-link pattern -- the
+              watchdog novedades feed is a growing log unsuited to a static
+              home preview, so this is just a direct link into /novedades. */}
+          <Link
+            href={NOVEDADES_ROW.href}
+            className="flex min-h-11 items-center justify-between gap-4 border-t border-rule py-5 no-underline hover:bg-surface"
+          >
+            <span>
+              <h2 className="font-display text-[clamp(20px,3vw,28px)] font-semibold text-ink">
+                {NOVEDADES_ROW.question}
+              </h2>
+              <span className="mt-1 block text-sm text-ink-2">
+                {novedadesRowDescription}
               </span>
             </span>
             <span aria-hidden="true" className="font-display text-2xl text-stamp">

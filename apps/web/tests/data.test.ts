@@ -16,13 +16,19 @@ import adjudicacionesMalformed from "./fixtures/adjudicaciones.malformed.json";
 import proveedoresValid from "./fixtures/proveedores.valid.json";
 import pedidosValid from "./fixtures/pedidos.valid.json";
 import pedidosMalformed from "./fixtures/pedidos.malformed.json";
+import deudaHistoricaValid from "./fixtures/deuda-historica.valid.json";
+import deudaHistoricaMalformed from "./fixtures/deuda-historica.malformed.json";
+import novedadesValid from "./fixtures/novedades.valid.json";
+import novedadesMalformed from "./fixtures/novedades.malformed.json";
 import {
   loadAdjudicaciones,
   loadCadencia,
   loadCoparticipacion,
+  loadDeudaHistorica,
   loadFallos,
   loadGastoPartida,
   loadManifest,
+  loadNovedades,
   loadPedidos,
   loadProveedores,
   loadTransparencia,
@@ -177,6 +183,35 @@ describe("loadPedidos", () => {
   });
 });
 
+describe("loadDeudaHistorica", () => {
+  it("accepts a valid deuda-historica fixture", () => {
+    const data = loadDeudaHistorica(deudaHistoricaValid);
+    expect(data.series).toHaveLength(3);
+    expect(data.series[0].period).toBe("2025-Q1");
+    expect(data.series[2].totalArs).toBeCloseTo(46876896.86);
+  });
+
+  it("rejects a malformed deuda-historica fixture (bad period/fecha format, string amount)", () => {
+    expect(() => loadDeudaHistorica(deudaHistoricaMalformed)).toThrow();
+  });
+});
+
+describe("loadNovedades", () => {
+  it("accepts a valid novedades fixture", () => {
+    const data = loadNovedades(novedadesValid);
+    expect(data.events).toHaveLength(3);
+    expect(data.events.map((e) => e.kind)).toEqual([
+      "seeded",
+      "auto-detected",
+      "auto-stale",
+    ]);
+  });
+
+  it("rejects a malformed novedades fixture (invalid kind enum value)", () => {
+    expect(() => loadNovedades(novedadesMalformed)).toThrow();
+  });
+});
+
 describe("loaders reading real build-time JSON with no argument", () => {
   it("loads the real archive-manifest.json, coparticipacion.json, fallos.json and transparencia.json", () => {
     expect(loadManifest().length).toBeGreaterThan(0);
@@ -224,6 +259,27 @@ describe("loaders reading real build-time JSON with no argument", () => {
     expect(sum).toBe(81);
     for (const dimension of cadencia.dimensions) {
       expect(dimension.got).toBeLessThanOrEqual(dimension.max);
+    }
+  });
+
+  it("loads the real data/deuda-historica.json (feature H2a): 3 published quarters, oldest first", () => {
+    const deudaHistorica = loadDeudaHistorica();
+    expect(deudaHistorica.series).toHaveLength(3);
+    expect(deudaHistorica.series.map((p) => p.period)).toEqual([
+      "2025-Q1",
+      "2025-Q2",
+      "2025-Q3",
+    ]);
+    for (const point of deudaHistorica.series) {
+      expect(point.totalArs).toBeGreaterThan(0);
+    }
+  });
+
+  it("loads the real data/novedades.json (feature H2b): every event kind is one of the three labeled kinds", () => {
+    const novedades = loadNovedades();
+    expect(novedades.events.length).toBeGreaterThan(0);
+    for (const event of novedades.events) {
+      expect(["seeded", "auto-detected", "auto-stale"]).toContain(event.kind);
     }
   });
 });

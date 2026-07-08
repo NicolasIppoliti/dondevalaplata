@@ -174,4 +174,20 @@ describe("/transparencia page", () => {
     expect(text).toMatch(/noviembre 2025/i);
     expect(text).toMatch(/10\/10\/10|10 sobre 10/);
   });
+
+  it("renders the deuda histórica chart with the acá-dejaron-de-publicar marker (feature H2a)", () => {
+    render(<Page />);
+    const heading = screen.getByRole("heading", {
+      name: /c[oó]mo evolucion[oó] la deuda p[uú]blica/i,
+    });
+    expect(heading).toBeTruthy();
+    const section = heading.closest("section");
+    expect(section?.textContent?.toLowerCase()).toMatch(/dejaron de publicar/);
+  });
+
+  it("links the deuda counter to the deuda histórica chart (feature H2a)", () => {
+    render(<Page />);
+    const link = screen.getByRole("link", { name: /serie hist[oó]rica/i });
+    expect(link.getAttribute("href")).toBe("#deuda-historica-heading");
+  });
 });

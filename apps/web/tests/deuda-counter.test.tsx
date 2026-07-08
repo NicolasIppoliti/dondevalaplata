@@ -89,4 +89,23 @@ describe("DeudaCounter", () => {
     expect(text).toMatch(/46\.876\.896/);
     expect(text).not.toMatch(/Ordenanza 3638/);
   });
+
+  it("links to the deuda histórica chart when historicoHref is given (feature H2a)", () => {
+    render(
+      <DeudaCounter
+        deuda={cadencia.deuda}
+        sourceLinks={sourceLinks}
+        historicoHref="/transparencia#deuda-historica-heading"
+      />,
+    );
+    const link = screen.getByRole("link", { name: /serie hist[oó]rica/i });
+    expect(link.getAttribute("href")).toBe(
+      "/transparencia#deuda-historica-heading",
+    );
+  });
+
+  it("does not render a serie histórica link when historicoHref is omitted", () => {
+    render(<DeudaCounter deuda={cadencia.deuda} sourceLinks={sourceLinks} />);
+    expect(screen.queryByRole("link", { name: /serie hist[oó]rica/i })).toBeNull();
+  });
 });

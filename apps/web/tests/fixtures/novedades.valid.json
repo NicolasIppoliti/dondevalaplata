@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-07-08T20:10:04Z",
+  "events": [
+    {
+      "id": "seed-situacion-economico-financiera-1er-semestre-2026",
+      "kind": "seeded",
+      "date": "2026-07-01",
+      "title": "El municipio publicó la Situación Económico-Financiera del 1er semestre 2026",
+      "detail": "Dimensión ASAP al máximo puntaje.",
+      "sourceRefs": ["mcr-docs/situacion-economica-financiera-primer-semestre-2026"]
+    },
+    {
+      "id": "auto-published-ejemplo",
+      "kind": "auto-detected",
+      "date": "2026-05-15",
+      "title": "El municipio publicó \"Documento de ejemplo\"",
+      "detail": null,
+      "sourceRefs": ["mcr-docs/ejemplo"]
+    },
+    {
+      "id": "auto-stale-deuda",
+      "kind": "auto-stale",
+      "date": "2025-09-30",
+      "title": "Sigue sin actualizar el Stock de deuda pública y perfil de vencimientos (281 días / 3 trimestres sin publicar)",
+      "detail": "Último dato publicado: 3er trimestre 2025.",
+      "sourceRefs": ["mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"]
+    }
+  ],
+  "sourceRefs": [
+    "mcr-docs/ejemplo",
+    "mcr-docs/situacion-economica-financiera-primer-semestre-2026",
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
+  ]
+}

@@ -98,6 +98,13 @@ describe("SiteHeader — active nav item", () => {
     expect(gastos.getAttribute("aria-current")).toBe("page");
   });
 
+  it("links to /novedades (feature H2b, watchdog feed)", () => {
+    render(<SiteHeader activeHref="/novedades" />);
+    const novedades = screen.getByRole("link", { name: /novedades/i });
+    expect(novedades.getAttribute("href")).toBe("/novedades");
+    expect(novedades.getAttribute("aria-current")).toBe("page");
+  });
+
   it("marks no nav item active when activeHref is null (default, e.g. home)", () => {
     render(<SiteHeader />);
     const links = screen.getAllByRole("link");

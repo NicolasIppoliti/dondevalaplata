@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { formatDateEsAr } from "@/lib/format";
 import { shortHash, type SourceLink } from "@/lib/sources";
 import type { CadenciaDeuda } from "@/lib/schemas";
@@ -23,14 +24,28 @@ import type { CadenciaDeuda } from "@/lib/schemas";
  * an evaluation of a person or gestión -- framed with the same `--ocre`
  * "aviso documental" token DESIGN.md's Alerts pattern reserves for this
  * exact case, never `--stamp`/alarm-red.
+ *
+ * `historicoHref` (feature H2a, optional): when given, renders a "Ver
+ * serie histórica →" link into the deuda pública histórica chart
+ * (`DeudaHistoricaChart`) -- the counter states the CURRENT gap, the
+ * histórica chart shows the full 3-quarter series + the same gap visually.
+ * Omitted on the compact home variant's typical caller unless explicitly
+ * passed; never rendered when absent, so every pre-existing caller is
+ * byte-identical.
  */
 interface DeudaCounterProps {
   deuda: CadenciaDeuda;
   sourceLinks: SourceLink[];
   compact?: boolean;
+  historicoHref?: string;
 }
 
-export function DeudaCounter({ deuda, sourceLinks, compact = false }: DeudaCounterProps) {
+export function DeudaCounter({
+  deuda,
+  sourceLinks,
+  compact = false,
+  historicoHref,
+}: DeudaCounterProps) {
   return (
     <section
       aria-labelledby="deuda-counter-heading"
@@ -65,6 +80,17 @@ export function DeudaCounter({ deuda, sourceLinks, compact = false }: DeudaCount
         </strong>
         .
       </p>
+
+      {historicoHref ? (
+        <p className="mt-2">
+          <Link
+            href={historicoHref}
+            className="font-mono text-sm font-semibold text-ink no-underline hover:text-stamp"
+          >
+            Ver serie histórica <span aria-hidden="true">→</span>
+          </Link>
+        </p>
+      ) : null}
 
       {!compact ? (
         <>

@@ -316,6 +316,18 @@ describe("Home — pedidos row (feature G4)", () => {
   });
 });
 
+describe("Home — novedades row (feature H2b)", () => {
+  it("links to /novedades with the whole row tappable, real event count in the description", () => {
+    const { novedades } = getPortalData();
+    render(<Home />);
+    const link = screen.getByRole("link", {
+      name: /qu[eé] public[oó] el municipio.*[uú]ltimamente/i,
+    });
+    expect(link.getAttribute("href")).toBe("/novedades");
+    expect(link.textContent).toContain(String(novedades.events.length));
+  });
+});
+
 /**
  * Fidelity slice F3 (Mockup C, mobile only): the hero card leads on small
  * screens via CSS `order` (never DOM reshuffling), a compact mobile lede

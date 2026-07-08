@@ -343,3 +343,65 @@ export const pedidosDataSchema = z.object({
 export type PedidoEstado = z.infer<typeof pedidoEstadoSchema>;
 export type PedidoRecord = z.infer<typeof pedidoRecordSchema>;
 export type PedidosData = z.infer<typeof pedidosDataSchema>;
+
+/**
+ * Feature H2a: the deuda pública histórica quarterly series
+ * (`etl/etl/deuda_historica.py`, `data/deuda-historica.json`) -- the three
+ * quarters the municipality ever published (1er/2do/3er trimestre 2025)
+ * before it stopped. `totalArs` is the ONLY figure this schema carries per
+ * quarter -- deliberately no composition breakdown, see the ETL module
+ * docstring for why a per-organismo-acreedor split could not be reconciled
+ * against the headline total and was dropped rather than guessed.
+ */
+export const deudaHistoricaPointSchema = z.object({
+  period: z.string().regex(/^\d{4}-Q[1-4]$/),
+  periodLabel: z.string().min(1),
+  fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  totalArs: z.number().nonnegative(),
+  sourceRef: z.string().min(1),
+});
+
+export const deudaHistoricaDataSchema = z.object({
+  generatedAt: z.string().min(1),
+  series: z.array(deudaHistoricaPointSchema).min(1),
+  sourceRefs: z.array(z.string().min(1)).min(1),
+});
+
+export type DeudaHistoricaPoint = z.infer<typeof deudaHistoricaPointSchema>;
+export type DeudaHistoricaData = z.infer<typeof deudaHistoricaDataSchema>;
+
+/**
+ * Feature H2b: the watchdog "novedades" publication-behavior log
+ * (`etl/etl/novedades.py`, `data/novedades.json`). Every event carries an
+ * explicit `kind` so the UI always labels which events are hand-curated
+ * ("seeded"), diffed live from two archived listing snapshots
+ * ("auto-detected", append-only), or re-derived every build from
+ * `data/cadencia.json`'s own numbers ("auto-stale") -- see the ETL module
+ * docstring for the full honesty rationale. `date`/`detail` are nullable:
+ * an `auto-detected` event always has a date, but a dimension with no
+ * `lastPublishedAt` yet (see `derive_stale_events`) legitimately has none,
+ * and `detail` is optional prose, never fabricated when absent.
+ */
+export const novedadKindSchema = z.enum(["seeded", "auto-detected", "auto-stale"]);
+
+export const novedadEventSchema = z.object({
+  id: z.string().min(1),
+  kind: novedadKindSchema,
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable(),
+  title: z.string().min(1),
+  detail: z.string().min(1).nullable(),
+  sourceRefs: z.array(z.string().min(1)),
+});
+
+export const novedadesDataSchema = z.object({
+  generatedAt: z.string().min(1),
+  events: z.array(novedadEventSchema),
+  sourceRefs: z.array(z.string().min(1)),
+});
+
+export type NovedadKind = z.infer<typeof novedadKindSchema>;
+export type NovedadEvent = z.infer<typeof novedadEventSchema>;
+export type NovedadesData = z.infer<typeof novedadesDataSchema>;

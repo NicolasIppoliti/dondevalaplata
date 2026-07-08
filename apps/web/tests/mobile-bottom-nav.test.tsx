@@ -13,7 +13,7 @@ afterEach(() => {
 });
 
 describe("MobileBottomNav", () => {
-  it("renders a navigation landmark with the 7 mobile tabs (feature G4 added Pedidos)", () => {
+  it("renders a navigation landmark with the 8 mobile tabs (feature H2b added Novedades)", () => {
     usePathnameMock.mockReturnValue("/");
     render(<MobileBottomNav />);
     const nav = screen.getByRole("navigation", {
@@ -27,6 +27,18 @@ describe("MobileBottomNav", () => {
     expect(screen.getByRole("link", { name: "Pedidos" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Multas" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Transparencia" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Novedades" })).toBeTruthy();
+  });
+
+  it("marks Novedades active on /novedades (feature H2b)", () => {
+    usePathnameMock.mockReturnValue("/novedades");
+    render(<MobileBottomNav />);
+    expect(
+      screen.getByRole("link", { name: "Novedades" }).getAttribute("aria-current"),
+    ).toBe("page");
+    expect(
+      screen.getByRole("link", { name: "Transparencia" }).getAttribute("aria-current"),
+    ).toBeNull();
   });
 
   it("marks the matching tab aria-current='page' for the current pathname", () => {
