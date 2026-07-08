@@ -1,0 +1,47 @@
+# Curated seed for `etl build-novedades` (data/novedades.json, feature H2b).
+#
+# HONESTY (non-negotiable, per the task): every event below is a HAND-
+# VERIFIED historical fact, cross-checked against the live mcr.gob.ar
+# "documentos" listing snapshot AND already cited elsewhere on the portal
+# (see `data/cadencia.json`, feature G1) -- never a guess or an inferred
+# date. This is the bootstrap set for the FIRST run of the watchdog, before
+# any two archived snapshots exist to diff against each other (see
+# `etl/novedades.py`'s module docstring for the `auto-detected` kind that
+# takes over from here going forward). Each entry becomes a `kind: "seeded"`
+# event in the built JSON, clearly labeled as such in the UI -- never
+# blended with the live-diffed or live-recomputed events.
+#
+# `source_refs` must resolve in `archive-manifest.json` (build-time
+# invariant, same as every other `data/*.json` artifact's provenance).
+
+events:
+  - id: "seed-presupuesto-gastos-por-objeto-2026"
+    date: "2026-03-16"
+    title: "El municipio publicó el Presupuesto de Gastos por Objeto 2026"
+    detail: >-
+      Última actualización de la dimensión ASAP "Presupuesto vigente
+      publicado" -- verificado en la lista en vivo de documentos oficiales
+      (ver data/cadencia.json).
+    source_refs:
+      - "mcr-docs/presupuesto-de-gastos-por-objeto"
+
+  - id: "seed-ejecucion-gastos-1er-trimestre-2026"
+    date: "2026-04-15"
+    title: "El municipio publicó la Ejecución de Gastos del 1er trimestre 2026"
+    detail: >-
+      Estado de Ejecución Presupuestaria de Gastos, 1er trimestre 2026 --
+      mismo documento que usa el explorador de gasto por partida (/gastos).
+    source_refs:
+      - "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre"
+
+  - id: "seed-situacion-economico-financiera-1er-semestre-2026"
+    date: "2026-07-01"
+    title: >-
+      El municipio publicó la Situación Económico-Financiera del 1er
+      semestre 2026
+    detail: >-
+      Dimensión ASAP "Situación económico-financiera (SEF) trimestral", al
+      máximo puntaje -- se publica sin rezago, el dato más reciente ya
+      cubre el semestre en curso.
+    source_refs:
+      - "mcr-docs/situacion-economica-financiera-primer-semestre-2026"

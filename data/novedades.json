@@ -1,0 +1,74 @@
+{
+  "generatedAt": "2026-07-08T20:10:04Z",
+  "events": [
+    {
+      "id": "seed-situacion-economico-financiera-1er-semestre-2026",
+      "kind": "seeded",
+      "date": "2026-07-01",
+      "title": "El municipio publicó la Situación Económico-Financiera del 1er semestre 2026",
+      "detail": "Dimensión ASAP \"Situación económico-financiera (SEF) trimestral\", al máximo puntaje -- se publica sin rezago, el dato más reciente ya cubre el semestre en curso.",
+      "sourceRefs": [
+        "mcr-docs/situacion-economica-financiera-primer-semestre-2026"
+      ]
+    },
+    {
+      "id": "seed-ejecucion-gastos-1er-trimestre-2026",
+      "kind": "seeded",
+      "date": "2026-04-15",
+      "title": "El municipio publicó la Ejecución de Gastos del 1er trimestre 2026",
+      "detail": "Estado de Ejecución Presupuestaria de Gastos, 1er trimestre 2026 -- mismo documento que usa el explorador de gasto por partida (/gastos).",
+      "sourceRefs": [
+        "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre"
+      ]
+    },
+    {
+      "id": "auto-stale-ejecucion-presupuestaria-trimestral",
+      "kind": "auto-stale",
+      "date": "2026-04-15",
+      "title": "Sigue sin actualizar al día “Ejecución presupuestaria trimestral” (2 meses de rezago)",
+      "detail": "Rezago entre las dos series de la misma dimensión: al corte del informe de mayo 2026, Ejecución de Gastos ya estaba publicada al 1er trimestre 2026, pero Ejecución de Recursos seguía publicada solo hasta el 4to trimestre 2025 -- un trimestre de rezago entre ambas.",
+      "sourceRefs": [
+        "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre",
+        "mcr-docs/estado-de-ejecucion-presupuestaria-de-recursos-4to-trimestre"
+      ]
+    },
+    {
+      "id": "auto-stale-gastos-por-finalidad-y-funcion",
+      "kind": "auto-stale",
+      "date": "2026-04-15",
+      "title": "Sigue sin actualizar al día “Gastos por finalidad y función” (2 meses de rezago)",
+      "detail": "Al 31/03/2026 (corte del informe de mayo 2026), lo último publicado online era el 3er trimestre 2025 -- medio año de rezago. El 4to trimestre 2025 recién se publicó el 15/04/2026, después del corte, así que no llegó a contar para este informe.",
+      "sourceRefs": [
+        "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-por-finalidad-y-funcion-4to-trimestre"
+      ]
+    },
+    {
+      "id": "seed-presupuesto-gastos-por-objeto-2026",
+      "kind": "seeded",
+      "date": "2026-03-16",
+      "title": "El municipio publicó el Presupuesto de Gastos por Objeto 2026",
+      "detail": "Última actualización de la dimensión ASAP \"Presupuesto vigente publicado\" -- verificado en la lista en vivo de documentos oficiales (ver data/cadencia.json).",
+      "sourceRefs": [
+        "mcr-docs/presupuesto-de-gastos-por-objeto"
+      ]
+    },
+    {
+      "id": "auto-stale-deuda",
+      "kind": "auto-stale",
+      "date": "2025-09-30",
+      "title": "Sigue sin actualizar el Stock de deuda pública y perfil de vencimientos (281 días / 3 trimestres sin publicar)",
+      "detail": "Último dato publicado: 3er trimestre 2025 (cierre 2025-09-30), por $ 46.876.896,86.",
+      "sourceRefs": [
+        "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
+      ]
+    }
+  ],
+  "sourceRefs": [
+    "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre",
+    "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-por-finalidad-y-funcion-4to-trimestre",
+    "mcr-docs/estado-de-ejecucion-presupuestaria-de-recursos-4to-trimestre",
+    "mcr-docs/presupuesto-de-gastos-por-objeto",
+    "mcr-docs/situacion-economica-financiera-primer-semestre-2026",
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
+  ]
+}
