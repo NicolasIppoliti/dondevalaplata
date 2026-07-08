@@ -84,7 +84,7 @@ export function MobileBottomNav() {
               <Link
                 href={tab.href}
                 aria-current={isActive ? "page" : undefined}
-                className={`flex min-h-14 flex-col items-center justify-center gap-1 py-2 text-xs font-semibold no-underline ${
+                className={`flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 px-0.5 py-2 text-xs font-semibold no-underline ${
                   isActive ? "text-stamp" : "text-muted"
                 }`}
               >
@@ -101,7 +101,18 @@ export function MobileBottomNav() {
                 >
                   {tab.icon}
                 </svg>
-                {tab.label}
+                {/* `truncate` (feature G4, 7 tabs): at 7 columns the
+                    longest label ("Transparencia") no longer fits its
+                    ~55px column at 390px and would otherwise overflow
+                    visually into the next tab (a real bug found in visual
+                    QA). `w-full min-w-0` lets this flex child shrink below
+                    its content width so `truncate` can actually clip it;
+                    the FULL word stays as the link's accessible name
+                    (this span isn't `aria-hidden`), only the rendered
+                    glyphs are clipped with an ellipsis. */}
+                <span className="w-full min-w-0 truncate text-center">
+                  {tab.label}
+                </span>
               </Link>
             </li>
           );
