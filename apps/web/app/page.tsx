@@ -13,6 +13,7 @@ import {
   splitArsUnit,
 } from "@/lib/format";
 import {
+  getFalloEjerciciosDescending,
   getPortalData,
   resolveSourceRef,
   selectFallosPreview,
@@ -68,6 +69,18 @@ function VerTodoLink({ href }: { href: string }) {
  * Only "¿De dónde salen los datos?" stays the old simple, whole-row-is-a-
  * link pattern (`FUENTES_ROW` below) -- it has no dashboard component of
  * its own to preview, just a link into /fuentes.
+ *
+ * Fidelity slice F3 (Mockup C, mobile only -- see DESIGN.md decisions log):
+ * closes the last mobile gap F1 explicitly deferred. Below `lg`, the hero
+ * card now leads visually (CSS `order`, never DOM reshuffling -- every
+ * text node stays singular so testing-library queries are unaffected by
+ * viewport) instead of the full editorial column, which collapses to a
+ * single mobile lede line + one compact "independiente" pill inside the
+ * SAME card. A new mobile-only grouped-rows list (icon + question + value
+ * + chevron) teases the three main routes right below the hero. Desktop
+ * (`lg` and up) is byte-identical to F1/F2 -- every addition here is
+ * either `lg:hidden` or restores the exact prior value via an `lg:`
+ * override, never a second copy of existing text.
  */
 const FUENTES_ROW = {
   question: "¿De dónde salen los datos?",
@@ -153,6 +166,23 @@ export default function Home() {
     manifest,
   );
 
+  // (F3) Mobile quick-action rows -- compact teasers (icon + question +
+  // value + chevron, Mockup C) linking to the three main routes. Every
+  // value below reuses data already computed above for the hero card / F2
+  // sections, never re-derived or fabricated; each is pre-joined into a
+  // single string so it renders as ONE text node (never an isolated node
+  // matching the bare `amount`/`unit` strings the hero card's own tests
+  // already query for elsewhere on this same page). `heroAmount` already
+  // carries its own "$ " prefix (see `splitArsUnit`'s docstring -- it only
+  // splits off the trailing unit WORD, never the leading currency sign),
+  // so this never prepends a second one.
+  const heroUnitAbbrev =
+    heroUnit === "mil millones" ? "MM" : heroUnit === "millones" ? "M" : "";
+  const heroRowValue = `${heroAmount}${heroUnitAbbrev ? ` ${heroUnitAbbrev}` : ""}`;
+  const fallosEjerciciosAscending = [
+    ...getFalloEjerciciosDescending(fallos),
+  ].reverse();
+
   return (
     <>
       {/* Home ("/") has no nested layout.tsx, so it renders SiteHeader
@@ -168,41 +198,63 @@ export default function Home() {
           invariant), without repeating the wordmark inside the poster. */}
         <h1 className="sr-only">¿Dónde va la plata? — Coronel Rosales</h1>
 
+        {/* Mobile-only lede (fidelity slice F3, Mockup C): a single
+            supporting line stands in for the full editorial column below,
+            which becomes desktop-only on small screens so the compact hero
+            card can lead the page instead. `lg:hidden` removes this line
+            entirely from the rendered CSS at `lg` and up, so desktop is
+            unaffected. */}
+        <p className="text-[15px] text-ink-2 lg:hidden">
+          Portal vecinal independiente que sigue la plata pública de Coronel
+          Rosales.
+        </p>
+
         {/* Two-column hero: editorial column (left) + floating premium
-            figure card (right) on desktop; single column, card-first
-            visual weight preserved, on mobile. */}
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.02fr_1fr] lg:gap-12">
-          {/* LEFT: editorial column */}
-          <div>
-            <p className="font-mono text-[12.5px] font-semibold tracking-[0.09em] text-stamp uppercase">
-              Portal vecinal independiente
-            </p>
-            <h2 className="mt-2 font-display text-[clamp(30px,6vw,52px)] font-bold leading-[1.02] tracking-tight text-ink">
-              Seguimos la <span className="text-stamp">plata pública</span> de
-              Coronel Rosales.
-            </h2>
-            <p className="mt-4 max-w-[46ch] text-[17.5px] text-ink-2">
-              Cada cifra enlaza su fuente oficial, una copia archivada y su
-              huella{" "}
-              <code className="rounded-[5px] border border-rule bg-surface-2 px-1.5 py-px font-mono text-[0.82em]">
-                sha256
-              </code>
-              . No opinamos sobre ninguna gestión: mostramos los números que
-              se pueden chequear.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/coparticipacion"
-                className="inline-flex min-h-11 items-center justify-center rounded-sm border-2 border-ink bg-ink px-5 font-sans text-[15px] font-semibold text-surface no-underline transition-colors hover:border-stamp hover:bg-stamp"
-              >
-                Ver la coparticipación
-              </Link>
-              <Link
-                href="/fuentes"
-                className="inline-flex min-h-11 items-center justify-center rounded-sm border-2 border-ink px-5 font-sans text-[15px] font-semibold text-ink no-underline transition-colors hover:bg-ink hover:text-surface"
-              >
-                Cómo verificamos
-              </Link>
+            figure card (right) on desktop; on mobile (fidelity slice F3)
+            the card leads via CSS `order` (never DOM reshuffling, so no
+            text node is ever duplicated) and the descriptive copy/CTAs
+            collapse behind the lede above -- only the freshness caveat
+            stays visible at every breakpoint. */}
+        <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-[1.02fr_1fr] lg:gap-12">
+          {/* LEFT: editorial column (desktop) / freshness caveat only
+              (mobile) */}
+          <div className="order-2 lg:order-1">
+            {/* Kicker, Fraunces headline, supporting line, two CTAs --
+                UNCHANGED from F1. Hidden below `lg`: the mobile lede above
+                the grid replaces this block on small screens, so no text
+                node here is ever duplicated for testing-library regardless
+                of viewport. */}
+            <div className="hidden lg:block">
+              <p className="font-mono text-[12.5px] font-semibold tracking-[0.09em] text-stamp uppercase">
+                Portal vecinal independiente
+              </p>
+              <h2 className="mt-2 font-display text-[clamp(30px,6vw,52px)] font-bold leading-[1.02] tracking-tight text-ink">
+                Seguimos la <span className="text-stamp">plata pública</span>{" "}
+                de Coronel Rosales.
+              </h2>
+              <p className="mt-4 max-w-[46ch] text-[17.5px] text-ink-2">
+                Cada cifra enlaza su fuente oficial, una copia archivada y su
+                huella{" "}
+                <code className="rounded-[5px] border border-rule bg-surface-2 px-1.5 py-px font-mono text-[0.82em]">
+                  sha256
+                </code>
+                . No opinamos sobre ninguna gestión: mostramos los números
+                que se pueden chequear.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href="/coparticipacion"
+                  className="inline-flex min-h-11 items-center justify-center rounded-sm border-2 border-ink bg-ink px-5 font-sans text-[15px] font-semibold text-surface no-underline transition-colors hover:border-stamp hover:bg-stamp"
+                >
+                  Ver la coparticipación
+                </Link>
+                <Link
+                  href="/fuentes"
+                  className="inline-flex min-h-11 items-center justify-center rounded-sm border-2 border-ink px-5 font-sans text-[15px] font-semibold text-ink no-underline transition-colors hover:bg-ink hover:text-surface"
+                >
+                  Cómo verificamos
+                </Link>
+              </div>
             </div>
             <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-dashed border-muted px-3 py-[5px] font-mono text-xs text-muted">
               <span
@@ -214,11 +266,13 @@ export default function Home() {
             </p>
           </div>
 
-          {/* RIGHT: floating premium figure card */}
+          {/* RIGHT: floating premium figure card (desktop) / compact hero
+              card (mobile, fidelity slice F3). CSS `order` puts this FIRST
+              below `lg` without moving it in the DOM. */}
           {latestPoint ? (
             <section
               aria-label="Cifra destacada del mes"
-              className="rounded-lg border border-rule bg-surface p-[clamp(20px,3vw,30px)] shadow-card"
+              className="order-1 rounded-lg border border-rule bg-surface p-[clamp(18px,5vw,22px)] shadow-card lg:order-2 lg:p-[clamp(20px,3vw,30px)]"
             >
               <div className="flex items-baseline justify-between gap-3">
                 <span className="font-mono text-[12.5px] tracking-[0.04em] text-muted uppercase">
@@ -229,7 +283,16 @@ export default function Home() {
                 </span>
               </div>
 
-              <p className="mt-1 flex flex-wrap items-baseline gap-x-2.5 gap-y-0 font-mono text-[clamp(38px,9vw,68px)] leading-[0.92] font-medium tracking-tight text-ink tabular-nums">
+              {/* Mobile-only "independiente" pill (fidelity slice F3,
+                  Mockup C). The desktop kicker above ("Portal vecinal
+                  independiente") already carries this claim, so this stays
+                  `lg:hidden` instead of repeating a second, differently-
+                  worded badge on desktop. */}
+              <span className="mt-2 inline-flex w-fit items-center rounded-full border border-rule-soft bg-surface-2 px-2.5 py-1 font-mono text-[11px] font-semibold tracking-[0.02em] text-ink-2 lg:hidden">
+                independiente
+              </span>
+
+              <p className="mt-1 flex flex-wrap items-baseline gap-x-2.5 gap-y-0 font-mono text-[clamp(32px,9.5vw,44px)] leading-[0.92] font-medium tracking-tight text-ink tabular-nums lg:text-[clamp(38px,9vw,68px)]">
                 <span>{heroAmount}</span>
                 {heroUnit ? (
                   <span className="text-[clamp(14px,2.6vw,18px)] font-medium text-muted">
@@ -318,6 +381,173 @@ export default function Home() {
             </section>
           ) : null}
         </div>
+
+        {/* Mobile-only quick-action rows (fidelity slice F3, Mockup C): a
+            grouped, rounded-card list -- icon + question + value + chevron
+            -- teasing the three main routes. Every value reuses data
+            already computed above for the hero card / F2 sections below,
+            never re-derived. This is additive to, not a replacement of,
+            the F2 dashboard sections (which stay the sole landing content
+            on desktop, `lg:hidden` removes this list entirely at `lg` and
+            up). DESIGN.md still lists the older "chips de acceso rápido"
+            pattern as available-but-unused elsewhere; reusing it here too
+            would duplicate the same 3 destinations twice on one mobile
+            screen, so this slice adds only the rows. */}
+        {latestPoint ? (
+          <nav
+            aria-label="Accesos rápidos"
+            className="mt-6 overflow-hidden rounded-lg border border-rule bg-surface shadow-card lg:hidden"
+          >
+            <Link
+              href="/coparticipacion"
+              className="flex min-h-16 items-center gap-3 border-b border-rule px-4 py-3 no-underline hover:bg-surface-2"
+            >
+              <span
+                aria-hidden="true"
+                className="grid h-9 w-9 flex-none place-items-center rounded-[11px] bg-surface-2 text-ink-2"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="19"
+                  height="19"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M3 6h18v12H3zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM6 12h.01M18 12h.01" />
+                </svg>
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-display text-[15px] font-semibold text-ink">
+                  ¿Cuánto llega de coparticipación?
+                </span>
+                <span className="block truncate text-xs text-muted">
+                  Serie mensual
+                </span>
+              </span>
+              <span className="flex flex-none flex-col items-end">
+                <span className="font-mono text-sm font-semibold text-ink">
+                  {heroRowValue}
+                </span>
+                <span className="font-mono text-[11px] text-muted">
+                  {dataThroughCompactLabel}
+                </span>
+              </span>
+              <span
+                aria-hidden="true"
+                className="font-display text-xl text-muted"
+              >
+                ›
+              </span>
+            </Link>
+
+            <Link
+              href="/fallos"
+              className="flex min-h-16 items-center gap-3 border-b border-rule px-4 py-3 no-underline hover:bg-surface-2"
+            >
+              <span
+                aria-hidden="true"
+                className="grid h-9 w-9 flex-none place-items-center rounded-[11px] bg-surface-2 text-ink-2"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="19"
+                  height="19"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m14 13-7.5 7.5a2.12 2.12 0 0 1-3-3L11 10m5 6 6-6M8 8l6-6M9 7l8 8M21 11l-8-8" />
+                </svg>
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-display text-[15px] font-semibold text-ink">
+                  ¿Qué multó el Tribunal de Cuentas?
+                </span>
+                <span className="block truncate text-xs text-muted">
+                  Fallos {fallosEjerciciosAscending.join(" · ")}
+                </span>
+              </span>
+              <span className="flex flex-none flex-col items-end">
+                <span className="font-mono text-sm font-semibold text-ink">
+                  {fallosEjerciciosAscending.length}
+                </span>
+                <span className="font-mono text-[11px] text-muted">
+                  ejercicios
+                </span>
+              </span>
+              <span
+                aria-hidden="true"
+                className="font-display text-xl text-muted"
+              >
+                ›
+              </span>
+            </Link>
+
+            <Link
+              href="/transparencia"
+              className="flex min-h-16 items-center gap-3 px-4 py-3 no-underline hover:bg-surface-2"
+            >
+              <span
+                aria-hidden="true"
+                className="grid h-9 w-9 flex-none place-items-center rounded-[11px] bg-surface-2 text-ink-2"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="19"
+                  height="19"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1zm-11-1 2 2 4-4" />
+                </svg>
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-display text-[15px] font-semibold text-ink">
+                  ¿Qué tan transparente es?
+                </span>
+                <span className="block truncate text-xs text-muted">
+                  Índice fiscal de ASAP
+                  {lastTransparenciaTrendPoint
+                    ? ` · ${lastTransparenciaTrendPoint.reportLabel}`
+                    : ""}
+                </span>
+              </span>
+              <span className="flex flex-none flex-col items-end">
+                <span className="font-mono text-sm font-semibold text-ink">
+                  {transparencia.total}/{transparencia.max}
+                </span>
+                {transparenciaDelta !== null ? (
+                  <span
+                    className={`font-mono text-[11px] font-semibold ${
+                      transparenciaDelta >= 0 ? "text-olive" : "text-stamp"
+                    }`}
+                  >
+                    <span className="sr-only">Variación del puntaje: </span>
+                    <span aria-hidden="true">
+                      {transparenciaDelta >= 0 ? "▲" : "▼"}
+                    </span>{" "}
+                    {transparenciaDelta >= 0 ? "+" : ""}
+                    {transparenciaDelta}
+                  </span>
+                ) : null}
+              </span>
+              <span
+                aria-hidden="true"
+                className="font-display text-xl text-muted"
+              >
+                ›
+              </span>
+            </Link>
+          </nav>
+        ) : null}
 
         {/* Dashboard landing (fidelity slice F2, Mockup A): three real
             dashboard sections -- coparticipación chart, fallos grid,

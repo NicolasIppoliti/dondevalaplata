@@ -5,6 +5,7 @@ import { FALLO_FIELD_LABELS } from "@/components/fallos/FalloCard";
 import { formatArsHuman, splitArsUnit } from "@/lib/format";
 import { computeCoparticipacionTrend } from "@/lib/insight";
 import {
+  getFalloEjerciciosDescending,
   getPortalData,
   resolveSourceRef,
   selectFallosPreview,
@@ -243,5 +244,96 @@ describe("Home — dashboard landing (fidelity slice F2, Mockup A)", () => {
       "href",
       expect.stringContaining("/transparencia"),
     );
+  });
+});
+
+/**
+ * Fidelity slice F3 (Mockup C, mobile only): the hero card leads on small
+ * screens via CSS `order` (never DOM reshuffling), a compact mobile lede
+ * line + "independiente" pill replace the full editorial column, and a new
+ * grouped-rows list (icon + question + value + chevron) teases the three
+ * main routes right below the hero. Every value reuses data already
+ * exercised by the F1/F2 describe blocks above -- these tests only check
+ * the NEW mobile-only markup exists, is correctly linked, and never
+ * duplicates a text node the F1/F2 tests already assert is singular.
+ */
+describe("Home — mobile hero + quick-action rows (fidelity slice F3, Mockup C)", () => {
+  it("shows the compact mobile lede sentence that stands in for the full editorial column", () => {
+    render(<Home />);
+    expect(
+      screen.getByText(
+        "Portal vecinal independiente que sigue la plata pública de Coronel Rosales.",
+      ),
+    ).toBeTruthy();
+  });
+
+  it("shows an 'independiente' pill inside the hero card", () => {
+    render(<Home />);
+    const hero = within(
+      screen.getByRole("region", { name: "Cifra destacada del mes" }),
+    );
+    expect(hero.getByText("independiente")).toBeTruthy();
+  });
+
+  it("renders a mobile quick-action rows list linking to coparticipación, fallos and transparencia, each with a chevron", () => {
+    render(<Home />);
+    const nav = screen.getByRole("navigation", { name: "Accesos rápidos" });
+    const links = within(nav).getAllByRole("link");
+    expect(links).toHaveLength(3);
+    expect(links[0]).toHaveProperty(
+      "href",
+      expect.stringContaining("/coparticipacion"),
+    );
+    expect(links[1]).toHaveProperty(
+      "href",
+      expect.stringContaining("/fallos"),
+    );
+    expect(links[2]).toHaveProperty(
+      "href",
+      expect.stringContaining("/transparencia"),
+    );
+    expect(within(nav).getAllByText("›")).toHaveLength(3);
+  });
+
+  it("shows the coparticipación row's headline value matching the hero card's own figure, with a single '$' (amount already carries its own sign)", () => {
+    const { coparticipacion } = getPortalData();
+    const coronelRosales = coparticipacion.series.find(
+      (s) => s.municipioId === CORONEL_ROSALES_MUNICIPIO_ID,
+    );
+    const latest = coronelRosales?.points.at(-1);
+    const { amount } = splitArsUnit(formatArsHuman(Math.round(latest!.realArs)));
+    expect(amount.startsWith("$")).toBe(true);
+    render(<Home />);
+    const nav = screen.getByRole("navigation", { name: "Accesos rápidos" });
+    expect(within(nav).getByText(`${amount} M`)).toBeTruthy();
+    expect(within(nav).queryByText(`$ ${amount} M`)).toBeNull();
+  });
+
+  it("shows the fallos row's ejercicio count, matching getFalloEjerciciosDescending -- never a hardcoded number", () => {
+    const { fallos } = getPortalData();
+    const ejercicioCount = getFalloEjerciciosDescending(fallos).length;
+    render(<Home />);
+    const nav = screen.getByRole("navigation", { name: "Accesos rápidos" });
+    expect(within(nav).getByText(String(ejercicioCount))).toBeTruthy();
+    expect(within(nav).getByText("ejercicios")).toBeTruthy();
+  });
+
+  it("shows the transparencia row's score fraction, compact (no spaces, distinct from the full-page '81 / 100' rendering)", () => {
+    const { transparencia } = getPortalData();
+    render(<Home />);
+    const nav = screen.getByRole("navigation", { name: "Accesos rápidos" });
+    expect(
+      within(nav).getByText(`${transparencia.total}/${transparencia.max}`),
+    ).toBeTruthy();
+  });
+
+  it("marks every row icon and chevron as decorative (aria-hidden)", () => {
+    render(<Home />);
+    const nav = screen.getByRole("navigation", { name: "Accesos rápidos" });
+    const svgs = nav.querySelectorAll("svg");
+    expect(svgs.length).toBe(3);
+    for (const svg of svgs) {
+      expect(svg.closest('[aria-hidden="true"]')).not.toBeNull();
+    }
   });
 });
