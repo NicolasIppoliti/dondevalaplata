@@ -248,6 +248,32 @@ describe("Home — dashboard landing (fidelity slice F2, Mockup A)", () => {
 });
 
 /**
+ * Feature G1: a compact deuda-counter widget on the home page, factual and
+ * neutral, linking through to the full /transparencia cadence dashboard.
+ */
+describe("Home — compact deuda counter (feature G1)", () => {
+  it("renders the compact deuda counter with the last figure, no ordenanza prose", () => {
+    render(<Home />);
+    const region = screen.getByRole("region", {
+      name: /no actualiza su stock de deuda/i,
+    });
+    const text = region.textContent ?? "";
+    expect(text.toLowerCase()).toMatch(/no actualiza/);
+    expect(text).toMatch(/46\.876\.896/);
+    expect(text).not.toMatch(/Ordenanza 3638/);
+  });
+
+  it("is framed factually, never a judgment of a person or gestión (scoped to the widget itself)", () => {
+    render(<Home />);
+    const region = screen.getByRole("region", {
+      name: /no actualiza su stock de deuda/i,
+    });
+    const text = region.textContent ?? "";
+    expect(text).not.toMatch(/intendente|concejal|partido|gesti[oó]n de|corrupci[oó]n/i);
+  });
+});
+
+/**
  * Fidelity slice F3 (Mockup C, mobile only): the hero card leads on small
  * screens via CSS `order` (never DOM reshuffling), a compact mobile lede
  * line + "independiente" pill replace the full editorial column, and a new

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ColorLegend } from "@/components/ColorLegend";
 import { InteractiveCoparticipacionChart } from "@/components/chart/InteractiveCoparticipacionChart";
 import { Sparkline } from "@/components/chart/Sparkline";
+import { DeudaCounter } from "@/components/DeudaCounter";
 import { FalloCard } from "@/components/fallos/FalloCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TransparenciaGauge } from "@/components/TransparenciaGauge";
@@ -16,6 +17,7 @@ import {
   getFalloEjerciciosDescending,
   getPortalData,
   resolveSourceRef,
+  resolveSourceRefs,
   selectFallosPreview,
   shortHash,
 } from "@/lib/sources";
@@ -89,8 +91,12 @@ const FUENTES_ROW = {
 } as const;
 
 export default function Home() {
-  const { coparticipacion, fallos, transparencia, manifest } =
+  const { coparticipacion, fallos, transparencia, cadencia, manifest } =
     getPortalData();
+  const deudaSourceLinks = resolveSourceRefs(
+    cadencia.deuda.sourceRefs,
+    manifest,
+  );
   const coronelRosales = coparticipacion.series.find(
     (series) => series.municipioId === CORONEL_ROSALES_MUNICIPIO_ID,
   );
@@ -778,6 +784,17 @@ export default function Home() {
               </div>
             </div>
           </section>
+
+          {/* Feature G1: compact deuda counter, teasing the full cadence
+              dashboard at /transparencia. Self-contained landmark section
+              (own aria-labelledby), so it never bleeds into the
+              "home-transparencia-heading" region's accessible name/content
+              above. */}
+          <DeudaCounter
+            deuda={cadencia.deuda}
+            sourceLinks={deudaSourceLinks}
+            compact
+          />
 
           {/* "¿De dónde salen los datos?" stays the simple, whole-row-is-a-
               link pattern -- no dashboard component to preview, just a

@@ -1,12 +1,15 @@
 import manifestJson from "../../../archive-manifest.json";
+import cadenciaJson from "../../../data/cadencia.json";
 import coparticipacionJson from "../../../data/coparticipacion.json";
 import fallosJson from "../../../data/fallos.json";
 import transparenciaJson from "../../../data/transparencia.json";
 import {
+  cadenciaDataSchema,
   coparticipacionDataSchema,
   fallosDataSchema,
   manifestSchema,
   transparenciaDataSchema,
+  type CadenciaData,
   type CoparticipacionData,
   type FallosData,
   type Manifest,
@@ -40,4 +43,8 @@ export function loadTransparencia(
   raw: unknown = transparenciaJson,
 ): TransparenciaData {
   return transparenciaDataSchema.parse(raw);
+}
+
+export function loadCadencia(raw: unknown = cadenciaJson): CadenciaData {
+  return cadenciaDataSchema.parse(raw);
 }

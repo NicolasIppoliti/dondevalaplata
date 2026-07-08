@@ -1,10 +1,12 @@
 import {
+  loadCadencia,
   loadCoparticipacion,
   loadFallos,
   loadManifest,
   loadTransparencia,
 } from "./data";
 import type {
+  CadenciaData,
   CoparticipacionData,
   FalloRecord,
   FallosData,
@@ -65,6 +67,7 @@ export function collectSourceRefs(
   coparticipacion: CoparticipacionData,
   fallos: FallosData,
   transparencia?: TransparenciaData,
+  cadencia?: CadenciaData,
 ): string[] {
   const ids = new Set<string>();
   for (const id of coparticipacion.sourceRefs) ids.add(id);
@@ -78,6 +81,13 @@ export function collectSourceRefs(
   if (transparencia) {
     for (const id of transparencia.sourceRefs) ids.add(id);
     for (const point of transparencia.trend) ids.add(point.sourceRef);
+  }
+  if (cadencia) {
+    for (const id of cadencia.sourceRefs) ids.add(id);
+    for (const dimension of cadencia.dimensions) {
+      for (const id of dimension.sourceRefs) ids.add(id);
+    }
+    for (const id of cadencia.deuda.sourceRefs) ids.add(id);
   }
   return [...ids];
 }
@@ -147,6 +157,7 @@ export interface PortalData {
   coparticipacion: CoparticipacionData;
   fallos: FallosData;
   transparencia: TransparenciaData;
+  cadencia: CadenciaData;
 }
 
 /**
@@ -159,9 +170,10 @@ export function getPortalData(): PortalData {
   const coparticipacion = loadCoparticipacion();
   const fallos = loadFallos();
   const transparencia = loadTransparencia();
+  const cadencia = loadCadencia();
   assertSourceRefsResolve(
-    collectSourceRefs(coparticipacion, fallos, transparencia),
+    collectSourceRefs(coparticipacion, fallos, transparencia, cadencia),
     manifest,
   );
-  return { manifest, coparticipacion, fallos, transparencia };
+  return { manifest, coparticipacion, fallos, transparencia, cadencia };
 }

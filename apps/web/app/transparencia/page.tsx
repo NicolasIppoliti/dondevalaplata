@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { CadenceDashboard } from "@/components/CadenceDashboard";
+import { DeudaCounter } from "@/components/DeudaCounter";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { TransparenciaGauge } from "@/components/TransparenciaGauge";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
@@ -49,7 +51,7 @@ export const metadata: Metadata = {
  * instead of a second hand-rolled SVG. Behavior/markup here is unchanged.
  */
 export default function TransparenciaPage() {
-  const { transparencia, manifest } = getPortalData();
+  const { transparencia, cadencia, manifest } = getPortalData();
   const { dimensions, trend } = transparencia;
 
   const fullMarkDimensions = dimensions.filter((d) => d.got >= d.max);
@@ -62,7 +64,7 @@ export default function TransparenciaPage() {
       ? lastTrendPoint.total - firstTrendPoint.total
       : null;
 
-  const sourceLinks = resolveSourceRefs(transparencia.sourceRefs, manifest);
+  const deudaSourceLinks = resolveSourceRefs(cadencia.deuda.sourceRefs, manifest);
 
   return (
     <div className="space-y-10">
@@ -101,6 +103,8 @@ export default function TransparenciaPage() {
           </p>
         </div>
       </section>
+
+      <DeudaCounter deuda={cadencia.deuda} sourceLinks={deudaSourceLinks} />
 
       {firstTrendPoint && lastTrendPoint && delta !== null ? (
         <section aria-labelledby="tendencia-heading">
@@ -227,6 +231,8 @@ export default function TransparenciaPage() {
         </ul>
       </section>
 
+      <CadenceDashboard cadencia={cadencia} />
+
       <section
         aria-labelledby="alcance-heading"
         className="max-w-[74ch] rounded-md border border-ocre border-l-[5px] bg-ocre-soft p-4"
@@ -249,8 +255,11 @@ export default function TransparenciaPage() {
       </p>
 
       <SourcesFooter
-        links={sourceLinks}
-        note={`Datos al ${transparencia.dataThrough} (${transparencia.reportLabel}). Este índice mide únicamente transparencia fiscal publicada en la web oficial del municipio, no transparencia integral, y se publica con rezago respecto del trimestre evaluado.`}
+        links={resolveSourceRefs(
+          [...new Set([...transparencia.sourceRefs, ...cadencia.sourceRefs])],
+          manifest,
+        )}
+        note={`Datos al ${transparencia.dataThrough} (${transparencia.reportLabel}). Este índice mide únicamente transparencia fiscal publicada en la web oficial del municipio, no transparencia integral, y se publica con rezago respecto del trimestre evaluado. La cadencia de publicación (última sección) se recalcula en cada build a partir de la lista en vivo de documentos oficiales.`}
       />
     </div>
   );

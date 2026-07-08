@@ -7,7 +7,10 @@ import fallosValid from "./fixtures/fallos.valid.json";
 import fallosMalformed from "./fixtures/fallos.malformed.json";
 import transparenciaValid from "./fixtures/transparencia.valid.json";
 import transparenciaMalformed from "./fixtures/transparencia.malformed.json";
+import cadenciaValid from "./fixtures/cadencia.valid.json";
+import cadenciaMalformed from "./fixtures/cadencia.malformed.json";
 import {
+  loadCadencia,
   loadCoparticipacion,
   loadFallos,
   loadManifest,
@@ -80,6 +83,28 @@ describe("loadTransparencia", () => {
   });
 });
 
+describe("loadCadencia", () => {
+  it("accepts a valid cadencia fixture", () => {
+    const data = loadCadencia(cadenciaValid);
+    expect(data.asapReport).toBe("Mayo 2026");
+    expect(data.dimensions).toHaveLength(6);
+    expect(data.deuda.lastPeriod).toBe("3er trimestre 2025");
+  });
+
+  it("rejects a malformed cadencia fixture", () => {
+    expect(() => loadCadencia(cadenciaMalformed)).toThrow();
+  });
+
+  it("HONESTY TEST: the live-derived dimensions sum to the same 81 total, no dimension exceeds its own max", () => {
+    const data = loadCadencia(cadenciaValid);
+    const sum = data.dimensions.reduce((acc, d) => acc + d.got, 0);
+    expect(sum).toBe(81);
+    for (const dimension of data.dimensions) {
+      expect(dimension.got).toBeLessThanOrEqual(dimension.max);
+    }
+  });
+});
+
 describe("loaders reading real build-time JSON with no argument", () => {
   it("loads the real archive-manifest.json, coparticipacion.json, fallos.json and transparencia.json", () => {
     expect(loadManifest().length).toBeGreaterThan(0);
@@ -95,6 +120,16 @@ describe("loaders reading real build-time JSON with no argument", () => {
     const sum = transparencia.dimensions.reduce((acc, d) => acc + d.got, 0);
     expect(sum).toBe(transparencia.total);
     for (const dimension of transparencia.dimensions) {
+      expect(dimension.got).toBeLessThanOrEqual(dimension.max);
+    }
+  });
+
+  it("loads the real data/cadencia.json, live-derived dimensions still sum to the same 81 total", () => {
+    const cadencia = loadCadencia();
+    expect(cadencia.dimensions).toHaveLength(6);
+    const sum = cadencia.dimensions.reduce((acc, d) => acc + d.got, 0);
+    expect(sum).toBe(81);
+    for (const dimension of cadencia.dimensions) {
       expect(dimension.got).toBeLessThanOrEqual(dimension.max);
     }
   });

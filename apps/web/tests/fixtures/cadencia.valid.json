@@ -1,0 +1,103 @@
+{
+  "generatedAt": "2026-07-08T15:48:00Z",
+  "asapReport": "Mayo 2026",
+  "asapCutoffLabel": "31 de marzo de 2026",
+  "killerFact": "En el informe de noviembre 2025, estas tres dimensiones estaban en el máximo -- 10 sobre 10 cada una.",
+  "killerFactSourceRef": "asap-transparencia/informe-noviembre-2025",
+  "dimensions": [
+    {
+      "name": "Acceso web fácil a la información",
+      "got": 5,
+      "max": 5,
+      "lastPeriodPublished": null,
+      "lastPublishedAt": null,
+      "lagMonths": null,
+      "reason": "Dimensión al máximo en el informe.",
+      "toReach10": "Ya está en el máximo -- no falta nada.",
+      "sourceRefs": []
+    },
+    {
+      "name": "Presupuesto vigente publicado",
+      "got": 30,
+      "max": 30,
+      "lastPeriodPublished": "Presupuesto de Gastos por Objeto",
+      "lastPublishedAt": "2026-03-16T09:30:20",
+      "lagMonths": 3,
+      "reason": "Dimensión al máximo en el informe.",
+      "toReach10": "Ya está en el máximo -- no falta nada.",
+      "sourceRefs": ["mcr-docs/presupuesto-de-gastos-por-objeto"]
+    },
+    {
+      "name": "Situación económico-financiera (SEF) trimestral",
+      "got": 35,
+      "max": 35,
+      "lastPeriodPublished": "SITUACION ECONOMICA FINANCIERA PRIMER SEMESTRE 2026",
+      "lastPublishedAt": "2026-07-01T12:53:56",
+      "lagMonths": 0,
+      "reason": "Dimensión al máximo en el informe.",
+      "toReach10": "Ya está en el máximo -- no falta nada.",
+      "sourceRefs": ["mcr-docs/situacion-economica-financiera-primer-semestre-2026"]
+    },
+    {
+      "name": "Ejecución presupuestaria trimestral",
+      "got": 5,
+      "max": 10,
+      "lastPeriodPublished": "Ejecución de Gastos: ... 1º Trimestre · Ejecución de Recursos: ... 4to Trimestre",
+      "lastPublishedAt": "2026-04-15T23:37:46",
+      "lagMonths": 2,
+      "reason": "Rezago entre las dos series de la misma dimensión: Recursos quedó un trimestre atrás de Gastos.",
+      "toReach10": "Publicar Ejecución de Recursos al mismo trimestre que Ejecución de Gastos. (+5 puntos)",
+      "sourceRefs": [
+        "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre",
+        "mcr-docs/estado-de-ejecucion-presupuestaria-de-recursos-4to-trimestre"
+      ]
+    },
+    {
+      "name": "Gastos por finalidad y función",
+      "got": 3,
+      "max": 10,
+      "lastPeriodPublished": "Estado de Ejecución Presupuestaria de Gastos por finalidad y función 4to Trimestre",
+      "lastPublishedAt": "2026-04-15T23:36:16",
+      "lagMonths": 2,
+      "reason": "Al corte del informe, lo último publicado online era el 3er trimestre 2025.",
+      "toReach10": "Publicar esta serie al 1er trimestre 2026. (+7 puntos)",
+      "sourceRefs": [
+        "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-por-finalidad-y-funcion-4to-trimestre"
+      ]
+    },
+    {
+      "name": "Stock de deuda y perfil de vencimientos",
+      "got": 3,
+      "max": 10,
+      "lastPeriodPublished": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 3º TRIMESTRE",
+      "lastPublishedAt": "2025-11-05T14:53:05",
+      "lagMonths": 8,
+      "reason": "El municipio dejó de actualizar esta serie desde el 3er trimestre 2025.",
+      "toReach10": "Publicar Stock de deuda al 4to trimestre 2025 y al 1er trimestre 2026. (+7 puntos)",
+      "sourceRefs": ["mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"]
+    }
+  ],
+  "deuda": {
+    "lastPeriod": "3er trimestre 2025",
+    "lastPeriodEnd": "2025-09-30",
+    "lastFigureArs": 46876896.86,
+    "lastFigureLabel": "$ 46.876.896,86",
+    "quartersMissing": 3,
+    "elapsedDays": 281,
+    "ordenanzaRef": "Ordenanza 3638 (Acceso a la Información Pública de Coronel Rosales)",
+    "ordenanzaArticle": "Art. 11",
+    "ordenanzaNote": "El Art. 11 de la Ordenanza 3638 obliga a la web oficial a publicar el detalle de gastos.",
+    "sourceRefs": ["mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"]
+  },
+  "sourceRefs": [
+    "asap-transparencia/informe-mayo-2026",
+    "asap-transparencia/informe-noviembre-2025",
+    "mcr-docs-snapshot/documentos",
+    "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre",
+    "mcr-docs/estado-de-ejecucion-presupuestaria-de-recursos-4to-trimestre",
+    "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-por-finalidad-y-funcion-4to-trimestre",
+    "mcr-docs/presupuesto-de-gastos-por-objeto",
+    "mcr-docs/situacion-economica-financiera-primer-semestre-2026",
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
+  ]
+}

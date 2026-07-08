@@ -120,3 +120,43 @@ export const transparenciaDataSchema = z.object({
 export type TransparenciaDimension = z.infer<typeof transparenciaDimensionSchema>;
 export type TransparenciaTrendPoint = z.infer<typeof transparenciaTrendPointSchema>;
 export type TransparenciaData = z.infer<typeof transparenciaDataSchema>;
+
+export const cadenciaDimensionSchema = z.object({
+  name: z.string().min(1),
+  got: z.number(),
+  max: z.number(),
+  lastPeriodPublished: z.string().min(1).nullable(),
+  lastPublishedAt: z.string().min(1).nullable(),
+  lagMonths: z.number().nullable(),
+  reason: z.string().min(1),
+  toReach10: z.string().min(1),
+  sourceRefs: z.array(z.string().min(1)),
+});
+
+export const cadenciaDeudaSchema = z.object({
+  lastPeriod: z.string().min(1),
+  lastPeriodEnd: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  lastFigureArs: z.number(),
+  lastFigureLabel: z.string().min(1),
+  quartersMissing: z.number().nonnegative(),
+  elapsedDays: z.number(),
+  ordenanzaRef: z.string().min(1),
+  ordenanzaArticle: z.string().min(1),
+  ordenanzaNote: z.string().min(1),
+  sourceRefs: z.array(z.string().min(1)).min(1),
+});
+
+export const cadenciaDataSchema = z.object({
+  generatedAt: z.string().min(1),
+  asapReport: z.string().min(1),
+  asapCutoffLabel: z.string().min(1),
+  killerFact: z.string().min(1),
+  killerFactSourceRef: z.string().min(1),
+  dimensions: z.array(cadenciaDimensionSchema).min(1),
+  deuda: cadenciaDeudaSchema,
+  sourceRefs: z.array(z.string().min(1)).min(1),
+});
+
+export type CadenciaDimension = z.infer<typeof cadenciaDimensionSchema>;
+export type CadenciaDeuda = z.infer<typeof cadenciaDeudaSchema>;
+export type CadenciaData = z.infer<typeof cadenciaDataSchema>;

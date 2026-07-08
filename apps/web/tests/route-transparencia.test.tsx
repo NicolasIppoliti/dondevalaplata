@@ -119,16 +119,24 @@ describe("/transparencia page", () => {
     expect(text).toMatch(/compras|salarios|declaraciones juradas|actas|datos abiertos/);
   });
 
-  it("renders dual-link provenance (original + archived) for both archived ASAP reports", () => {
+  it("renders dual-link provenance (original + archived) for both archived ASAP reports, and every source cited on the page keeps original/archived paired 1:1 (feature G1 added the cadence dashboard's own mcr-docs sources, so the total grew, but pairing symmetry must hold)", () => {
     render(<Page />);
     const originalLinks = screen.getAllByRole("link", {
       name: /fuente original/i,
     });
-    expect(originalLinks).toHaveLength(2);
     const archivedLinks = screen.getAllByRole("link", {
       name: /copia archivada/i,
     });
-    expect(archivedLinks).toHaveLength(2);
+    expect(originalLinks.length).toBeGreaterThanOrEqual(2);
+    expect(archivedLinks.length).toBe(originalLinks.length);
+
+    const originalHrefs = originalLinks.map((link) => link.getAttribute("href"));
+    expect(originalHrefs).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining("InformeTransparenciaMunicipiosPBA-Mayo2026"),
+        expect.stringContaining("InformeTransparenciaMunicipiosPBA-Noviembre2025"),
+      ]),
+    );
   });
 
   it("links to the ASAP index page (stable anchor across municipios)", () => {
@@ -142,5 +150,28 @@ describe("/transparencia page", () => {
   it("shows a short sha256 for the primary (Mayo 2026) report", () => {
     const { container } = render(<Page />);
     expect(container.textContent).toMatch(/sha256\s+689df97fe6f/);
+  });
+
+  it("renders the deuda counter widget, framed factually with a legal hook", () => {
+    const { container } = render(<Page />);
+    const text = container.textContent ?? "";
+    expect(text.toLowerCase()).toMatch(/no actualiza/);
+    expect(text).toMatch(/Ordenanza 3638/);
+    expect(text).not.toMatch(/intendente|concejal|partido|gesti[oó]n de/i);
+  });
+
+  it("renders the cadence dashboard with the live 81 -> 100 path", () => {
+    const { container } = render(<Page />);
+    const text = container.textContent ?? "";
+    expect(text).toMatch(/\+5/);
+    expect(text).toMatch(/\+7/);
+    expect(text.toLowerCase()).toMatch(/se recalcula/);
+  });
+
+  it("cadence dashboard sourced Nov-2025 10/10/10 fact is present", () => {
+    const { container } = render(<Page />);
+    const text = container.textContent ?? "";
+    expect(text).toMatch(/noviembre 2025/i);
+    expect(text).toMatch(/10\/10\/10|10 sobre 10/);
   });
 });
