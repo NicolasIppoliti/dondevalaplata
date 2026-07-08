@@ -6,6 +6,7 @@ import {
   getFalloEjerciciosDescending,
   resolveSourceRef,
   resolveSourceRefs,
+  selectFallosPreview,
   shortHash,
 } from "@/lib/sources";
 
@@ -77,5 +78,78 @@ describe("getFalloEjerciciosDescending", () => {
       ],
     });
     expect(getFalloEjerciciosDescending(fallos)).toEqual(["2023"]);
+  });
+});
+
+describe("selectFallosPreview (home dashboard preview, fidelity slice F2)", () => {
+  it("keeps EVERY record of the most recent ejercicio (never drops a named official)", () => {
+    const fallos = loadFallos({
+      ...fallosValid,
+      records: [
+        { ...fallosValid.records[0], ejercicio: "2022", official: "A" },
+        { ...fallosValid.records[0], ejercicio: "2024", official: "B" },
+        { ...fallosValid.records[0], ejercicio: "2024", official: "C" },
+      ],
+    });
+    const preview = selectFallosPreview(fallos);
+    const officials2024 = preview
+      .filter((record) => record.ejercicio === "2024")
+      .map((record) => record.official);
+    expect(officials2024).toEqual(["B", "C"]);
+  });
+
+  it("includes exactly one representative record for each OLDER ejercicio", () => {
+    const fallos = loadFallos({
+      ...fallosValid,
+      records: [
+        { ...fallosValid.records[0], ejercicio: "2023", official: "A" },
+        { ...fallosValid.records[0], ejercicio: "2023", official: "B" },
+        { ...fallosValid.records[0], ejercicio: "2022", official: "C" },
+        { ...fallosValid.records[0], ejercicio: "2024", official: "D" },
+      ],
+    });
+    const preview = selectFallosPreview(fallos);
+    expect(
+      preview.filter((record) => record.ejercicio === "2023"),
+    ).toHaveLength(1);
+    expect(
+      preview.filter((record) => record.ejercicio === "2022"),
+    ).toHaveLength(1);
+  });
+
+  it("never drops a whole ejercicio -- completeness at the ejercicio level (honesty guarantee)", () => {
+    const { fallos } = { fallos: fallosValid };
+    const loaded = loadFallos({
+      ...fallos,
+      records: [
+        { ...fallos.records[0], ejercicio: "2022" },
+        { ...fallos.records[0], ejercicio: "2023" },
+        { ...fallos.records[0], ejercicio: "2024" },
+      ],
+    });
+    const preview = selectFallosPreview(loaded);
+    const previewEjercicios = new Set(preview.map((r) => r.ejercicio));
+    expect(previewEjercicios).toEqual(new Set(["2022", "2023", "2024"]));
+  });
+
+  it("orders the preview newest ejercicio first, stable within an ejercicio", () => {
+    const fallos = loadFallos({
+      ...fallosValid,
+      records: [
+        { ...fallosValid.records[0], ejercicio: "2022", official: "A" },
+        { ...fallosValid.records[0], ejercicio: "2024", official: "B" },
+        { ...fallosValid.records[0], ejercicio: "2024", official: "C" },
+        { ...fallosValid.records[0], ejercicio: "2023", official: "D" },
+      ],
+    });
+    const preview = selectFallosPreview(fallos);
+    expect(preview.map((r) => r.ejercicio)).toEqual([
+      "2024",
+      "2024",
+      "2023",
+      "2022",
+    ]);
+    // Stable within the 2024 group: B before C, same relative order as input.
+    expect(preview.map((r) => r.official).slice(0, 2)).toEqual(["B", "C"]);
   });
 });

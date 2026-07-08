@@ -6,6 +6,7 @@ import {
 } from "./data";
 import type {
   CoparticipacionData,
+  FalloRecord,
   FallosData,
   Manifest,
   ManifestRecord,
@@ -113,6 +114,32 @@ export function getFalloEjerciciosDescending(fallos: FallosData): string[] {
     ...new Set(fallos.records.map((record) => record.ejercicio)),
   ];
   return ejercicios.sort((a, b) => Number(b) - Number(a));
+}
+
+/**
+ * Home-dashboard preview selection for the fallos grid (fidelity slice F2):
+ * EVERY record of the most recent ejercicio (the current administration --
+ * the most newsworthy, and typically only 1-2 officials), plus exactly one
+ * representative record for each OLDER ejercicio. No ejercicio is ever
+ * dropped entirely -- same "completeness" honesty guarantee already
+ * enforced for the /fallos index by `getFalloEjerciciosDescending` (see
+ * tests/fallos-recency-order.test.tsx) -- this just also bounds the CARD
+ * COUNT for a compact home preview, never the ejercicio coverage. The full
+ * record set for every ejercicio always stays one tap away at /fallos.
+ *
+ * `Array.prototype.sort` is stable (spec-guaranteed since ES2019), so
+ * records sharing an ejercicio keep their original relative order.
+ */
+export function selectFallosPreview(fallos: FallosData): FalloRecord[] {
+  const [latestEjercicio] = getFalloEjerciciosDescending(fallos);
+  const seenOlderEjercicios = new Set<string>();
+  const preview = fallos.records.filter((record) => {
+    if (record.ejercicio === latestEjercicio) return true;
+    if (seenOlderEjercicios.has(record.ejercicio)) return false;
+    seenOlderEjercicios.add(record.ejercicio);
+    return true;
+  });
+  return preview.sort((a, b) => Number(b.ejercicio) - Number(a.ejercicio));
 }
 
 export interface PortalData {
