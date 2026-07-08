@@ -151,8 +151,20 @@ export function Drawer({
         style={
           dragOffset ? { transform: `translateY(${dragOffset}px)` } : undefined
         }
-        className={`fixed z-[61] flex max-h-[88dvh] flex-col rounded-t-2xl bg-surface text-ink shadow-card transition-transform duration-300 ease-out inset-x-0 bottom-0 translate-y-full sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:max-h-none sm:w-[min(560px,94vw)] sm:translate-x-full sm:translate-y-0 sm:rounded-none sm:rounded-l-2xl ${
-          open ? "translate-y-0 sm:translate-x-0" : ""
+        className={`fixed z-[61] flex max-h-[88dvh] flex-col rounded-t-2xl bg-surface text-ink shadow-card transition-transform duration-300 ease-out inset-x-0 bottom-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:max-h-none sm:w-[min(560px,94vw)] sm:rounded-none sm:rounded-l-2xl ${
+          /* The "closed" and "open" translate utilities MUST be mutually
+             exclusive in the rendered class list, never both present at
+             once. Tailwind v4 compiles `translate-*` utilities to the
+             native CSS `translate` property (not `transform`); two
+             same-specificity classes setting the same property (e.g.
+             `translate-y-full` unconditional + `translate-y-0`
+             conditional) resolve by STYLESHEET SOURCE ORDER, not DOM
+             class-attribute order -- so a naive "base class + conditional
+             override" pattern can silently keep the CLOSED offset applied
+             even while `open` is true and aria-hidden is false. Found via
+             real-browser visual QA (slice 2); jsdom-only tests never
+             caught it because they don't compute CSS cascade. */
+          open ? "translate-y-0 sm:translate-x-0" : "translate-y-full sm:translate-x-full"
         } ${className ?? ""}`}
       >
         <div

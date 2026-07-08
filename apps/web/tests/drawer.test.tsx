@@ -114,6 +114,48 @@ describe("Drawer", () => {
     expect(document.body.style.overflow).not.toBe("hidden");
   });
 
+  it("never combines a closed-state translate utility with the open-state one on the same render (Tailwind v4 same-specificity cascade bug regression)", () => {
+    // Real bug found via visual QA (slice 2): Tailwind v4 compiles
+    // `translate-y-*` utilities to the native CSS `translate` property
+    // (not `transform`). `translate-y-full` (unconditional base class) and
+    // `translate-y-0` (conditionally appended when open) have IDENTICAL
+    // specificity (both single-class selectors) -- so when BOTH are
+    // present in the className string at once, the winner is decided by
+    // stylesheet SOURCE ORDER, not DOM class-attribute order, and
+    // `translate-y-full` won regardless of `open`. The panel's
+    // `aria-hidden`/dialog-role state was correct, so jsdom-only tests
+    // (which don't compute real CSS cascade) never caught this -- only a
+    // real browser paint did. The fix must ensure the "closed" and "open"
+    // translate utilities are mutually exclusive in the rendered class
+    // list for a given `open` value, on both the mobile (translate-y-*)
+    // and desktop (sm:translate-x-*) axes.
+    const classTokens = (className: string) => new Set(className.split(/\s+/).filter(Boolean));
+
+    const { rerender, container } = render(
+      <Drawer open={false} onClose={() => {}} title="Título">
+        <p>contenido</p>
+      </Drawer>,
+    );
+    const panelClosed = container.querySelector('[role="dialog"]');
+    const closedTokens = classTokens(panelClosed?.className ?? "");
+    expect(closedTokens.has("translate-y-full")).toBe(true);
+    expect(closedTokens.has("translate-y-0")).toBe(false);
+    expect(closedTokens.has("sm:translate-x-full")).toBe(true);
+    expect(closedTokens.has("sm:translate-x-0")).toBe(false);
+
+    rerender(
+      <Drawer open={true} onClose={() => {}} title="Título">
+        <p>contenido</p>
+      </Drawer>,
+    );
+    const panelOpen = screen.getByRole("dialog");
+    const openTokens = classTokens(panelOpen.className);
+    expect(openTokens.has("translate-y-0")).toBe(true);
+    expect(openTokens.has("translate-y-full")).toBe(false);
+    expect(openTokens.has("sm:translate-x-0")).toBe(true);
+    expect(openTokens.has("sm:translate-x-full")).toBe(false);
+  });
+
   it("traps Tab focus within the dialog while open", () => {
     render(<ControlledDrawer initialOpen={true} />);
     const dialog = screen.getByRole("dialog");
