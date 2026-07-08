@@ -101,9 +101,26 @@ const GASTO_PARTIDA_ROW = {
   href: "/gastos",
 } as const;
 
+// Feature G3: same simple "fila-pregunta tappable" pattern -- the
+// adjudicaciones explorer is also a client island unsuited to a static home
+// preview. The description below is data-driven (real row count + proveedor
+// count from data/adjudicaciones.json / data/proveedores.json), never a
+// hardcoded claim.
+const ADJUDICACIONES_ROW = {
+  question: "¿A quién le compró el municipio?",
+  href: "/adjudicaciones",
+} as const;
+
 export default function Home() {
-  const { coparticipacion, fallos, transparencia, cadencia, manifest } =
-    getPortalData();
+  const {
+    coparticipacion,
+    fallos,
+    transparencia,
+    cadencia,
+    adjudicaciones,
+    proveedores,
+    manifest,
+  } = getPortalData();
   const deudaSourceLinks = resolveSourceRefs(
     cadencia.deuda.sourceRefs,
     manifest,
@@ -155,6 +172,9 @@ export default function Home() {
     real: point.realArs,
     nominal: point.nominalArs,
   }));
+
+  // (G3) Adjudicaciones home row: real counts, never a hardcoded claim.
+  const adjudicacionesRowDescription = `${adjudicaciones.records.length} adjudicaciones publicadas, ${proveedores.proveedores.length} proveedores identificados.`;
 
   // (F2) Fallos dashboard grid -- every record of the most recent ejercicio
   // + one representative per older ejercicio, never a whole ejercicio
@@ -821,6 +841,27 @@ export default function Home() {
               </h2>
               <span className="mt-1 block text-sm text-ink-2">
                 {GASTO_PARTIDA_ROW.description}
+              </span>
+            </span>
+            <span aria-hidden="true" className="font-display text-2xl text-stamp">
+              ›
+            </span>
+          </Link>
+
+          {/* Feature G3: same simple, whole-row-is-a-link pattern -- the
+              adjudicaciones + padrón de proveedores explorer is a client
+              island unsuited to a static home preview, so this is just a
+              direct link into /adjudicaciones. */}
+          <Link
+            href={ADJUDICACIONES_ROW.href}
+            className="flex min-h-11 items-center justify-between gap-4 border-t border-rule py-5 no-underline hover:bg-surface"
+          >
+            <span>
+              <h2 className="font-display text-[clamp(20px,3vw,28px)] font-semibold text-ink">
+                {ADJUDICACIONES_ROW.question}
+              </h2>
+              <span className="mt-1 block text-sm text-ink-2">
+                {adjudicacionesRowDescription}
               </span>
             </span>
             <span aria-hidden="true" className="font-display text-2xl text-stamp">

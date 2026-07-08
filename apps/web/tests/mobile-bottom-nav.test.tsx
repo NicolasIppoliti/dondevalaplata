@@ -13,7 +13,7 @@ afterEach(() => {
 });
 
 describe("MobileBottomNav", () => {
-  it("renders a navigation landmark with the 5 mobile tabs (feature G2 added Gastos)", () => {
+  it("renders a navigation landmark with the 6 mobile tabs (feature G3 added Compras)", () => {
     usePathnameMock.mockReturnValue("/");
     render(<MobileBottomNav />);
     const nav = screen.getByRole("navigation", {
@@ -23,6 +23,7 @@ describe("MobileBottomNav", () => {
     expect(screen.getByRole("link", { name: "Inicio" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Plata" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Gastos" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Compras" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Multas" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Transparencia" })).toBeTruthy();
   });
@@ -57,6 +58,17 @@ describe("MobileBottomNav", () => {
     ).toBe("page");
     expect(
       screen.getByRole("link", { name: "Plata" }).getAttribute("aria-current"),
+    ).toBeNull();
+  });
+
+  it("marks Compras active on /adjudicaciones (feature G3)", () => {
+    usePathnameMock.mockReturnValue("/adjudicaciones");
+    render(<MobileBottomNav />);
+    expect(
+      screen.getByRole("link", { name: "Compras" }).getAttribute("aria-current"),
+    ).toBe("page");
+    expect(
+      screen.getByRole("link", { name: "Gastos" }).getAttribute("aria-current"),
     ).toBeNull();
   });
 });

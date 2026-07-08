@@ -283,6 +283,19 @@ describe("Home — gasto por partida row (feature G2)", () => {
   });
 });
 
+describe("Home — adjudicaciones row (feature G3)", () => {
+  it("links to /adjudicaciones with the whole row tappable, real counts in the description", () => {
+    const { adjudicaciones, proveedores } = getPortalData();
+    render(<Home />);
+    const link = screen.getByRole("link", {
+      name: /a qui[eé]n le compr[oó] el municipio/i,
+    });
+    expect(link.getAttribute("href")).toBe("/adjudicaciones");
+    expect(link.textContent).toContain(String(adjudicaciones.records.length));
+    expect(link.textContent).toContain(String(proveedores.proveedores.length));
+  });
+});
+
 /**
  * Fidelity slice F3 (Mockup C, mobile only): the hero card leads on small
  * screens via CSS `order` (never DOM reshuffling), a compact mobile lede
