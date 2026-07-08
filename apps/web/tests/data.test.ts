@@ -11,12 +11,17 @@ import cadenciaValid from "./fixtures/cadencia.valid.json";
 import cadenciaMalformed from "./fixtures/cadencia.malformed.json";
 import gastoPartidaValid from "./fixtures/gasto-partida.valid.json";
 import gastoPartidaMalformed from "./fixtures/gasto-partida.malformed.json";
+import adjudicacionesValid from "./fixtures/adjudicaciones.valid.json";
+import adjudicacionesMalformed from "./fixtures/adjudicaciones.malformed.json";
+import proveedoresValid from "./fixtures/proveedores.valid.json";
 import {
+  loadAdjudicaciones,
   loadCadencia,
   loadCoparticipacion,
   loadFallos,
   loadGastoPartida,
   loadManifest,
+  loadProveedores,
   loadTransparencia,
 } from "@/lib/data";
 
@@ -129,6 +134,28 @@ describe("loadGastoPartida", () => {
   });
 });
 
+describe("loadAdjudicaciones", () => {
+  it("accepts a valid adjudicaciones fixture", () => {
+    const data = loadAdjudicaciones(adjudicacionesValid);
+    expect(data.records).toHaveLength(1);
+    expect(data.records[0].proveedor).toBe("SEDARRI SERGIO ARIEL");
+    expect(data.records[0].montoArs).toBe(17760000);
+  });
+
+  it("rejects a malformed adjudicaciones fixture (bad date format, negative amount)", () => {
+    expect(() => loadAdjudicaciones(adjudicacionesMalformed)).toThrow();
+  });
+});
+
+describe("loadProveedores", () => {
+  it("accepts a valid proveedores fixture", () => {
+    const data = loadProveedores(proveedoresValid);
+    expect(data.proveedores).toHaveLength(1);
+    expect(data.proveedores[0].totalArs).toBe(17760000);
+    expect(data.proveedores[0].decretoRefs).toEqual(["524/2023"]);
+  });
+});
+
 describe("loaders reading real build-time JSON with no argument", () => {
   it("loads the real archive-manifest.json, coparticipacion.json, fallos.json and transparencia.json", () => {
     expect(loadManifest().length).toBeGreaterThan(0);
@@ -143,6 +170,16 @@ describe("loaders reading real build-time JSON with no argument", () => {
     const gastoPartida = loadGastoPartida();
     expect(gastoPartida.reconciliation.reconciles).toBe(true);
     expect(gastoPartida.jurisdicciones.length).toBeGreaterThan(0);
+  });
+
+  it("loads the real data/adjudicaciones.json and data/proveedores.json", () => {
+    const adjudicaciones = loadAdjudicaciones();
+    expect(adjudicaciones.records.length).toBeGreaterThan(0);
+    for (const record of adjudicaciones.records) {
+      expect(record.montoArs).toBeGreaterThan(0);
+    }
+    const proveedores = loadProveedores();
+    expect(proveedores.proveedores.length).toBeGreaterThan(0);
   });
 
   it("HONESTY TEST (real repo data): dimensions sum to the total, every got <= max", () => {

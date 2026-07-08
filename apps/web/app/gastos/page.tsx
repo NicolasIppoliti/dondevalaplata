@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { GastoPartidaExplorer } from "@/components/gasto-partida/GastoPartidaExplorer";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { formatArsPlain } from "@/lib/format";
@@ -70,9 +71,10 @@ export default function GastosPage() {
           <p className="mt-1.5 max-w-[62ch] text-sm text-ink-2">
             Este es el máximo detalle público del PRESUPUESTO que publica la
             Municipalidad: no incluye proveedores ni órdenes de compra
-            individuales — esos datos viven en otra fuente pública (el
-            Boletín Oficial de compras, SIBOM), que todavía no está
-            incorporada a este portal.
+            individuales. Ese dato vive en otra fuente pública — el Boletín
+            Oficial de compras (SIBOM) — que sí está incorporada al portal en{" "}
+            <Link href="/adjudicaciones">¿A quién le compró el municipio?</Link>
+            .
           </p>
         </div>
 

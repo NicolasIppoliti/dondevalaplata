@@ -128,6 +128,19 @@ export function formatDateEsAr(isoDate: string): string {
 }
 
 /**
+ * Formats an ISO `"YYYY-MM-DD"` date as compact es-AR `"DD/MM/AAAA"`, e.g.
+ * `"2024-03-14"` -> `"14/03/2024"`. For narrow table columns where the full
+ * `formatDateEsAr` prose form ("14 de marzo de 2024") would force overflow
+ * -- the exact same convention SIBOM's own bulletins use ("Publicado el
+ * 18/06/2026"), so this reads as a native format on this data, not a
+ * shortcut.
+ */
+export function formatDateShortEsAr(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-");
+  return `${day}/${month}/${year}`;
+}
+
+/**
  * Formats a fractional real (inflation-adjusted) variation, e.g. `0.032` ->
  * `"+3,2%"`, `-0.057` -> `"−5,7%"`. Always carries an explicit sign --
  * including a genuine `0` -- so a variation is never mistaken for an absolute

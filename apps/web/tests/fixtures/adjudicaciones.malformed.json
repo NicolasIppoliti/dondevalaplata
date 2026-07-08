@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-07-08T12:00:00Z",
+  "windowFrom": "2022-05-10",
+  "windowTo": "2026-03-18",
+  "bulletinsScanned": 56,
+  "decreesScanned": 2845,
+  "skippedCount": 54,
+  "sourceRefs": ["sibom-actos/boletin-036-decreto-524-2023"],
+  "records": [
+    {
+      "decreto": "524/2023",
+      "fecha": "07-09-2023",
+      "expediente": "D-79/23",
+      "proveedor": "SEDARRI SERGIO ARIEL",
+      "montoArs": -17760000,
+      "procedimiento": "Licitación Privada Nº 4/23",
+      "objeto": "Contratación del Servicio de Hotelería",
+      "bulletinNumber": 36,
+      "sourceRef": "sibom-actos/boletin-036-decreto-524-2023"
+    }
+  ]
+}

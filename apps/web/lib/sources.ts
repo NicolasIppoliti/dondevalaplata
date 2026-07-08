@@ -1,12 +1,15 @@
 import {
+  loadAdjudicaciones,
   loadCadencia,
   loadCoparticipacion,
   loadFallos,
   loadGastoPartida,
   loadManifest,
+  loadProveedores,
   loadTransparencia,
 } from "./data";
 import type {
+  AdjudicacionesData,
   CadenciaData,
   CoparticipacionData,
   FalloRecord,
@@ -14,6 +17,7 @@ import type {
   GastoPartidaData,
   Manifest,
   ManifestRecord,
+  ProveedoresData,
   TransparenciaData,
 } from "./schemas";
 
@@ -71,6 +75,7 @@ export function collectSourceRefs(
   transparencia?: TransparenciaData,
   cadencia?: CadenciaData,
   gastoPartida?: GastoPartidaData,
+  adjudicaciones?: AdjudicacionesData,
 ): string[] {
   const ids = new Set<string>();
   for (const id of coparticipacion.sourceRefs) ids.add(id);
@@ -94,6 +99,10 @@ export function collectSourceRefs(
   }
   if (gastoPartida) {
     for (const id of gastoPartida.sourceRefs) ids.add(id);
+  }
+  if (adjudicaciones) {
+    for (const id of adjudicaciones.sourceRefs) ids.add(id);
+    for (const record of adjudicaciones.records) ids.add(record.sourceRef);
   }
   return [...ids];
 }
@@ -165,6 +174,8 @@ export interface PortalData {
   transparencia: TransparenciaData;
   cadencia: CadenciaData;
   gastoPartida: GastoPartidaData;
+  adjudicaciones: AdjudicacionesData;
+  proveedores: ProveedoresData;
 }
 
 /**
@@ -179,9 +190,27 @@ export function getPortalData(): PortalData {
   const transparencia = loadTransparencia();
   const cadencia = loadCadencia();
   const gastoPartida = loadGastoPartida();
+  const adjudicaciones = loadAdjudicaciones();
+  const proveedores = loadProveedores();
   assertSourceRefsResolve(
-    collectSourceRefs(coparticipacion, fallos, transparencia, cadencia, gastoPartida),
+    collectSourceRefs(
+      coparticipacion,
+      fallos,
+      transparencia,
+      cadencia,
+      gastoPartida,
+      adjudicaciones,
+    ),
     manifest,
   );
-  return { manifest, coparticipacion, fallos, transparencia, cadencia, gastoPartida };
+  return {
+    manifest,
+    coparticipacion,
+    fallos,
+    transparencia,
+    cadencia,
+    gastoPartida,
+    adjudicaciones,
+    proveedores,
+  };
 }

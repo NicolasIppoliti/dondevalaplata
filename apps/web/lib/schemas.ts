@@ -238,3 +238,70 @@ export type GastoPartidaReconciliation = z.infer<
   typeof gastoPartidaReconciliationSchema
 >;
 export type GastoPartidaData = z.infer<typeof gastoPartidaDataSchema>;
+
+/**
+ * Feature G3: SIBOM adjudicaciones monitor. Every row is a single
+ * ADJUDICACIÓN decision (vendor + amount) parsed from a Departamento
+ * Ejecutivo decreto published in the Boletín Oficial Municipal
+ * (sibom.slyt.gba.gob.ar/cities/28) -- the only public source that names a
+ * vendor alongside an exact amount (`etl/etl/sibom_adjudicaciones.py`).
+ * `sourceRef` resolves to its own individually-archived act page (never the
+ * whole bulletin), so every row's provenance is the SPECIFIC decreto text
+ * it was extracted from. `montoArs` and `expediente`/`procedimiento` are
+ * only ever populated when unambiguously extracted -- see the ETL module
+ * docstring for the "never fabricate, skip on ambiguity" correctness gate
+ * (spelled-vs-numeric amount cross-validation).
+ */
+export const adjudicacionRecordSchema = z.object({
+  decreto: z.string().min(1),
+  fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  expediente: z.string().min(1).nullable(),
+  proveedor: z.string().min(1),
+  montoArs: z.number().positive(),
+  procedimiento: z.string().min(1).nullable(),
+  objeto: z.string().min(1),
+  bulletinNumber: z.number().positive(),
+  sourceRef: z.string().min(1),
+});
+
+export const adjudicacionesDataSchema = z.object({
+  generatedAt: z.string().min(1),
+  windowFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+  windowTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+  bulletinsScanned: z.number().nonnegative(),
+  decreesScanned: z.number().nonnegative(),
+  skippedCount: z.number().nonnegative(),
+  sourceRefs: z.array(z.string().min(1)),
+  records: z.array(adjudicacionRecordSchema),
+});
+
+export type AdjudicacionRecord = z.infer<typeof adjudicacionRecordSchema>;
+export type AdjudicacionesData = z.infer<typeof adjudicacionesDataSchema>;
+
+/**
+ * Feature G3: the reconstructed proveedores padrón -- an aggregate of every
+ * adjudicaciones row grouped by vendor (`etl.sibom_adjudicaciones.build_proveedores`).
+ * "Reconstructed" because the municipality's own official padrón is behind a
+ * login wall, which Ordenanza 3638 Art. 11 requires to be public; this view
+ * exists ONLY because that data is otherwise unavailable, not as a
+ * replacement for it. `decretoRefs` lets the UI filter the adjudicaciones
+ * table down to one vendor's own rows -- the only place per-row provenance
+ * (sha256, archived copy) lives, matching the "expand to see the sourced
+ * components" pattern already used for aggregate figures on this site.
+ */
+export const proveedorRecordSchema = z.object({
+  proveedor: z.string().min(1),
+  totalArs: z.number().positive(),
+  count: z.number().positive(),
+  firstDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  lastDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  decretoRefs: z.array(z.string().min(1)).min(1),
+});
+
+export const proveedoresDataSchema = z.object({
+  generatedAt: z.string().min(1),
+  proveedores: z.array(proveedorRecordSchema),
+});
+
+export type ProveedorRecord = z.infer<typeof proveedorRecordSchema>;
+export type ProveedoresData = z.infer<typeof proveedoresDataSchema>;

@@ -4,6 +4,7 @@ import {
   formatArsHuman,
   formatArsPlain,
   formatDateEsAr,
+  formatDateShortEsAr,
   formatFineArs,
   formatPeriodEsAr,
   formatVariationEsAr,
@@ -106,6 +107,12 @@ describe("formatPeriodEsAr", () => {
 describe("formatDateEsAr", () => {
   it("renders an ISO date as 'D de mes de aaaa'", () => {
     expect(formatDateEsAr("2024-03-14")).toBe("14 de marzo de 2024");
+  });
+});
+
+describe("formatDateShortEsAr", () => {
+  it("renders an ISO date as compact 'DD/MM/AAAA'", () => {
+    expect(formatDateShortEsAr("2024-03-14")).toBe("14/03/2024");
   });
 });
 

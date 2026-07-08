@@ -5,7 +5,9 @@ import fallosValid from "./fixtures/fallos.valid.json";
 import transparenciaValid from "./fixtures/transparencia.valid.json";
 import cadenciaValid from "./fixtures/cadencia.valid.json";
 import gastoPartidaValid from "./fixtures/gasto-partida.valid.json";
+import adjudicacionesValid from "./fixtures/adjudicaciones.valid.json";
 import {
+  loadAdjudicaciones,
   loadCadencia,
   loadCoparticipacion,
   loadFallos,
@@ -231,6 +233,61 @@ describe("collectSourceRefs + assertSourceRefsResolve — gasto-partida (optiona
   });
 });
 
+describe("collectSourceRefs + assertSourceRefsResolve — adjudicaciones (optional 6th arg)", () => {
+  it("does not throw when every adjudicaciones sourceRef resolves to a manifest record", () => {
+    const adjudicaciones = loadAdjudicaciones(adjudicacionesValid);
+    const manifest = loadManifest([
+      ...manifestValid,
+      {
+        id: "sibom-actos/boletin-036-decreto-524-2023",
+        capability: "sibom-actos",
+        source: "sibom.slyt.gba.gob.ar",
+        source_url: "https://sibom.slyt.gba.gob.ar/bulletins/9568/contents/1980017",
+        archived_url: "https://pub-example.r2.dev/sibom-actos/boletin-036-decreto-524-2023.html",
+        archived_path: "archive/sibom-actos/boletin-036-decreto-524-2023.html",
+        sha256: "689df97fe6f383a136d6a74c88cecce910b8e3f72e1385aa4e8253338aa723a3",
+        mime: "text/html",
+        bytes: 13916,
+        fetched_at: "2026-07-08T17:00:00Z",
+        status: "ok",
+        notes: "Fixture record for tests.",
+      },
+    ]);
+    const coparticipacion = loadCoparticipacion(coparticipacionValid);
+    const fallos = loadFallos(fallosValid);
+    const ids = collectSourceRefs(
+      coparticipacion,
+      fallos,
+      undefined,
+      undefined,
+      undefined,
+      adjudicaciones,
+    );
+    expect(ids).toEqual(
+      expect.arrayContaining(["sibom-actos/boletin-036-decreto-524-2023"]),
+    );
+    expect(() => assertSourceRefsResolve(ids, manifest)).not.toThrow();
+  });
+
+  it("throws when an adjudicaciones sourceRef has no manifest record", () => {
+    const adjudicaciones = loadAdjudicaciones(adjudicacionesValid);
+    const manifest = loadManifest(manifestValid);
+    const coparticipacion = loadCoparticipacion(coparticipacionValid);
+    const fallos = loadFallos(fallosValid);
+    const ids = collectSourceRefs(
+      coparticipacion,
+      fallos,
+      undefined,
+      undefined,
+      undefined,
+      adjudicaciones,
+    );
+    expect(() => assertSourceRefsResolve(ids, manifest)).toThrow(
+      /sibom-actos\/boletin-036-decreto-524-2023/,
+    );
+  });
+});
+
 describe("getPortalData", () => {
   it("loads the real repo data/*.json + archive-manifest.json with every sourceRefs id resolving", () => {
     const portal = getPortalData();
@@ -240,5 +297,7 @@ describe("getPortalData", () => {
     expect(portal.transparencia.total).toBe(81);
     expect(portal.cadencia.dimensions).toHaveLength(6);
     expect(portal.gastoPartida.reconciliation.reconciles).toBe(true);
+    expect(portal.adjudicaciones.records.length).toBeGreaterThan(0);
+    expect(portal.proveedores.proveedores.length).toBeGreaterThan(0);
   });
 });

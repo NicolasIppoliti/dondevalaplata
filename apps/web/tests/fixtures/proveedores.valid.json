@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-07-08T12:00:00Z",
+  "proveedores": [
+    {
+      "proveedor": "SEDARRI SERGIO ARIEL",
+      "totalArs": 17760000,
+      "count": 1,
+      "firstDate": "2023-09-07",
+      "lastDate": "2023-09-07",
+      "decretoRefs": ["524/2023"]
+    }
+  ]
+}

@@ -1,21 +1,27 @@
 import manifestJson from "../../../archive-manifest.json";
+import adjudicacionesJson from "../../../data/adjudicaciones.json";
 import cadenciaJson from "../../../data/cadencia.json";
 import coparticipacionJson from "../../../data/coparticipacion.json";
 import fallosJson from "../../../data/fallos.json";
 import gastoPartidaJson from "../../../data/gasto-partida.json";
+import proveedoresJson from "../../../data/proveedores.json";
 import transparenciaJson from "../../../data/transparencia.json";
 import {
+  adjudicacionesDataSchema,
   cadenciaDataSchema,
   coparticipacionDataSchema,
   fallosDataSchema,
   gastoPartidaDataSchema,
   manifestSchema,
+  proveedoresDataSchema,
   transparenciaDataSchema,
+  type AdjudicacionesData,
   type CadenciaData,
   type CoparticipacionData,
   type FallosData,
   type GastoPartidaData,
   type Manifest,
+  type ProveedoresData,
   type TransparenciaData,
 } from "./schemas";
 
@@ -56,4 +62,16 @@ export function loadGastoPartida(
   raw: unknown = gastoPartidaJson,
 ): GastoPartidaData {
   return gastoPartidaDataSchema.parse(raw);
+}
+
+export function loadAdjudicaciones(
+  raw: unknown = adjudicacionesJson,
+): AdjudicacionesData {
+  return adjudicacionesDataSchema.parse(raw);
+}
+
+export function loadProveedores(
+  raw: unknown = proveedoresJson,
+): ProveedoresData {
+  return proveedoresDataSchema.parse(raw);
 }
