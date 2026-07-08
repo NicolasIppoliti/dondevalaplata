@@ -1,5 +1,4 @@
 import {
-  leastExecutedAreas,
   overExecutedAreas,
   sortByExecutionDesc,
   type AreaEjecucion,
@@ -21,15 +20,28 @@ import { formatArsHuman, formatArsPlain } from "@/lib/format";
  * that executed beyond its current (already-adjusted) Vigente budget gets
  * the established `--ocre` "resalta, no juzga" documentary token instead --
  * never hidden, never `--stamp`/alarm-red, never a judgment.
+ *
+ * **Honesty fix (post-launch):** the data covers `periodLabel` (currently
+ * "1er trimestre 2026", ~one quarter of the calendar year), so the 10
+ * non-"Servicios de la Deuda" áreas executing 19-34% of their ANNUAL Vigente
+ * is the NORMAL, on-pace rate -- roughly a quarter of the year has elapsed,
+ * so roughly a quarter of the annual budget being devengado is expected,
+ * NOT under-spending. An earlier version of this section surfaced "menor
+ * ejecución relativa: H.C.D. 19%" as if it were a finding, which a reader
+ * could misread as "no gastan en salud/HCD/etc." That line was removed; a
+ * period-context paragraph now leads the section instead, and the ONLY
+ * genuinely notable case remains the over-execution highlight below (kept,
+ * with its existing "no prueba por sí solo una irregularidad" caveat).
  */
 export function PresupuestoEjecucionSection({
   areas,
+  periodLabel,
 }: {
   areas: AreaEjecucion[];
+  periodLabel: string;
 }) {
   const sorted = sortByExecutionDesc(areas);
   const overExecuted = overExecutedAreas(areas);
-  const leastExecuted = leastExecutedAreas(areas, 1);
 
   return (
     <section aria-labelledby="cumplen-heading" className="space-y-5">
@@ -43,6 +55,18 @@ export function PresupuestoEjecucionSection({
         <p className="mt-1.5 max-w-[64ch] text-sm text-muted">
           Presupuestado (Vigente) contra ejecutado (Devengado), área por
           área. Mismo período y misma fuente que el detalle de abajo.
+        </p>
+      </div>
+
+      <div className="rounded-lg border border-rule bg-surface p-4 shadow-card">
+        <p className="max-w-[68ch] text-sm text-ink-2">
+          Estos números son del{" "}
+          <strong className="text-ink">{periodLabel}</strong> — alrededor de
+          una cuarta parte del año calendario. Ejecutar entre 20% y 30% del
+          presupuesto vigente en ese lapso es el{" "}
+          <strong className="text-ink">ritmo esperado</strong>, no una señal
+          de que un área &quot;gasta de menos&quot;. Lo que vale la pena mirar es lo
+          que cae <strong className="text-ink">fuera</strong> de ese rango.
         </p>
       </div>
 
@@ -74,16 +98,6 @@ export function PresupuestoEjecucionSection({
             </p>
           ))}
         </div>
-      ) : null}
-
-      {leastExecuted.length > 0 ? (
-        <p className="max-w-[68ch] text-sm text-ink-2">
-          En el otro extremo, el área con menor ejecución relativa hasta
-          ahora es <strong className="text-ink">{leastExecuted[0].name}</strong>
-          , con{" "}
-          {Math.round((leastExecuted[0].executionFraction ?? 0) * 100)}% de
-          su presupuesto vigente ejecutado.
-        </p>
       ) : null}
 
       <ul className="space-y-3">

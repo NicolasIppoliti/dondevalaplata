@@ -110,7 +110,7 @@ export default function GastosPage() {
         </p>
       </section>
 
-      <PresupuestoEjecucionSection areas={areas} />
+      <PresupuestoEjecucionSection areas={areas} periodLabel={period.label} />
 
       <section aria-labelledby="explorador-heading">
         <h2 id="explorador-heading" className="font-display text-xl font-semibold text-ink">

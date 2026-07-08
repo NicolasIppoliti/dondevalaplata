@@ -11,6 +11,8 @@ import type { AreaEjecucion } from "@/lib/presupuestoEjecucion";
  * by `CadenceDashboard`/`app/transparencia/page.tsx`'s progress bars.
  */
 
+const PERIOD_LABEL = "1er trimestre 2026";
+
 const AREAS: AreaEjecucion[] = [
   {
     code: "1110190000",
@@ -53,7 +55,7 @@ function getRowByName(name: string): HTMLElement {
 
 describe("PresupuestoEjecucionSection", () => {
   it("titles the section as a question, in a level-2 heading", () => {
-    render(<PresupuestoEjecucionSection areas={AREAS} />);
+    render(<PresupuestoEjecucionSection areas={AREAS} periodLabel={PERIOD_LABEL} />);
     expect(
       screen.getByRole("heading", {
         level: 2,
@@ -63,7 +65,7 @@ describe("PresupuestoEjecucionSection", () => {
   });
 
   it("discloses the honesty caveat: what over/under 100% means and does NOT prove by itself", () => {
-    render(<PresupuestoEjecucionSection areas={AREAS} />);
+    render(<PresupuestoEjecucionSection areas={AREAS} periodLabel={PERIOD_LABEL} />);
     const caveat = screen
       .getByText(/no prueba por s[ií] sol[oa]/i)
       .closest("p")?.textContent;
@@ -72,7 +74,7 @@ describe("PresupuestoEjecucionSection", () => {
   });
 
   it("surfaces the over-executed área as a documentary highlight, with its exact % and peso gap", () => {
-    render(<PresupuestoEjecucionSection areas={AREAS} />);
+    render(<PresupuestoEjecucionSection areas={AREAS} periodLabel={PERIOD_LABEL} />);
     const label = screen.getByText(/caso que llama la atenci[oó]n/i);
     const highlight = label.closest("div");
     expect(highlight?.textContent).toMatch(/servicios de la deuda/i);
@@ -80,15 +82,23 @@ describe("PresupuestoEjecucionSection", () => {
     expect(highlight?.textContent).toMatch(/1\.570/); // gapArs, human-rounded millones
   });
 
-  it("names the área with the lowest relative execution as a factual reference point", () => {
-    render(<PresupuestoEjecucionSection areas={AREAS} />);
-    expect(screen.getByText(/menor ejecuci[oó]n relativa/i).textContent).toMatch(
-      /H\.C\.D\./,
-    );
+  it("leads with a period-context paragraph explaining that ~20-30% execution in a quarter is the expected pace, not under-spending", () => {
+    render(<PresupuestoEjecucionSection areas={AREAS} periodLabel={PERIOD_LABEL} />);
+    const context = screen.getByText(new RegExp(PERIOD_LABEL)).closest("p")
+      ?.textContent;
+    expect(context).toMatch(/20%/);
+    expect(context).toMatch(/30%/);
+    expect(context).toMatch(/ritmo esperado/i);
+    expect(context).toMatch(/no.*señal.*gasta de menos/i);
+  });
+
+  it("never frames a low Q1 % ejecutado (19-34% range) as an under-spending finding", () => {
+    render(<PresupuestoEjecucionSection areas={AREAS} periodLabel={PERIOD_LABEL} />);
+    expect(screen.queryByText(/menor ejecuci[oó]n relativa/i)).toBeNull();
   });
 
   it("renders every área with presupuestado, ejecutado and % ejecutado", () => {
-    render(<PresupuestoEjecucionSection areas={AREAS} />);
+    render(<PresupuestoEjecucionSection areas={AREAS} periodLabel={PERIOD_LABEL} />);
     for (const area of AREAS) {
       const row = getRowByName(area.name);
       expect(row.textContent).toMatch(/presupuestado/i);
@@ -97,7 +107,7 @@ describe("PresupuestoEjecucionSection", () => {
   });
 
   it("never colors % ejecutado with --olive/--stamp -- it is a ratio within one period, not a variation over time", () => {
-    render(<PresupuestoEjecucionSection areas={AREAS} />);
+    render(<PresupuestoEjecucionSection areas={AREAS} periodLabel={PERIOD_LABEL} />);
     for (const area of AREAS) {
       const row = getRowByName(area.name);
       expect(row.innerHTML).not.toMatch(/text-olive/);
@@ -106,7 +116,7 @@ describe("PresupuestoEjecucionSection", () => {
   });
 
   it("marks only the over-executed área's row with the ocre documentary accent, never the others", () => {
-    render(<PresupuestoEjecucionSection areas={AREAS} />);
+    render(<PresupuestoEjecucionSection areas={AREAS} periodLabel={PERIOD_LABEL} />);
     const overRow = getRowByName("Servicios de la Deuda");
     expect(overRow.className).toMatch(/border-ocre/);
     const normalRow = getRowByName("H.C.D.");
@@ -114,7 +124,7 @@ describe("PresupuestoEjecucionSection", () => {
   });
 
   it("sorts áreas by % ejecutado descending, the standout case first", () => {
-    render(<PresupuestoEjecucionSection areas={AREAS} />);
+    render(<PresupuestoEjecucionSection areas={AREAS} periodLabel={PERIOD_LABEL} />);
     const items = screen.getAllByRole("listitem");
     expect(within(items[0]).getByText("Servicios de la Deuda")).toBeTruthy();
   });
@@ -131,7 +141,7 @@ describe("PresupuestoEjecucionSection", () => {
         gapArs: 0,
       },
     ];
-    render(<PresupuestoEjecucionSection areas={withNullFraction} />);
+    render(<PresupuestoEjecucionSection areas={withNullFraction} periodLabel={PERIOD_LABEL} />);
     expect(screen.getByText("Área sin vigente")).toBeTruthy();
   });
 });
