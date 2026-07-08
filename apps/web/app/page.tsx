@@ -111,6 +111,16 @@ const ADJUDICACIONES_ROW = {
   href: "/adjudicaciones",
 } as const;
 
+// Feature G4: same simple "fila-pregunta tappable" pattern -- the pedido
+// generator is a client island (a form + live preview) unsuited to a
+// static home preview, so this is just a direct link into /pedidos.
+const PEDIDOS_ROW = {
+  question: "¿Cómo pedís el detalle completo?",
+  description:
+    "Generá tu pedido bajo la Ordenanza 3638 y hacé seguimiento del plazo de 30 días hábiles.",
+  href: "/pedidos",
+} as const;
+
 export default function Home() {
   const {
     coparticipacion,
@@ -862,6 +872,27 @@ export default function Home() {
               </h2>
               <span className="mt-1 block text-sm text-ink-2">
                 {adjudicacionesRowDescription}
+              </span>
+            </span>
+            <span aria-hidden="true" className="font-display text-2xl text-stamp">
+              ›
+            </span>
+          </Link>
+
+          {/* Feature G4: same simple, whole-row-is-a-link pattern -- the
+              pedido generator + tracker is a client island unsuited to a
+              static home preview, so this is just a direct link into
+              /pedidos. */}
+          <Link
+            href={PEDIDOS_ROW.href}
+            className="flex min-h-11 items-center justify-between gap-4 border-t border-rule py-5 no-underline hover:bg-surface"
+          >
+            <span>
+              <h2 className="font-display text-[clamp(20px,3vw,28px)] font-semibold text-ink">
+                {PEDIDOS_ROW.question}
+              </h2>
+              <span className="mt-1 block text-sm text-ink-2">
+                {PEDIDOS_ROW.description}
               </span>
             </span>
             <span aria-hidden="true" className="font-display text-2xl text-stamp">

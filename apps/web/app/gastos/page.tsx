@@ -74,7 +74,10 @@ export default function GastosPage() {
             individuales. Ese dato vive en otra fuente pública — el Boletín
             Oficial de compras (SIBOM) — que sí está incorporada al portal en{" "}
             <Link href="/adjudicaciones">¿A quién le compró el municipio?</Link>
-            .
+            . Si necesitás un detalle que ninguna de las dos cubre (por
+            ejemplo, compras directas por debajo del monto que exige
+            licitación), el detalle completo no es público —{" "}
+            <Link href="/pedidos">pedilo acá</Link>.
           </p>
         </div>
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { AdjudicacionesExplorer } from "@/components/adjudicaciones/AdjudicacionesExplorer";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { formatDateEsAr } from "@/lib/format";
@@ -74,7 +75,7 @@ export default function AdjudicacionesPage() {
             decreto y que el municipio publicó en su Boletín Oficial. NO
             incluye compras directas por debajo de los montos que exigen
             licitación, ni los sueldos. El detalle completo de gastos no es
-            público — ver la sección de pedidos de acceso.
+            público — <Link href="/pedidos">pedilo acá</Link>.
           </p>
         </div>
 

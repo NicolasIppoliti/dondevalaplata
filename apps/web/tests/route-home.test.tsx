@@ -296,6 +296,16 @@ describe("Home — adjudicaciones row (feature G3)", () => {
   });
 });
 
+describe("Home — pedidos row (feature G4)", () => {
+  it("links to /pedidos with the whole row tappable", () => {
+    render(<Home />);
+    const link = screen.getByRole("link", {
+      name: /c[oó]mo ped[ií]s el detalle completo/i,
+    });
+    expect(link.getAttribute("href")).toBe("/pedidos");
+  });
+});
+
 /**
  * Fidelity slice F3 (Mockup C, mobile only): the hero card leads on small
  * screens via CSS `order` (never DOM reshuffling), a compact mobile lede

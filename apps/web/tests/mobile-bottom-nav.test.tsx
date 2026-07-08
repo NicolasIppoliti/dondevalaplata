@@ -13,7 +13,7 @@ afterEach(() => {
 });
 
 describe("MobileBottomNav", () => {
-  it("renders a navigation landmark with the 6 mobile tabs (feature G3 added Compras)", () => {
+  it("renders a navigation landmark with the 7 mobile tabs (feature G4 added Pedidos)", () => {
     usePathnameMock.mockReturnValue("/");
     render(<MobileBottomNav />);
     const nav = screen.getByRole("navigation", {
@@ -24,6 +24,7 @@ describe("MobileBottomNav", () => {
     expect(screen.getByRole("link", { name: "Plata" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Gastos" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Compras" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Pedidos" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Multas" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Transparencia" })).toBeTruthy();
   });
@@ -69,6 +70,17 @@ describe("MobileBottomNav", () => {
     ).toBe("page");
     expect(
       screen.getByRole("link", { name: "Gastos" }).getAttribute("aria-current"),
+    ).toBeNull();
+  });
+
+  it("marks Pedidos active on /pedidos (feature G4)", () => {
+    usePathnameMock.mockReturnValue("/pedidos");
+    render(<MobileBottomNav />);
+    expect(
+      screen.getByRole("link", { name: "Pedidos" }).getAttribute("aria-current"),
+    ).toBe("page");
+    expect(
+      screen.getByRole("link", { name: "Compras" }).getAttribute("aria-current"),
     ).toBeNull();
   });
 });

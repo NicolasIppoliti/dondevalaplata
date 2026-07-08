@@ -31,6 +31,13 @@ const TABS = [
     ),
   },
   {
+    href: "/pedidos",
+    label: "Pedidos",
+    icon: (
+      <path d="M14 3v5h5M6 3h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM8 13h8M8 17h5" />
+    ),
+  },
+  {
     href: "/fallos",
     label: "Multas",
     icon: (
@@ -66,7 +73,7 @@ export function MobileBottomNav() {
       aria-label="Navegación principal"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-rule bg-surface/95 pb-[env(safe-area-inset-bottom)] shadow-header backdrop-blur sm:hidden"
     >
-      <ul className="grid grid-cols-6">
+      <ul className="grid grid-cols-7">
         {TABS.map((tab) => {
           const isActive =
             tab.href === "/"

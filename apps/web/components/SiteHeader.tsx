@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { href: "/coparticipacion", label: "Coparticipación" },
   { href: "/gastos", label: "Gastos" },
   { href: "/adjudicaciones", label: "Adjudicaciones" },
+  { href: "/pedidos", label: "Pedidos" },
   { href: "/fallos", label: "Multas del Tribunal de Cuentas" },
   { href: "/transparencia", label: "Transparencia" },
   { href: "/fuentes", label: "Fuentes" },
