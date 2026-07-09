@@ -10,6 +10,7 @@ import {
   loadPedidos,
   loadPoblacionCenso2022,
   loadProveedores,
+  loadTitularidad,
   loadTransparencia,
 } from "./data";
 import type {
@@ -26,6 +27,7 @@ import type {
   PedidosData,
   PoblacionCensoData,
   ProveedoresData,
+  TitularidadData,
   TransparenciaData,
 } from "./schemas";
 
@@ -87,6 +89,7 @@ export function collectSourceRefs(
   deudaHistorica?: DeudaHistoricaData,
   novedades?: NovedadesData,
   poblacionCenso?: PoblacionCensoData,
+  titularidad?: TitularidadData,
 ): string[] {
   const ids = new Set<string>();
   for (const id of coparticipacion.sourceRefs) ids.add(id);
@@ -127,6 +130,10 @@ export function collectSourceRefs(
   }
   if (poblacionCenso) {
     for (const id of poblacionCenso.sourceRefs) ids.add(id);
+  }
+  if (titularidad) {
+    for (const id of titularidad.sourceRefs) ids.add(id);
+    for (const record of titularidad.records) ids.add(record.sourceRef);
   }
   return [...ids];
 }
@@ -204,6 +211,7 @@ export interface PortalData {
   deudaHistorica: DeudaHistoricaData;
   novedades: NovedadesData;
   poblacionCenso: PoblacionCensoData;
+  titularidad: TitularidadData;
 }
 
 /**
@@ -235,6 +243,7 @@ export function getPortalData(): PortalData {
   const deudaHistorica = loadDeudaHistorica();
   const novedades = loadNovedades();
   const poblacionCenso = loadPoblacionCenso2022();
+  const titularidad = loadTitularidad();
   assertSourceRefsResolve(
     collectSourceRefs(
       coparticipacion,
@@ -246,6 +255,7 @@ export function getPortalData(): PortalData {
       deudaHistorica,
       novedades,
       poblacionCenso,
+      titularidad,
     ),
     manifest,
   );
@@ -262,5 +272,6 @@ export function getPortalData(): PortalData {
     deudaHistorica,
     novedades,
     poblacionCenso,
+    titularidad,
   };
 }

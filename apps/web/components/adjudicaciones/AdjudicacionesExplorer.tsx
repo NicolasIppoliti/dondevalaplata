@@ -18,6 +18,10 @@ import {
 } from "@/lib/format";
 import { shortHash, type SourceLink } from "@/lib/sources";
 import type { AdjudicacionRecord, ProveedorRecord } from "@/lib/schemas";
+import {
+  TitularidadField,
+  type ProveedorTitularidad,
+} from "./TitularidadField";
 
 type AdjudicacionWithSource = AdjudicacionRecord & { sourceLink: SourceLink };
 
@@ -44,9 +48,11 @@ type AdjudicacionWithSource = AdjudicacionRecord & { sourceLink: SourceLink };
 export function AdjudicacionesExplorer({
   records,
   proveedores,
+  titularidadByProveedor,
 }: {
   records: AdjudicacionWithSource[];
   proveedores: ProveedorRecord[];
+  titularidadByProveedor: Record<string, ProveedorTitularidad>;
 }) {
   const [tab, setTab] = useState<"adjudicaciones" | "proveedores">(
     "adjudicaciones",
@@ -197,6 +203,7 @@ export function AdjudicacionesExplorer({
             onSort={toggleProvSort}
             query={query}
             onSelectProveedor={goToProveedor}
+            titularidadByProveedor={titularidadByProveedor}
           />
         ) : null}
       </div>
@@ -458,13 +465,29 @@ function ProveedoresPadron({
   onSort,
   query,
   onSelectProveedor,
+  titularidadByProveedor,
 }: {
   proveedores: ProveedorRecord[];
   sort: { key: ProveedorSortKey; direction: SortDirection };
   onSort: (key: ProveedorSortKey) => void;
   query: string;
   onSelectProveedor: (proveedor: string) => void;
+  titularidadByProveedor: Record<string, ProveedorTitularidad>;
 }) {
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  function toggleExpanded(proveedor: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(proveedor)) {
+        next.delete(proveedor);
+      } else {
+        next.add(proveedor);
+      }
+      return next;
+    });
+  }
+
   return (
     <div>
       <p className="max-w-[70ch] text-sm text-ink-2">
@@ -524,35 +547,79 @@ function ProveedoresPadron({
                     onClick={() => onSort("count")}
                   />
                 </th>
+                <th scope="col" className="py-2 pl-2">
+                  <span className="sr-only">Titularidad</span>
+                </th>
               </tr>
             </thead>
             <tbody>
-              {proveedores.map((proveedor) => (
-                <tr key={proveedor.proveedor} className="border-b border-rule">
-                  <td className="py-2.5 pr-3 text-ink">
-                    <button
-                      type="button"
-                      onClick={() => onSelectProveedor(proveedor.proveedor)}
-                      className="min-h-11 text-left"
-                    >
-                      {proveedor.proveedor}
-                      <span className="sr-only">
-                        {" "}
-                        — ver adjudicaciones de {proveedor.proveedor}
-                      </span>
-                    </button>
-                  </td>
-                  <td
-                    className="py-2.5 pr-3 text-right font-mono tabular-nums text-ink"
-                    title={formatArsPlain(proveedor.totalArs)}
-                  >
-                    {formatArsHuman(proveedor.totalArs)}
-                  </td>
-                  <td className="py-2.5 text-right font-mono tabular-nums text-ink">
-                    {proveedor.count}
-                  </td>
-                </tr>
-              ))}
+              {proveedores.map((proveedor) => {
+                const isOpen = expanded.has(proveedor.proveedor);
+                const detailId = `titularidad-${proveedor.proveedor}`;
+                const titularidad = titularidadByProveedor[proveedor.proveedor] ?? {
+                  status: "no-disponible" as const,
+                  noDisponibleReason:
+                    "todavía no verificamos un edicto oficial que confirme su titularidad societaria.",
+                };
+                return (
+                  <Fragment key={proveedor.proveedor}>
+                    <tr className="border-b border-rule">
+                      <td className="py-2.5 pr-3 text-ink">
+                        <button
+                          type="button"
+                          onClick={() => onSelectProveedor(proveedor.proveedor)}
+                          className="min-h-11 text-left"
+                        >
+                          {proveedor.proveedor}
+                          <span className="sr-only">
+                            {" "}
+                            — ver adjudicaciones de {proveedor.proveedor}
+                          </span>
+                        </button>
+                      </td>
+                      <td
+                        className="py-2.5 pr-3 text-right font-mono tabular-nums text-ink"
+                        title={formatArsPlain(proveedor.totalArs)}
+                      >
+                        {formatArsHuman(proveedor.totalArs)}
+                      </td>
+                      <td className="py-2.5 text-right font-mono tabular-nums text-ink">
+                        {proveedor.count}
+                      </td>
+                      <td className="py-2.5 pl-2 text-right">
+                        <button
+                          type="button"
+                          aria-expanded={isOpen}
+                          aria-controls={detailId}
+                          onClick={() => toggleExpanded(proveedor.proveedor)}
+                          className="min-h-11 min-w-11 no-underline"
+                        >
+                          <span aria-hidden="true">{isOpen ? "▲" : "▼"}</span>
+                          <span className="sr-only">
+                            Ver titularidad de {proveedor.proveedor}
+                          </span>
+                        </button>
+                      </td>
+                    </tr>
+                    {isOpen ? (
+                      <tr>
+                        <td
+                          colSpan={4}
+                          id={detailId}
+                          className="bg-surface-2 px-3 py-4"
+                        >
+                          <dl>
+                            <TitularidadField
+                              proveedor={proveedor.proveedor}
+                              titularidad={titularidad}
+                            />
+                          </dl>
+                        </td>
+                      </tr>
+                    ) : null}
+                  </Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>

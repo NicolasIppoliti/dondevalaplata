@@ -9,6 +9,7 @@ import novedadesJson from "../../../data/novedades.json";
 import pedidosJson from "../../../data/pedidos.json";
 import poblacionCensoJson from "../../../data/poblacion-censo-2022.json";
 import proveedoresJson from "../../../data/proveedores.json";
+import titularidadJson from "../../../data/titularidad.json";
 import transparenciaJson from "../../../data/transparencia.json";
 import {
   adjudicacionesDataSchema,
@@ -22,6 +23,7 @@ import {
   pedidosDataSchema,
   poblacionCensoDataSchema,
   proveedoresDataSchema,
+  titularidadDataSchema,
   transparenciaDataSchema,
   type AdjudicacionesData,
   type CadenciaData,
@@ -34,6 +36,7 @@ import {
   type PedidosData,
   type PoblacionCensoData,
   type ProveedoresData,
+  type TitularidadData,
   type TransparenciaData,
 } from "./schemas";
 
@@ -106,4 +109,8 @@ export function loadPoblacionCenso2022(
   raw: unknown = poblacionCensoJson,
 ): PoblacionCensoData {
   return poblacionCensoDataSchema.parse(raw);
+}
+
+export function loadTitularidad(raw: unknown = titularidadJson): TitularidadData {
+  return titularidadDataSchema.parse(raw);
 }

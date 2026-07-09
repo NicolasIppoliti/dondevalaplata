@@ -71,6 +71,52 @@ describe("/adjudicaciones page", () => {
     const first = proveedores.proveedores[0];
     expect(screen.getAllByText(first.proveedor).length).toBeGreaterThan(0);
   });
+
+  it("expanding RUMAX in the padrón reveals its real curated socios with the date-cut label and dual-link provenance", () => {
+    render(<Page />);
+    fireEvent.click(screen.getByRole("tab", { name: /padrón de proveedores/i }));
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: /ver titularidad de equipos de servicios portuarios rumax s\.r\.l/i,
+      }),
+    );
+
+    expect(screen.getByText("Juan Esteban Iglesias")).toBeTruthy();
+    expect(screen.getAllByText(/socio gerente/i).length).toBeGreaterThan(0);
+    expect(screen.getByText("Maximiliano Marcelo Márquez")).toBeTruthy();
+    expect(
+      screen.getAllByText(/seg[uú]n el edicto de constituci[oó]n del 18 de julio de 2023/i)
+        .length,
+    ).toBeGreaterThan(0);
+    const links = screen.getAllByRole("link", { name: /fuente original/i });
+    expect(links.length).toBeGreaterThan(0);
+  });
+
+  it("expanding a vendor with no curated edicto shows 'no disponible públicamente' and never a DNI/domicilio (triangulation: opposite code path)", () => {
+    render(<Page />);
+    fireEvent.click(screen.getByRole("tab", { name: /padrón de proveedores/i }));
+
+    fireEvent.click(screen.getByRole("button", { name: /ver titularidad de rimsol s\.a/i }));
+
+    expect(screen.getAllByText(/no disponible p[uú]blicamente/i).length).toBeGreaterThan(0);
+    const text = document.body.textContent ?? "";
+    // The real socio's DNI (verified in engram groundtruth research) must
+    // NEVER render anywhere on this page, regardless of which vendor row
+    // is expanded.
+    expect(text).not.toMatch(/26\.333\.949/);
+    expect(text).not.toMatch(/Castelli 603/);
+  });
+
+  it("discloses the titularidad methodology (partial coverage, minimization, legal basis) and a visible rectification channel", () => {
+    const { container } = render(<Page />);
+    const text = container.textContent ?? "";
+
+    expect(text).toMatch(/edicto de constituci[oó]n oficial/i);
+    expect(text).toMatch(/25\.326/);
+    expect(text).toMatch(/rectificar/i);
+    expect(screen.getByRole("link", { name: /escribinos/i })).toBeTruthy();
+  });
 });
 
 function escapeRegExp(value: string): string {

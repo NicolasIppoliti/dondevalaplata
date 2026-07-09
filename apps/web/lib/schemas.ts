@@ -433,3 +433,56 @@ export const novedadesDataSchema = z.object({
 export type NovedadKind = z.infer<typeof novedadKindSchema>;
 export type NovedadEvent = z.infer<typeof novedadEventSchema>;
 export type NovedadesData = z.infer<typeof novedadesDataSchema>;
+
+/**
+ * Feature titularidad: per-vendor "titularidad registral" (company
+ * ownership) -- the HIGHEST LEGAL-RISK data this portal publishes. Read
+ * DESIGN.md's titularidad decision entry and `etl/etl/titularidad.py`'s
+ * module docstring before touching this schema.
+ *
+ * MINIMIZATION (Ley 25.326 art. 4, principio de finalidad) IS ENFORCED BY
+ * THIS SCHEMA ITSELF: `titularidadSocioSchema` has exactly two fields,
+ * `nombre` and `rol` -- there is no field for DNI, domicilio particular,
+ * fecha de nacimiento or estado civil. Even if that PII were ever
+ * accidentally added upstream (`data/titularidad.json`), zod's default
+ * `.object()` behavior strips unknown keys on parse, so it could never
+ * cross this build-time boundary into a rendered page.
+ *
+ * `rol` is restricted to the only roles this portal ever publishes
+ * (matches `etl.titularidad.ALLOWED_ROLES`). `vendorMatchKeys` is an
+ * EXPLICIT list of exact proveedor-name strings this record applies to
+ * (e.g. both "EQUIPO..."/"EQUIPOS..." spellings for the same real
+ * entity) -- resolution is always exact-match, never fuzzy (see
+ * `lib/titularidad.ts::resolveTitularidad`).
+ */
+export const titularidadRolSchema = z.enum(["socio", "socio gerente", "director"]);
+
+export const titularidadSocioSchema = z.object({
+  nombre: z.string().min(1),
+  rol: titularidadRolSchema,
+});
+
+export const titularidadRecordSchema = z.object({
+  empresa: z.string().min(1),
+  vendorMatchKeys: z.array(z.string().min(1)).min(1),
+  tipo: z.string().min(1),
+  cuitEmpresa: z.string().min(1).nullable(),
+  socios: z.array(titularidadSocioSchema).min(1),
+  fuenteEdictoUrl: z.string().min(1),
+  edicionFecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  edicionLabel: z.string().min(1),
+  instrumentoFecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  instrumentoLabel: z.string().min(1),
+  sourceRef: z.string().min(1),
+});
+
+export const titularidadDataSchema = z.object({
+  generatedAt: z.string().min(1),
+  sourceRefs: z.array(z.string().min(1)),
+  records: z.array(titularidadRecordSchema),
+});
+
+export type TitularidadRol = z.infer<typeof titularidadRolSchema>;
+export type TitularidadSocio = z.infer<typeof titularidadSocioSchema>;
+export type TitularidadRecord = z.infer<typeof titularidadRecordSchema>;
+export type TitularidadData = z.infer<typeof titularidadDataSchema>;
