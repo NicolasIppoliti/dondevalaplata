@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -626,7 +627,30 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _load_env_file(env_path: Path | None = None) -> None:
+    """Populate os.environ from etl/.env for keys not already set.
+
+    Local runs of `archive`/`sync-r2` need the R2 credentials, which live in
+    etl/.env (gitignored). CI/cron already provide them as real env vars, so
+    existing values are never overwritten. Dependency-free (no python-dotenv).
+    """
+    if env_path is None:
+        env_path = Path(__file__).resolve().parent.parent / ".env"
+    if not env_path.is_file():
+        return
+    for raw in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
 def main(argv: Sequence[str] | None = None) -> int:
+    _load_env_file()
     parser = build_parser()
     args = parser.parse_args(argv)
     return args.func(args)
