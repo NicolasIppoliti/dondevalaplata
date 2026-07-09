@@ -11,9 +11,8 @@ export const SITE_URL = "https://dondevalaplata.vercel.app";
  * Rectification/contact channel for the titularidad registral field (Ley
  * 25.326 art. 16, derecho de rectificación -- AAIP, Agencia de Acceso a
  * la Información Pública, is the enforcement authority for this right).
- * OWNER ACTION REQUIRED: this is a placeholder mailbox at the portal's
- * own domain -- configure a real inbox that receives mail at this
- * address (or replace it with a real one you control) before this
- * feature is published. See DESIGN.md's titularidad decision entry.
+ * Real inbox controlled by the portal owner (fragua.dev), receiving
+ * rectification requests per Ley 25.326 (derecho de rectificación).
+ * See DESIGN.md's titularidad decision entry.
  */
-export const RECTIFICATION_EMAIL = "titularidad@dondevalaplata.vercel.app";
+export const RECTIFICATION_EMAIL = "rectificaciones@fragua.dev";
