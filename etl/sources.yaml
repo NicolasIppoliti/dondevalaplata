@@ -201,3 +201,34 @@ electoral:
       fetch from Wayback -- use a generous timeout and resume/retry.
     filename: 2023-paso.zip
     timeout: 180
+
+edictos-societarios:
+  # HIGHEST-LEGAL-RISK capability on this portal (titularidad registral
+  # feature). Read etl/etl/titularidad.py's module docstring in full
+  # before adding another entry here -- every record archived under this
+  # capability must have a matching HUMAN-CURATED entry in
+  # etl/titularidad.yaml before it is ever published; nothing here is
+  # parsed automatically.
+  - id: edictos-societarios/rumax
+    source: boletinoficial.gba.gob.ar
+    source_url: https://boletinoficial.gba.gob.ar/secciones/12309/ver
+    mime: application/pdf
+    notes: >-
+      Boletín Oficial de la Provincia de Buenos Aires, edición 18/07/2023
+      (Año CXIV, Nº 29548), Sección Oficial - Sociedades. Contiene el
+      edicto de constitución de EQUIPO DE SERVICIOS PORTUARIOS RUMAX
+      S.R.L. (instrumento privado del 29/6/2023) -- socios Juan Esteban
+      Iglesias (50%, socio gerente) y Maximiliano Marcelo Márquez (50%),
+      curados en etl/titularidad.yaml. This URL returns the FULL day's
+      Sección Oficial PDF (189 pages, every entity published that day),
+      not a RUMAX-specific sub-document -- the source exposes no narrower
+      URL. Verified live 2026-07-09: the PDF carries a real, searchable
+      text layer (pdftotext extracts ~843KB across 189 pages, including
+      the RUMAX paragraph verbatim) -- NOT a scanned image as an earlier
+      internal note assumed; corrected here rather than left inaccurate.
+      A full-document parser is deliberately NOT built: this single PDF
+      also carries hundreds of unrelated people's DNI, domicilio and
+      estado civil across every OTHER entity's edicto published the same
+      day -- only the one verified RUMAX record is hand-curated for
+      publication (minimization by construction, see titularidad.py).
+    filename: rumax-edicto-constitucion-bo-20230718.pdf

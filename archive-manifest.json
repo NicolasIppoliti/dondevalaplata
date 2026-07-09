@@ -2116,5 +2116,19 @@
     "fetched_at": "2026-07-08T20:40:30Z",
     "status": "ok",
     "notes": "\"Población\" dataset, Dirección Provincial de Estadística (Ministerio de Economía de la Provincia de Buenos Aires) -- the SAME catalogo.datos.gba.gob.ar CKAN publisher already used for coparticipacion-viewer. Per-municipio series 2010-2025; the dataset's own CKAN notes (verbatim): \"Datos relativos a la población de la Provincia (Censo 2010 y Censo 2022) y su proyección\" -- only the 2010 and 2022 columns are actual Censo Nacional de Población, Hogares y Viviendas counts, every other year is a linear interpolation/projection. This build (feature H3a, per-cápita coparticipación) uses ONLY the 2022 column, filtered to the same four municipios as coparticipacion-viewer. Cross-verified at apply-time (2026-07-08): Coronel Rosales's 2022 value (67.503) and 2010 value (62.152) both match, digit for digit, an independent press report (radiofm2001.com.ar, citing La Nueva / INDEC's official \"datos definitivos del Censo 2022\" release, published 22/11/2023) -- see etl/etl/poblacion.py's module docstring for the full verification note. [R2 upload pending: no credentials configured]"
+  },
+  {
+    "id": "edictos-societarios/rumax",
+    "capability": "edictos-societarios",
+    "source": "boletinoficial.gba.gob.ar",
+    "source_url": "https://boletinoficial.gba.gob.ar/secciones/12309/ver",
+    "archived_url": null,
+    "archived_path": "archive/edictos-societarios/rumax-edicto-constitucion-bo-20230718.pdf",
+    "sha256": "ae159a72f801f86a1b0c8f4bee4fc5cf8a94893ad18c5dbca17635883cf68c5b",
+    "mime": "application/pdf",
+    "bytes": 23295658,
+    "fetched_at": "2026-07-09T17:10:25Z",
+    "status": "ok",
+    "notes": "Boletín Oficial de la Provincia de Buenos Aires, edición 18/07/2023 (Año CXIV, Nº 29548), Sección Oficial - Sociedades. Contiene el edicto de constitución de EQUIPO DE SERVICIOS PORTUARIOS RUMAX S.R.L. (instrumento privado del 29/6/2023) -- socios Juan Esteban Iglesias (50%, socio gerente) y Maximiliano Marcelo Márquez (50%), curados en etl/titularidad.yaml. This URL returns the FULL day's Sección Oficial PDF (189 pages, every entity published that day), not a RUMAX-specific sub-document -- the source exposes no narrower URL. Verified live 2026-07-09: the PDF carries a real, searchable text layer (pdftotext extracts ~843KB across 189 pages, including the RUMAX paragraph verbatim) -- NOT a scanned image as an earlier internal note assumed; corrected here rather than left inaccurate. A full-document parser is deliberately NOT built: this single PDF also carries hundreds of unrelated people's DNI, domicilio and estado civil across every OTHER entity's edicto published the same day -- only the one verified RUMAX record is hand-curated for publication (minimization by construction, see titularidad.py). [R2 upload pending: no credentials configured]"
   }
 ]

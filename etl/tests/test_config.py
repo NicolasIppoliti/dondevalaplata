@@ -44,6 +44,37 @@ def test_load_sources_defaults_missing_capabilities_to_empty_list(tmp_path) -> N
     assert sources["poblacion-censo"] == []
 
 
+def test_load_sources_surfaces_edictos_societarios_capability(tmp_path) -> None:
+    # Same regression class as the poblacion-censo test below: KNOWN_CAPABILITIES
+    # must list every real sources.yaml top-level key, or `etl archive
+    # --capability edictos-societarios` would silently no-op for the
+    # highest-legal-risk capability on this portal.
+    path = tmp_path / "sources.yaml"
+    path.write_text(
+        """
+edictos-societarios:
+  - id: edictos-societarios/example
+    source: example.gob.ar
+    source_url: https://example.gob.ar/edicto.pdf
+    mime: application/pdf
+    notes: sample
+""",
+        encoding="utf-8",
+    )
+
+    sources = load_sources(path)
+
+    assert list(sources["edictos-societarios"]) == [
+        {
+            "id": "edictos-societarios/example",
+            "source": "example.gob.ar",
+            "source_url": "https://example.gob.ar/edicto.pdf",
+            "mime": "application/pdf",
+            "notes": "sample",
+        }
+    ]
+
+
 def test_load_sources_surfaces_poblacion_censo_capability(tmp_path) -> None:
     # Regression: KNOWN_CAPABILITIES must list every real sources.yaml
     # top-level key, or `etl archive --capability X` silently no-ops for

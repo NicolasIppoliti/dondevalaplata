@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-07-09T17:10:35Z",
+  "sourceRefs": [
+    "edictos-societarios/rumax"
+  ],
+  "records": [
+    {
+      "empresa": "Equipo de Servicios Portuarios Rumax S.R.L.",
+      "vendorMatchKeys": [
+        "EQUIPO DE SERVICIOS PORTUARIOS RUMAX S.R.L",
+        "EQUIPOS DE SERVICIOS PORTUARIOS RUMAX S.R.L"
+      ],
+      "tipo": "S.R.L.",
+      "cuitEmpresa": null,
+      "socios": [
+        {
+          "nombre": "Juan Esteban Iglesias",
+          "rol": "socio gerente"
+        },
+        {
+          "nombre": "Maximiliano Marcelo Márquez",
+          "rol": "socio"
+        }
+      ],
+      "fuenteEdictoUrl": "https://boletinoficial.gba.gob.ar/secciones/12309/ver",
+      "edicionFecha": "2023-07-18",
+      "edicionLabel": "Boletín Oficial de la Provincia de Buenos Aires, edición 18/07/2023 (Año CXIV, Nº 29548), Sección Oficial – Sociedades",
+      "instrumentoFecha": "2023-06-29",
+      "instrumentoLabel": "instrumento privado del 29/6/2023",
+      "sourceRef": "edictos-societarios/rumax"
+    }
+  ]
+}

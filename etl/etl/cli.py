@@ -13,6 +13,7 @@ Subcommands:
   build-deuda-historica Build the deuda pública histórica quarterly series JSON from the archive.
   build-novedades       Build the watchdog "novedades" publication-behavior log JSON.
   build-poblacion       Build the Censo 2022 population-per-municipio display JSON.
+  build-titularidad     Build the per-vendor "titularidad registral" display JSON.
   build                 Run all build-* steps in sequence.
 
 ``archive`` and ``sync-r2`` are the only commands that perform network I/O
@@ -48,6 +49,7 @@ from .sibom import discover_bulletins, discover_sibom_actos
 from .sibom import to_source_entries as sibom_to_entries
 from .sibom_adjudicaciones import build_adjudicaciones, build_proveedores
 from .storage import LocalArchiveStore
+from .titularidad import build_titularidad
 from .transparencia import build_transparencia
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -59,6 +61,7 @@ DEFAULT_FICHA_2022_PATH = REPO_ROOT / "etl" / "fallos_ficha_2022.yaml"
 DEFAULT_TRANSPARENCIA_CURATED_PATH = REPO_ROOT / "etl" / "asap_transparencia.yaml"
 DEFAULT_CADENCIA_CURATED_PATH = REPO_ROOT / "etl" / "cadencia.yaml"
 DEFAULT_NOVEDADES_SEED_PATH = REPO_ROOT / "etl" / "novedades_seed.yaml"
+DEFAULT_TITULARIDAD_CURATED_PATH = REPO_ROOT / "etl" / "titularidad.yaml"
 
 # From Nº31 (2023) onward, per design D4/tasks Slice 2 scope note.
 SIBOM_FROM_NUMBER = 31
@@ -392,6 +395,23 @@ def run_build_poblacion(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_build_titularidad(args: argparse.Namespace) -> int:
+    """Build `data/titularidad.json`: the per-vendor "titularidad registral"
+    display JSON (HIGHEST LEGAL-RISK data this portal publishes). Reads
+    `etl/titularidad.yaml` by default (see --titularidad-curated-path) --
+    a human-curated source, never machine-extracted from the archived
+    edicto PDF. See `etl.titularidad` module docstring for the
+    minimization/date-cut/provenance guardrails this build enforces.
+    """
+    result = build_titularidad(args.titularidad_curated_path)
+    output_path = args.data_root / "titularidad.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(result, indent=2, ensure_ascii=False) + "\n"
+    output_path.write_text(payload, encoding="utf-8")
+    print(f"etl build-titularidad: wrote {output_path} ({len(result['records'])} records)")
+    return 0
+
+
 def run_build(args: argparse.Namespace) -> int:
     """Run all build-* steps in sequence. Not yet implemented."""
     print("etl build: not implemented yet (see Slice 3)")
@@ -580,6 +600,23 @@ def build_parser() -> argparse.ArgumentParser:
         "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
     )
     build_poblacion_parser.set_defaults(func=run_build_poblacion)
+
+    build_titularidad_parser = subparsers.add_parser(
+        "build-titularidad",
+        help=(
+            "Build the per-vendor \"titularidad registral\" display JSON "
+            "from the curated source."
+        ),
+    )
+    build_titularidad_parser.add_argument(
+        "--titularidad-curated-path",
+        type=Path,
+        default=DEFAULT_TITULARIDAD_CURATED_PATH,
+    )
+    build_titularidad_parser.add_argument(
+        "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
+    )
+    build_titularidad_parser.set_defaults(func=run_build_titularidad)
 
     build_parser_cmd = subparsers.add_parser(
         "build", help="Run all build-* steps in sequence."

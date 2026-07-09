@@ -1,0 +1,64 @@
+# Curated source for "titularidad registral" (per-vendor company
+# ownership) -- HIGHEST LEGAL-RISK data this portal publishes. Read
+# etl/etl/titularidad.py's module docstring IN FULL before editing this
+# file, and never add a record here without a primary official edicto in
+# hand (the document itself, not an aggregator).
+#
+# MINIMIZATION BY CONSTRUCTION (Ley 25.326 art. 4, principio de
+# finalidad): only `nombre` + `rol` are ever transcribed per socio below,
+# even though the source edicto also states each socio's DNI, domicilio
+# particular, fecha de nacimiento and estado civil. Those fields are
+# NEVER copied into this file -- not redacted, not present -- so no code
+# path downstream can ever load or publish them. `titularidad.py` also
+# enforces this at parse time (`_assert_no_forbidden_socio_fields`) as a
+# second, independent guard in case this rule is ever violated by
+# accident in a future edit.
+#
+# CURATION DISCIPLINE: every record here was read DIRECTLY off the
+# primary official edicto by a human reviewer, NOT machine-extracted --
+# same curated-ficha pattern as etl/fallos_ficha_2022.yaml and
+# etl/asap_transparencia.yaml. The DEFAULT for every vendor NOT listed
+# here is "Titularidad no disponible públicamente" -- rendered by the web
+# layer (`lib/titularidad.ts`) for any proveedor whose name does not
+# match a `vendor_match_keys` entry below. That is an expected, honestly
+# disclosed outcome, never an error.
+#
+# HOMÓNIMO GUARD: the real socio "Juan Esteban Iglesias" named below (per
+# the edicto) must NEVER be confused with a different "Esteban Iglesias"
+# (a different person, different CUIT) that some data aggregators
+# auto-link to unrelated public records. Keep the name exactly as the
+# edicto states it; never "enrich" it from any other source, and never
+# publish either person's CUIT/DNI here.
+
+records:
+  - empresa_edicto: "Equipo de Servicios Portuarios Rumax S.R.L."
+    # Municipal procurement documents (SIBOM decretos, data/adjudicaciones.json,
+    # data/proveedores.json) write the name with a plural "EQUIPOS" -- the
+    # edicto de constitución writes it singular "EQUIPO". Verified as the
+    # SAME entity: identical object (servicios portuarios) and identical
+    # domicilio (Mitre 1147, Punta Alta) in both documents. Both spellings
+    # are listed explicitly below as exact match keys -- this is NEVER
+    # fuzzy-matched, same discipline as build_proveedores' vendor grouping.
+    vendor_match_keys:
+      - "EQUIPO DE SERVICIOS PORTUARIOS RUMAX S.R.L"
+      - "EQUIPOS DE SERVICIOS PORTUARIOS RUMAX S.R.L"
+    tipo: "S.R.L."
+    # Not stated in the constitution edicto (a company has no CUIT yet at
+    # the moment of constitution) and no separately-verified company CUIT
+    # was found from another primary source -- left null rather than
+    # guessed. `cuit_empresa`, if ever filled, must be the COMPANY's CUIT
+    # only, never a socio's personal CUIT/DNI.
+    cuit_empresa: null
+    socios:
+      - nombre: "Juan Esteban Iglesias"
+        rol: "socio gerente"
+      - nombre: "Maximiliano Marcelo Márquez"
+        rol: "socio"
+    fuente_edicto_url: "https://boletinoficial.gba.gob.ar/secciones/12309/ver"
+    edicion_fecha: "2023-07-18"
+    edicion_label: >-
+      Boletín Oficial de la Provincia de Buenos Aires, edición 18/07/2023
+      (Año CXIV, Nº 29548), Sección Oficial – Sociedades
+    instrumento_fecha: "2023-06-29"
+    instrumento_label: "instrumento privado del 29/6/2023"
+    source_ref: "edictos-societarios/rumax"
