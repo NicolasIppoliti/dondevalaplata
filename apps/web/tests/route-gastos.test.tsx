@@ -68,59 +68,18 @@ describe("/gastos page", () => {
     const { container } = render(<Page />);
     expect(container.textContent?.toLowerCase()).not.toMatch(/\bcuit\b/);
   });
-});
 
-/**
- * Feature H1: "¿Cumplen lo que prometieron?" -- Presupuesto vs. Ejecución
- * por área, a prominent section on THIS page (not a new top-level route --
- * see the decision recorded in `app/gastos/page.tsx` and DESIGN.md). Same
- * reconciled `data/gasto-partida.json` as the explorer below it, re-grouped
- * one level up to the Jurisdicción ("área"/secretaría).
- */
-describe("/gastos page — ¿Cumplen lo que prometieron? (feature H1)", () => {
-  it("titles the section as a question, above the partida explorer", () => {
+  it("no longer embeds the '¿Cumplen lo que prometieron?' section here (moved to /gastos/cumplen)", () => {
     render(<Page />);
     expect(
-      screen.getByRole("heading", {
-        level: 2,
-        name: /cumplen lo que prometieron/i,
-      }),
-    ).toBeTruthy();
-  });
-
-  it("discloses the honesty caveat about what over/under 100% execution means and does NOT prove by itself", () => {
-    const { container } = render(<Page />);
-    const text = container.textContent?.toLowerCase() ?? "";
-    expect(text).toMatch(/no prueba por s[ií] sol[oa] una irregularidad/);
-    expect(text).toMatch(/reasignaciones leg[ií]timas/);
-  });
-
-  it("shows every jurisdicción from data/gasto-partida.json as a compared área", () => {
-    const { gastoPartida } = getPortalData();
-    render(<Page />);
-    for (const jurisdiccion of gastoPartida.jurisdicciones) {
-      expect(screen.getAllByText(jurisdiccion.name).length).toBeGreaterThan(
-        0,
-      );
-    }
-  });
-
-  it("surfaces at least one over-executed área when the real data has one, with its exact % (never clamped to 100)", () => {
-    const { gastoPartida } = getPortalData();
-    const overExecuted = gastoPartida.jurisdicciones.filter((j) => {
-      const totals = j.programas
-        .flatMap((p) => p.objetos)
-        .reduce(
-          (acc, o) => ({
-            vigenteArs: acc.vigenteArs + o.vigenteArs,
-            devengadoArs: acc.devengadoArs + o.devengadoArs,
-          }),
-          { vigenteArs: 0, devengadoArs: 0 },
-        );
-      return totals.vigenteArs > 0 && totals.devengadoArs > totals.vigenteArs;
-    });
-    expect(overExecuted.length).toBeGreaterThan(0);
-    const { container } = render(<Page />);
-    expect(container.textContent).toMatch(/[1-9]\d\d\d?%/); // a 3-4 digit percentage exists somewhere
+      screen.queryByRole("heading", { name: /cumplen lo que prometieron/i }),
+    ).toBeNull();
   });
 });
+
+// Feature H1 ("¿Cumplen lo que prometieron?") moved to its own route,
+// /gastos/cumplen, as part of the IA consolidation ("4 puertas", DESIGN.md
+// decisions log entry "I1") -- Gastos is now a tabbed door (Por partida /
+// ¿Cumplen lo que prometieron? / ¿A quién le compró?), each tab a real,
+// independently prerendered route. Its invariant tests moved with it: see
+// tests/route-gastos-cumplen.test.tsx.

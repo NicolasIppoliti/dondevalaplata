@@ -102,14 +102,15 @@ const GASTO_PARTIDA_ROW = {
 } as const;
 
 // Feature H1: same simple "fila-pregunta tappable" pattern -- links into
-// the "¿Cumplen lo que prometieron?" section on /gastos (`#cumplen-heading`)
-// rather than a new top-level route: see the decision recorded in
-// `app/gastos/page.tsx`'s own docstring (same reconciled dataset as G2,
-// re-grouped by área, no new nav destination for it).
+// the "¿Cumplen lo que prometieron?" tab of the Gastos door, its own real
+// route as of the IA consolidation ("4 puertas", DESIGN.md decisions log
+// entry "I1"): see `app/gastos/cumplen/page.tsx`'s own docstring (same
+// reconciled dataset as G2, re-grouped by área, now a deep-linkable tab
+// instead of an in-page anchor).
 const PRESUPUESTO_EJECUCION_ROW = {
   question: "¿Cumplen lo que prometieron?",
   description: "Presupuesto vs. ejecución real, área por área.",
-  href: "/gastos#cumplen-heading",
+  href: "/gastos/cumplen",
 } as const;
 
 // Feature G3: same simple "fila-pregunta tappable" pattern -- the

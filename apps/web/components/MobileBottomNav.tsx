@@ -3,6 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+/**
+ * IA consolidation ("4 puertas", DESIGN.md decisions log entry "I1"): 5
+ * tabs -- Inicio + the 4 primary doors -- down from 8. `matchPrefixes`
+ * folds a door's now-tabbed sibling routes (adjudicaciones under Gastos;
+ * novedades/fallos under Transparencia) into the SAME bottom-nav tab, same
+ * grouping SiteHeader's `NAV_ITEMS` uses, so both navs agree on what's
+ * "inside" a door.
+ */
 const TABS = [
   {
     href: "/",
@@ -19,30 +27,8 @@ const TABS = [
   {
     href: "/gastos",
     label: "Gastos",
-    icon: (
-      <path d="M4 19h16M6 19V9l6-4 6 4v10M9 19v-6h6v6" />
-    ),
-  },
-  {
-    href: "/adjudicaciones",
-    label: "Compras",
-    icon: (
-      <path d="M9 3h6l1 4H8l1-4ZM4 7h16l-1.5 13a1 1 0 0 1-1 1H6.5a1 1 0 0 1-1-1L4 7Zm5 5v5m6-5v5" />
-    ),
-  },
-  {
-    href: "/pedidos",
-    label: "Pedidos",
-    icon: (
-      <path d="M14 3v5h5M6 3h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM8 13h8M8 17h5" />
-    ),
-  },
-  {
-    href: "/fallos",
-    label: "Multas",
-    icon: (
-      <path d="m14 13-7.5 7.5a2.12 2.12 0 0 1-3-3L11 10m5 6 6-6M8 8l6-6M9 7l8 8M21 11l-8-8" />
-    ),
+    icon: <path d="M4 19h16M6 19V9l6-4 6 4v10M9 19v-6h6v6" />,
+    matchPrefixes: ["/adjudicaciones"],
   },
   {
     href: "/transparencia",
@@ -50,12 +36,13 @@ const TABS = [
     icon: (
       <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1zm-11-1 2 2 4-4" />
     ),
+    matchPrefixes: ["/novedades", "/fallos"],
   },
   {
-    href: "/novedades",
-    label: "Novedades",
+    href: "/pedidos",
+    label: "Pedidos",
     icon: (
-      <path d="M4 5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5ZM8 12h8M8 16h5M8 8h3" />
+      <path d="M14 3v5h5M6 3h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM8 13h8M8 17h5" />
     ),
   },
 ] as const;
@@ -80,12 +67,17 @@ export function MobileBottomNav() {
       aria-label="Navegación principal"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-rule bg-surface/95 pb-[env(safe-area-inset-bottom)] shadow-header backdrop-blur sm:hidden"
     >
-      <ul className="grid grid-cols-8">
+      <ul className="grid grid-cols-5">
         {TABS.map((tab) => {
+          const prefixes: readonly string[] =
+            "matchPrefixes" in tab ? tab.matchPrefixes : [];
           const isActive =
             tab.href === "/"
               ? pathname === "/"
-              : pathname?.startsWith(tab.href);
+              : [tab.href, ...prefixes].some(
+                  (prefix) =>
+                    pathname === prefix || pathname?.startsWith(`${prefix}/`),
+                );
           return (
             <li key={tab.href}>
               <Link
@@ -108,15 +100,16 @@ export function MobileBottomNav() {
                 >
                   {tab.icon}
                 </svg>
-                {/* `truncate` (feature G4, 7 tabs): at 7 columns the
-                    longest label ("Transparencia") no longer fits its
-                    ~55px column at 390px and would otherwise overflow
-                    visually into the next tab (a real bug found in visual
-                    QA). `w-full min-w-0` lets this flex child shrink below
-                    its content width so `truncate` can actually clip it;
-                    the FULL word stays as the link's accessible name
-                    (this span isn't `aria-hidden`), only the rendered
-                    glyphs are clipped with an ellipsis. */}
+                {/* `truncate` (kept from the pre-consolidation 7/8-tab bar,
+                    feature G4): "Transparencia" is still the longest label
+                    and this is cheap insurance against overflow at very
+                    narrow widths, even though 5 columns gives each tab
+                    roughly 78px at 390px instead of the old ~55px.
+                    `w-full min-w-0` lets this flex child shrink below its
+                    content width so `truncate` can actually clip it; the
+                    FULL word stays as the link's accessible name (this span
+                    isn't `aria-hidden`), only the rendered glyphs are
+                    clipped with an ellipsis. */}
                 <span className="w-full min-w-0 truncate text-center">
                   {tab.label}
                 </span>

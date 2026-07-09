@@ -73,12 +73,45 @@ describe("rebrand: ¿Dónde va la plata?", () => {
 });
 
 describe("vocabulary: 'Multas del Tribunal de Cuentas', never bare 'HTC'", () => {
-  it("SiteHeader's nav no longer uses the 'Fallos HTC' abbreviation", () => {
+  it("SiteHeader itself never uses the bare 'HTC' abbreviation anywhere in its own markup", () => {
     render(<SiteHeader />);
-    expect(
-      screen.getByRole("link", { name: "Multas del Tribunal de Cuentas" }),
-    ).toBeTruthy();
     expect(screen.queryByText(/\bHTC\b/)).toBeNull();
+  });
+});
+
+/**
+ * IA consolidation ("4 puertas"): SiteHeader's primary nav is now exactly
+ * 4 "doors" -- Coparticipación, Gastos, Transparencia, Pedidos -- down from
+ * 9 items. Adjudicaciones/Multas del Tribunal de Cuentas fold into the
+ * Gastos/Transparencia doors respectively (their own pages stay reachable
+ * as tabs, see `tests/section-tabs.test.tsx` + the route tests for those
+ * pages), and Novedades folds into Transparencia the same way. Fuentes and
+ * Acerca de move out of the primary nav entirely, into the footer (see the
+ * "SiteFooter — Fuentes/Acerca de links" describe block below).
+ */
+describe("SiteHeader — consolidated 4-door nav", () => {
+  it("renders exactly the 4 primary doors, nothing else", () => {
+    render(<SiteHeader />);
+    const nav = screen.getByRole("navigation", { name: /navegaci[oó]n principal/i });
+    const links = within(nav).getAllByRole("link");
+    expect(links.map((link) => link.textContent)).toEqual([
+      "Coparticipación",
+      "Gastos",
+      "Transparencia",
+      "Pedidos",
+    ]);
+  });
+
+  it("no longer exposes Adjudicaciones, Multas del Tribunal de Cuentas, Novedades, Fuentes or Acerca de as their own primary nav items", () => {
+    render(<SiteHeader />);
+    const nav = screen.getByRole("navigation", { name: /navegaci[oó]n principal/i });
+    expect(within(nav).queryByRole("link", { name: /^adjudicaciones$/i })).toBeNull();
+    expect(
+      within(nav).queryByRole("link", { name: /multas del tribunal/i }),
+    ).toBeNull();
+    expect(within(nav).queryByRole("link", { name: /^novedades$/i })).toBeNull();
+    expect(within(nav).queryByRole("link", { name: /^fuentes$/i })).toBeNull();
+    expect(within(nav).queryByRole("link", { name: /^acerca de$/i })).toBeNull();
   });
 });
 
@@ -87,7 +120,7 @@ describe("SiteHeader — active nav item", () => {
     render(<SiteHeader activeHref="/coparticipacion" />);
     const active = screen.getByRole("link", { name: "Coparticipación" });
     expect(active.getAttribute("aria-current")).toBe("page");
-    const inactive = screen.getByRole("link", { name: "Fuentes" });
+    const inactive = screen.getByRole("link", { name: "Pedidos" });
     expect(inactive.getAttribute("aria-current")).toBeNull();
   });
 
@@ -98,11 +131,25 @@ describe("SiteHeader — active nav item", () => {
     expect(gastos.getAttribute("aria-current")).toBe("page");
   });
 
-  it("links to /novedades (feature H2b, watchdog feed)", () => {
+  it("marks 'Gastos' active when activeHref is /adjudicaciones (adjudicaciones is now a Gastos tab, not its own door)", () => {
+    render(<SiteHeader activeHref="/adjudicaciones" />);
+    expect(
+      screen.getByRole("link", { name: "Gastos" }).getAttribute("aria-current"),
+    ).toBe("page");
+  });
+
+  it("marks 'Transparencia' active when activeHref is /novedades (novedades is now a Transparencia tab, not its own door)", () => {
     render(<SiteHeader activeHref="/novedades" />);
-    const novedades = screen.getByRole("link", { name: /novedades/i });
-    expect(novedades.getAttribute("href")).toBe("/novedades");
-    expect(novedades.getAttribute("aria-current")).toBe("page");
+    expect(
+      screen.getByRole("link", { name: "Transparencia" }).getAttribute("aria-current"),
+    ).toBe("page");
+  });
+
+  it("marks 'Transparencia' active when activeHref is /fallos (fallos is now a Transparencia tab, not its own door)", () => {
+    render(<SiteHeader activeHref="/fallos" />);
+    expect(
+      screen.getByRole("link", { name: "Transparencia" }).getAttribute("aria-current"),
+    ).toBe("page");
   });
 
   it("marks no nav item active when activeHref is null (default, e.g. home)", () => {

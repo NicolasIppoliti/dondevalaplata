@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GastoPartidaExplorer } from "@/components/gasto-partida/GastoPartidaExplorer";
-import { PresupuestoEjecucionSection } from "@/components/presupuesto-ejecucion/PresupuestoEjecucionSection";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { formatArsPlain } from "@/lib/format";
-import { buildAreaEjecucion } from "@/lib/presupuestoEjecucion";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
 export const metadata: Metadata = {
@@ -40,26 +38,21 @@ export const metadata: Metadata = {
  * `build_gasto_partida`'s honesty gate) -- the reconciliation figures are
  * surfaced here as visible proof, not just trusted silently.
  *
- * Feature H1: "¿Cumplen lo que prometieron?" -- Presupuesto vs. Ejecución
- * por área. **Decision** (the task offered a choice: a new `/presupuesto`
- * route, or a prominent section here): a section on THIS page wins,
- * because (1) it is the SAME reconciled dataset re-grouped one level up
- * (Jurisdicción/área instead of Objeto del Gasto), not a new source or a
- * new ETL artifact, so it belongs next to the detail it summarizes rather
- * than behind a second nav destination for the same underlying data; (2)
- * `MobileBottomNav` is already at 7 tabs and needed a `truncate` fix at
- * that count (see G4's decision log entry in DESIGN.md) -- adding an 8th
- * tab for a view of the SAME data G2 already exposes would revisit that
- * fragility for no real information gain. `PresupuestoEjecucionSection`
- * renders ABOVE the partida explorer (summary first, drill-down after);
- * the home page links to it directly via its own row + `#cumplen-heading`
- * anchor (see `app/page.tsx`), so it stays one tap away without a new nav
- * item.
+ * IA consolidation ("4 puertas", DESIGN.md decisions log entry "I1"): this
+ * page is now the "Por partida" TAB of the Gastos door (`SectionTabs`,
+ * wired in `app/gastos/layout.tsx` -- that shared layout also covers
+ * `/gastos/cumplen` via Next's nested-layout inheritance, and
+ * `app/adjudicaciones/layout.tsx` renders the SAME tab bar for the third
+ * tab). Feature H1 ("¿Cumplen lo que prometieron?") used to be a section
+ * ON this page; it now lives at its own route, `/gastos/cumplen`
+ * (`app/gastos/cumplen/page.tsx`) -- same reconciled data, re-grouped one
+ * level up, just promoted to a real prerendered tab instead of an in-page
+ * anchor, so it stays deep-linkable/shareable on its own URL. See that
+ * file's own docstring for the H1 feature history.
  */
 export default function GastosPage() {
   const { gastoPartida, manifest } = getPortalData();
   const { period, reconciliation, jurisdicciones } = gastoPartida;
-  const areas = buildAreaEjecucion(jurisdicciones);
 
   return (
     <div className="space-y-8">
@@ -109,8 +102,6 @@ export default function GastosPage() {
           publicarse antes que mostrar un número dudoso.
         </p>
       </section>
-
-      <PresupuestoEjecucionSection areas={areas} periodLabel={period.label} />
 
       <section aria-labelledby="explorador-heading">
         <h2 id="explorador-heading" className="font-display text-xl font-semibold text-ink">

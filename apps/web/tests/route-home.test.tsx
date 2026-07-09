@@ -274,12 +274,12 @@ describe("Home — compact deuda counter (feature G1)", () => {
 });
 
 describe("Home — presupuesto vs. ejecución por área row (feature H1)", () => {
-  it("links to /gastos#cumplen-heading with the whole row tappable", () => {
+  it("links to /gastos/cumplen with the whole row tappable (IA consolidation: own route, no longer an anchor within /gastos)", () => {
     render(<Home />);
     const link = screen.getByRole("link", {
       name: /cumplen lo que prometieron/i,
     });
-    expect(link.getAttribute("href")).toBe("/gastos#cumplen-heading");
+    expect(link.getAttribute("href")).toBe("/gastos/cumplen");
   });
 });
 

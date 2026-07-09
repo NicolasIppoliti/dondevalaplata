@@ -2,16 +2,30 @@ import Link from "next/link";
 import { StickyHeaderShell } from "@/components/StickyHeaderShell";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
+/**
+ * IA consolidation ("4 puertas", see DESIGN.md decisions log entry "I1"):
+ * the primary nav went from 9 items to 4 doors mapped to the vecino's
+ * mental model (¿cuánto entra? / ¿en qué se va? / ¿se puede confiar? /
+ * qué hago). Adjudicaciones and Multas del Tribunal de Cuentas/Novedades
+ * fold into the Gastos/Transparencia doors as TABS on their own pages
+ * (`components/SectionTabs.tsx`, `lib/nav.ts`) -- their routes are
+ * unchanged and still directly reachable, they just stop being separate
+ * top-level nav destinations. Fuentes and Acerca de move to the footer
+ * (`components/SiteFooter.tsx`). `matchPrefixes` lets a door stay
+ * highlighted while the visitor is on one of its folded-in tab routes; the
+ * values here are the literal `activeHref` strings each of those routes'
+ * own `layout.tsx` passes down (same convention as before, see the "Nav
+ * activo" comment below), never a runtime prefix scan.
+ */
 const NAV_ITEMS = [
   { href: "/coparticipacion", label: "Coparticipación" },
-  { href: "/gastos", label: "Gastos" },
-  { href: "/adjudicaciones", label: "Adjudicaciones" },
+  { href: "/gastos", label: "Gastos", matchPrefixes: ["/adjudicaciones"] },
+  {
+    href: "/transparencia",
+    label: "Transparencia",
+    matchPrefixes: ["/novedades", "/fallos"],
+  },
   { href: "/pedidos", label: "Pedidos" },
-  { href: "/fallos", label: "Multas del Tribunal de Cuentas" },
-  { href: "/transparencia", label: "Transparencia" },
-  { href: "/novedades", label: "Novedades" },
-  { href: "/fuentes", label: "Fuentes" },
-  { href: "/acerca", label: "Acerca de" },
 ] as const;
 
 /**
@@ -72,7 +86,11 @@ export function SiteHeader({
         <nav aria-label="Navegación principal" className="hidden sm:block">
           <ul className="flex flex-wrap gap-x-6 gap-y-2 text-[15px]">
             {NAV_ITEMS.map((item) => {
-              const isActive = item.href === activeHref;
+              const matchPrefixes: readonly string[] =
+                "matchPrefixes" in item ? item.matchPrefixes : [];
+              const isActive =
+                activeHref != null &&
+                (item.href === activeHref || matchPrefixes.includes(activeHref));
               return (
                 <li key={item.href}>
                   <Link
