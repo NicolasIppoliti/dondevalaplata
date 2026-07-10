@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { GastoPartidaExplorer } from "@/components/gasto-partida/GastoPartidaExplorer";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { formatArsPlain } from "@/lib/format";
+import { buildPageMetadata } from "@/lib/seo";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Gasto por partida",
   description:
     "Explorador del presupuesto municipal ejecutado, partida por partida, según el propio reporte oficial (RAFAM) de Coronel Rosales.",
-};
+  path: "/gastos",
+});
 
 /**
  * /gastos — "gasto por partida" explorer (feature G2). This is the MAXIMUM

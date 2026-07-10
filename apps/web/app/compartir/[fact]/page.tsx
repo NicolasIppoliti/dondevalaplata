@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CompartirFactView } from "@/components/compartir/CompartirFactView";
+import { buildPageMetadata } from "@/lib/seo";
 import { SHARE_FACT_IDS, getShareFact } from "@/lib/shareFacts";
 
 // This portal is 100% build-time/static (DESIGN.md INVIOLABLE #4): the
@@ -23,15 +24,11 @@ export async function generateMetadata({
   if (!fact) {
     return { title: "Compartir" };
   }
-  return {
+  return buildPageMetadata({
     title: fact.headline,
     description: fact.caption,
-    openGraph: {
-      title: fact.headline,
-      description: fact.caption,
-      type: "website",
-    },
-  };
+    path: `/compartir/${factId}`,
+  });
 }
 
 export default async function CompartirFactPage({

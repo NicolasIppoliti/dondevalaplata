@@ -1,18 +1,19 @@
-import type { Metadata } from "next";
 import { CadenceDashboard } from "@/components/CadenceDashboard";
 import { DeudaCounter } from "@/components/DeudaCounter";
 import { DeudaHistoricaChart } from "@/components/deuda-historica/DeudaHistoricaChart";
 import { ShareButton } from "@/components/ShareButton";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { TransparenciaGauge } from "@/components/TransparenciaGauge";
+import { buildPageMetadata } from "@/lib/seo";
 import { getShareFact, shareTextFor, shareUrlFor } from "@/lib/shareFacts";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Transparencia",
   description:
     "Índice de Transparencia Fiscal Municipal (ASAP) de Coronel Rosales: puntaje, qué mide, qué falta y fuente verificable.",
-};
+  path: "/transparencia",
+});
 
 /**
  * /transparencia -- "¿Qué tan transparente es el municipio?" (DESIGN.md

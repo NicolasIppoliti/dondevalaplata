@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ShareButton } from "@/components/ShareButton";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { getShareFact, shareTextFor, shareUrlFor } from "@/lib/shareFacts";
+import { SITE_HOST } from "@/lib/site";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
 /**
@@ -49,7 +50,7 @@ export function CompartirFactView({ factId }: CompartirFactViewProps) {
         </p>
         <p className="mt-4 max-w-[62ch] text-ink">{fact.caption}</p>
         <p className="mt-2 font-mono text-xs text-muted">
-          dondevalaplata.vercel.app · {fact.sourceLabel}
+          {SITE_HOST} · {fact.sourceLabel}
         </p>
       </section>
 

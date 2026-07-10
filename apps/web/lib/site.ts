@@ -1,11 +1,26 @@
 /**
  * Canonical production site URL. Used to build absolute share links (Web
- * Share API / WhatsApp intent / copy-link, feature H3b) and as
- * `metadataBase` for resolving relative Open Graph image URLs. Static
- * constant, never derived from a request header -- this is a static
- * portal, deployed at one fixed domain.
+ * Share API / WhatsApp intent / copy-link, feature H3b), canonical/OG/
+ * sitemap URLs (SEO), and as `metadataBase` for resolving relative Open
+ * Graph image URLs. Static constant, never derived from a request header
+ * -- this is a static portal, deployed at one fixed domain.
+ *
+ * Real production domain (switched 2026-07-10, see DESIGN.md decisions
+ * log): `dondevalaplata.fragua.dev`, a subdomain of Fragua's own brand
+ * (the studio that develops this portal as an independent civic project,
+ * see /acerca), wired via Vercel + Cloudflare DNS. Replaces the previous
+ * `dondevalaplata.vercel.app` preview URL everywhere an absolute URL is
+ * built (OG images, share-card text, canonical tags, sitemap).
  */
-export const SITE_URL = "https://dondevalaplata.vercel.app";
+export const SITE_URL = "https://dondevalaplata.fragua.dev";
+
+/**
+ * Bare host derived from `SITE_URL` (no protocol), for UI copy that shows
+ * the domain as text rather than a link (share cards, OG image footer).
+ * Derived, never duplicated as a second literal, so the domain only ever
+ * needs to change in one place.
+ */
+export const SITE_HOST = new URL(SITE_URL).host;
 
 /**
  * Rectification/contact channel for the titularidad registral field (Ley

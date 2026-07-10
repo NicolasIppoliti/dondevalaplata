@@ -1,12 +1,13 @@
 import Link from "next/link";
-import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
 import { getFalloEjerciciosDescending, getPortalData } from "@/lib/sources";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Fallos del Tribunal de Cuentas",
   description:
     "Índice de fallos del Tribunal de Cuentas de la Provincia de Buenos Aires sobre las cuentas municipales de Coronel Rosales, 2022-2024.",
-};
+  path: "/fallos",
+});
 
 export default function FallosIndexPage() {
   const { fallos } = getPortalData();

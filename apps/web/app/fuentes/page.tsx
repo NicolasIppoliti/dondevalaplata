@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { formatDateEsAr, formatPeriodEsAr } from "@/lib/format";
+import { buildPageMetadata } from "@/lib/seo";
 import { getPortalData, shortHash } from "@/lib/sources";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Fuentes y metodología",
   description:
     "Metodología de ajuste por inflación e índice completo de fuentes archivadas por el portal.",
-};
+  path: "/fuentes",
+});
 
 const CAPABILITY_LABELS = {
   "coparticipacion-viewer": "Coparticipación",

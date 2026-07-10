@@ -3,20 +3,45 @@ import Script from "next/script";
 import { fraunces, instrumentSans, newsreader, splineSansMono } from "./fonts";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { SITE_NAME } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
+const DEFAULT_TITLE = "¿Dónde va la plata? — Coronel Rosales";
+const DEFAULT_DESCRIPTION =
+  "Datos públicos de coparticipación y fallos del Tribunal de Cuentas de Coronel Rosales, con enlaces a fuente y archivo.";
+
 export const metadata: Metadata = {
   // Resolves relative Open Graph/Twitter image URLs (e.g. the H3b
-  // `/compartir/[fact]/opengraph-image.tsx` cards) to absolute URLs
-  // against the real production domain.
+  // `/compartir/[fact]/opengraph-image.tsx` cards, and the site-wide
+  // default `app/opengraph-image.tsx`) to absolute URLs against the real
+  // production domain.
   metadataBase: new URL(SITE_URL),
   title: {
     template: "%s — ¿Dónde va la plata? — Coronel Rosales",
-    default: "¿Dónde va la plata? — Coronel Rosales",
+    default: DEFAULT_TITLE,
   },
-  description:
-    "Datos públicos de coparticipación y fallos del Tribunal de Cuentas de Coronel Rosales, con enlaces a fuente y archivo.",
+  description: DEFAULT_DESCRIPTION,
+  // Sensible site-wide default (SEO): every route overrides this with its
+  // own `buildPageMetadata()` call (lib/seo.ts) except the home page,
+  // which has no distinct title/description of its own and relies on
+  // this default as-is.
+  alternates: {
+    canonical: SITE_URL,
+  },
+  openGraph: {
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    locale: "es_AR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+  },
 };
 
 export const viewport: Viewport = {

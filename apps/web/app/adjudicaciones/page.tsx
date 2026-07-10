@@ -1,18 +1,19 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { AdjudicacionesExplorer } from "@/components/adjudicaciones/AdjudicacionesExplorer";
 import type { ProveedorTitularidad } from "@/components/adjudicaciones/TitularidadField";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { formatDateEsAr } from "@/lib/format";
+import { buildPageMetadata } from "@/lib/seo";
 import { RECTIFICATION_EMAIL, TITULARIDAD_ENABLED } from "@/lib/site";
 import { getPortalData, resolveSourceRef, resolveSourceRefs } from "@/lib/sources";
 import { inferUnavailableReason, resolveTitularidad } from "@/lib/titularidad";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Adjudicaciones",
   description:
     "Adjudicaciones publicadas por la Municipalidad de Coronel Rosales en su Boletín Oficial (SIBOM): proveedor, monto, decreto y expediente de cada licitación, concurso o compra que pasó por un acto administrativo.",
-};
+  path: "/adjudicaciones",
+});
 
 /**
  * /adjudicaciones — SIBOM adjudicaciones monitor + reconstructed proveedores

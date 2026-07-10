@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
 import { NovedadesFeed } from "@/components/novedades/NovedadesFeed";
 import { SourcesFooter } from "@/components/SourcesFooter";
+import { buildPageMetadata } from "@/lib/seo";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Novedades",
   description:
     "Qué publicó el municipio y cuándo, y qué sigue sin actualizar — un registro neutral de comportamiento de transparencia.",
-};
+  path: "/novedades",
+});
 
 /**
  * /novedades -- "¿Qué publicó el municipio últimamente?" (feature H2b, the

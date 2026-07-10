@@ -50,7 +50,7 @@ describe("CompartirFactView", () => {
   it("states the site URL somewhere on the page (factual attribution, not a bare figure)", () => {
     render(<CompartirFactView factId="deuda" />);
     expect(
-      screen.getByText(/dondevalaplata\.vercel\.app/),
+      screen.getByText(/dondevalaplata\.fragua\.dev/),
     ).toBeTruthy();
   });
 });

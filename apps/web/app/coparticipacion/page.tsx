@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ColorLegend } from "@/components/ColorLegend";
 import { DataTable } from "@/components/chart/DataTable";
@@ -9,14 +8,16 @@ import { SourcesFooter } from "@/components/SourcesFooter";
 import { computeCoparticipacionTrend } from "@/lib/insight";
 import { formatArsHuman, formatArsPlain, formatPeriodEsAr } from "@/lib/format";
 import { computePerCapitaSeries } from "@/lib/perCapita";
+import { buildPageMetadata } from "@/lib/seo";
 import { getShareFact, shareTextFor, shareUrlFor } from "@/lib/shareFacts";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Coparticipación municipal",
   description:
     "Cuánto recibe Coronel Rosales de coparticipación cada mes, en plata de hoy, con fuente y archivo verificables.",
-};
+  path: "/coparticipacion",
+});
 
 const CORONEL_ROSALES_MUNICIPIO_ID = "06182";
 

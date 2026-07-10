@@ -1,37 +1,23 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { SHARE_FACT_IDS, getShareFact } from "@/lib/shareFacts";
 import { SITE_HOST } from "@/lib/site";
 
 /**
- * Feature H3b (share cards): a static, build-time-generated Open Graph
- * image per fact -- what makes a shared `/compartir/[fact]` link show an
- * on-brand card (not a generic page snippet) in the WhatsApp/social link
- * preview. `dynamicParams = false` + `generateStaticParams` below mean
- * this renders exactly 3 times, once per fact, at `next build` -- no
- * request-time API is used, so Next statically optimizes and caches every
- * image (see the file-convention docs: "generated images are statically
- * optimized unless they use Request-time APIs"). No backend, no tracking.
- *
- * Fonts: the project's actual brand fonts (Fraunces, Spline Sans Mono,
- * Instrument Sans -- DESIGN.md typography table) are vendored as static
- * `.woff` files under `assets/fonts/` (`next/font/google`'s own hosted
- * files aren't reachable by filesystem path, and `ImageResponse`/Satori
- * only accepts raw font bytes, not a React font-loader object) --
- * `ImageResponse` only supports `ttf`/`otf`/`woff`, not `woff2`, so each
- * file here was fetched as the legacy static-weight `woff` variant
- * Google's font CDN still serves.
+ * SEO: site-wide default Open Graph image, used by every route that does
+ * not define a more specific one (Next.js file-convention precedence --
+ * `app/compartir/[fact]/opengraph-image.tsx`, feature H3b, still wins for
+ * that route specifically). Same generation approach as the H3b share
+ * cards (`ImageResponse` + vendored `.woff` brand fonts under
+ * `assets/fonts/`, see that file's comment for why raw `.woff` bytes are
+ * required instead of `next/font/google`), simplified to a generic
+ * site-identity card with no per-fact data -- build-time only, no
+ * Request-time API, cached by Next like every other metadata file.
  */
 
 export const alt = "¿Dónde va la plata? — Coronel Rosales";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return SHARE_FACT_IDS.map((fact) => ({ fact }));
-}
 
 const PAPER = "#F2EFE4";
 const INK = "#1A1A17";
@@ -39,17 +25,7 @@ const MUTED = "#6B6558";
 const STAMP = "#C4361E";
 const RULE = "#D8D2C0";
 
-export default async function Image({
-  params,
-}: {
-  params: Promise<{ fact: string }>;
-}) {
-  const { fact: factId } = await params;
-  const fact = getShareFact(factId);
-  if (!fact) {
-    throw new Error(`compartir opengraph-image: unknown fact id "${factId}"`);
-  }
-
+export default async function Image() {
   const [fraunces, splineSansMono, instrumentSans] = await Promise.all([
     readFile(join(process.cwd(), "assets/fonts/Fraunces-Bold.woff")),
     readFile(join(process.cwd(), "assets/fonts/SplineSansMono-Bold.woff")),
@@ -118,7 +94,7 @@ export default async function Image({
               letterSpacing: 2,
             }}
           >
-            {fact.kicker}
+            Portal cívico
           </div>
         </div>
 
@@ -135,28 +111,19 @@ export default async function Image({
             style={{
               fontFamily: "Fraunces",
               fontWeight: 700,
-              fontSize: 46,
+              fontSize: 52,
               lineHeight: 1.15,
               color: INK,
               maxWidth: 1020,
             }}
           >
-            {fact.headline}
+            Seguimos la plata pública de Coronel Rosales.
           </div>
           <div
-            style={{
-              fontFamily: "Spline Sans Mono",
-              fontWeight: 700,
-              fontSize: 104,
-              lineHeight: 1,
-              color: STAMP,
-              marginTop: 22,
-            }}
+            style={{ fontSize: 26, color: INK, marginTop: 20, maxWidth: 940 }}
           >
-            {fact.value}
-          </div>
-          <div style={{ fontSize: 24, color: INK, marginTop: 20, maxWidth: 940 }}>
-            {fact.caption}
+            Coparticipación y fallos del Tribunal de Cuentas, con fuente y
+            copia archivada en cada dato.
           </div>
         </div>
 
@@ -175,10 +142,9 @@ export default async function Image({
               fontFamily: "Spline Sans Mono",
               fontSize: 16,
               color: MUTED,
-              maxWidth: 760,
             }}
           >
-            {`Fuente: ${fact.sourceLabel}`}
+            Portal ciudadano independiente, sin fines partidarios
           </div>
           <div
             style={{

@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PresupuestoEjecucionSection } from "@/components/presupuesto-ejecucion/PresupuestoEjecucionSection";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { buildAreaEjecucion } from "@/lib/presupuestoEjecucion";
+import { buildPageMetadata } from "@/lib/seo";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "¿Cumplen lo que prometieron?",
   description:
     "Presupuesto vigente contra ejecutado (devengado), área por área, según el mismo reporte oficial (RAFAM) que usa el explorador de gasto por partida de Coronel Rosales.",
-};
+  path: "/gastos/cumplen",
+});
 
 /**
  * /gastos/cumplen -- "¿Cumplen lo que prometieron?" (feature H1). IA

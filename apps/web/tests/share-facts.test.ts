@@ -85,7 +85,7 @@ describe("shareUrlFor / shareTextFor", () => {
   it("builds an absolute /compartir/[id] URL on the real production domain", () => {
     const fact = getShareFact("deuda");
     expect(shareUrlFor(fact!)).toBe(
-      "https://dondevalaplata.vercel.app/compartir/deuda",
+      "https://dondevalaplata.fragua.dev/compartir/deuda",
     );
   });
 
@@ -93,7 +93,7 @@ describe("shareUrlFor / shareTextFor", () => {
     const fact = getShareFact("transparencia");
     const text = shareTextFor(fact!);
     expect(text).toContain(fact!.headline);
-    expect(text).toContain("dondevalaplata.vercel.app");
+    expect(text).toContain("dondevalaplata.fragua.dev");
   });
 });
 

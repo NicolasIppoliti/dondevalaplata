@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { ShareButton } from "@/components/ShareButton";
 
-const URL = "https://dondevalaplata.vercel.app/compartir/deuda";
+const URL = "https://dondevalaplata.fragua.dev/compartir/deuda";
 const TITLE = "El municipio no actualiza su deuda hace 281 días";
-const TEXT = `${TITLE} — dondevalaplata.vercel.app`;
+const TEXT = `${TITLE} — dondevalaplata.fragua.dev`;
 
 describe("ShareButton (feature H3b)", () => {
   afterEach(() => {

@@ -1,5 +1,5 @@
 import { formatArsHuman, formatPeriodEsAr } from "./format";
-import { SITE_URL } from "./site";
+import { SITE_HOST, SITE_URL } from "./site";
 import { getPortalData, type PortalData } from "./sources";
 
 /**
@@ -105,5 +105,5 @@ export function shareUrlFor(fact: ShareFact): string {
 /** Plain-text share payload: the fact's headline plus the site URL, so a
  * WhatsApp message is legible even before the link preview loads. */
 export function shareTextFor(fact: ShareFact): string {
-  return `${fact.headline} — dondevalaplata.vercel.app`;
+  return `${fact.headline} — ${SITE_HOST}`;
 }

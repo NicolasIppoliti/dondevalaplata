@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PedidoGenerator } from "@/components/pedidos/PedidoGenerator";
 import { PedidosTracker } from "@/components/pedidos/PedidosTracker";
+import { buildPageMetadata } from "@/lib/seo";
 import { getPortalData } from "@/lib/sources";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Pedidos de acceso a la información",
   description:
     "Generá tu pedido de acceso a la información pública bajo la Ordenanza 3638 de Coronel Rosales, directamente en tu navegador, y hacé seguimiento del plazo de 30 días hábiles.",
-};
+  path: "/pedidos",
+});
 
 /**
  * /pedidos — pedido de acceso a la información generator + tracker
