@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { fraunces, instrumentSans, newsreader, splineSansMono } from "./fonts";
@@ -122,6 +123,12 @@ export default function RootLayout({
         {children}
         <SiteFooter />
         <MobileBottomNav />
+        {/* Vercel Web Analytics: cookieless, no PII, no consent banner
+            needed -- consistent with the portal's neutral/privacy stance
+            (DESIGN.md). Requires enabling Web Analytics for this project
+            in the Vercel dashboard (free tier) -- code-side, this is the
+            entire integration; nothing else to configure. */}
+        <Analytics />
       </body>
     </html>
   );
