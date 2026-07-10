@@ -30,6 +30,7 @@ describe("app/sitemap.ts", () => {
       "/coparticipacion",
       "/gastos",
       "/gastos/cumplen",
+      "/gastos/sueldos",
       "/adjudicaciones",
       "/transparencia",
       "/novedades",

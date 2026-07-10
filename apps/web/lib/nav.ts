@@ -23,12 +23,14 @@ export type SectionTabConfig = {
 /**
  * Gastos ("¿En qué se va?"): the gasto-por-partida explorer (G2), the
  * presupuesto-vs-ejecución comparison (H1, its own route as of this
- * consolidation), and the SIBOM adjudicaciones monitor (G3, unchanged
- * route, kept canonical).
+ * consolidation), the "¿Cuánto se va en sueldos?" personnel-spend
+ * aggregation (its own route, `lib/personal.ts`), and the SIBOM
+ * adjudicaciones monitor (G3, unchanged route, kept canonical).
  */
 export const GASTOS_TABS: SectionTabConfig[] = [
   { href: "/gastos", label: "Por partida" },
   { href: "/gastos/cumplen", label: "¿Cumplen lo que prometieron?" },
+  { href: "/gastos/sueldos", label: "¿Cuánto se va en sueldos?" },
   { href: "/adjudicaciones", label: "¿A quién le compró?" },
 ];
 

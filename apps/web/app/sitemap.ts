@@ -30,6 +30,7 @@ const STATIC_ROUTES = [
   "/coparticipacion",
   "/gastos",
   "/gastos/cumplen",
+  "/gastos/sueldos",
   "/adjudicaciones",
   "/transparencia",
   "/novedades",
