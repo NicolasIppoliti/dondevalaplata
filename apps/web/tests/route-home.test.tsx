@@ -4,6 +4,7 @@ import Home from "@/app/page";
 import { FALLO_FIELD_LABELS } from "@/components/fallos/FalloCard";
 import { formatArsHuman, splitArsUnit } from "@/lib/format";
 import { computeCoparticipacionTrend } from "@/lib/insight";
+import { personalTotals } from "@/lib/personal";
 import {
   getFalloEjerciciosDescending,
   getPortalData,
@@ -290,6 +291,23 @@ describe("Home — gasto por partida row (feature G2)", () => {
       name: /en qu[eé] gast[oó] el municipio/i,
     });
     expect(link.getAttribute("href")).toBe("/gastos");
+  });
+});
+
+describe("Home — sueldos row (¿Cuánto se va en sueldos?)", () => {
+  it("links to /gastos/sueldos with the whole row tappable, real total + % in the description", () => {
+    const { gastoPartida } = getPortalData();
+    const totals = personalTotals(gastoPartida.jurisdicciones);
+    const pct = Math.round(
+      (totals.devengadoArs / gastoPartida.reconciliation.totalDevengadoArs) * 100,
+    );
+    render(<Home />);
+    const link = screen.getByRole("link", {
+      name: /cu[aá]nto se va en sueldos/i,
+    });
+    expect(link.getAttribute("href")).toBe("/gastos/sueldos");
+    expect(link.textContent).toContain(formatArsHuman(totals.devengadoArs));
+    expect(link.textContent).toContain(`${pct}%`);
   });
 });
 
