@@ -31,6 +31,17 @@ import { formatArsHuman, formatArsPlain } from "@/lib/format";
  * municipality does not do it (same non-compliance already documented for
  * the proveedores padrón, see `AdjudicacionesExplorer`'s own caveat) --
  * stated plainly, factually, never naming anyone.
+ *
+ * SECOND, smaller honest note (near the per-área breakdown): the owner
+ * asked for a "costo por persona" (spend ÷ headcount) metric. VERIFIED
+ * not feasible honestly -- the municipality does not publish a
+ * consolidated dotación de personal (headcount per área), only scattered
+ * individual designation decrees in SIBOM -- so this component does NOT
+ * fabricate that ratio. It states the gap plainly and links to a
+ * DIFFERENT /pedidos preset ("Pedí la dotación de personal", distinct
+ * accessible name from the "Pedí el detalle" link above it, both routing
+ * to /pedidos) plus a brief, neutral note that even spend/headcount would
+ * not be a salary (it bundles aportes patronales, aguinaldo, contratados).
  */
 export function PersonalSection({
   totals,
@@ -106,6 +117,23 @@ export function PersonalSection({
           Ordenanza 3638 (Art. 11) obliga a publicar los gastos de
           contratación de personal, y el municipio no lo hace.{" "}
           <Link href="/pedidos">Pedí el detalle</Link>.
+        </p>
+      </div>
+
+      <div className="rounded-md border border-rule bg-surface p-4">
+        <p className="max-w-[64ch] text-sm text-ink-2">
+          ¿Cuánta gente trabaja en cada área? El municipio no publica la
+          dotación de personal (cuántos agentes hay por secretaría), así
+          que no se puede calcular un costo por persona confiable con
+          datos públicos. La Ordenanza 3638 (Art. 11) obliga a publicar
+          los gastos de contratación de personal —{" "}
+          <Link href="/pedidos">Pedí la dotación de personal</Link>.
+        </p>
+        <p className="mt-2 max-w-[64ch] text-sm text-ink-2">
+          Incluso con la dotación, gasto ÷ cantidad de agentes tampoco
+          sería un sueldo: ese cociente también incluye aportes
+          patronales, aguinaldo y personal contratado, no solo los
+          salarios de planta.
         </p>
       </div>
 

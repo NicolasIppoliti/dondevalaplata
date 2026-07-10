@@ -141,6 +141,52 @@ describe("PersonalSection", () => {
     expect(link.getAttribute("href")).toBe("/pedidos");
   });
 
+  it('discloses that per-área headcount (dotación de personal) is NOT public, so a "costo por persona" cannot be honestly calculated, and hooks to a distinct /pedidos link', () => {
+    render(
+      <PersonalSection
+        totals={TOTALS}
+        areas={AREAS}
+        shareOfTotal={SHARE_OF_TOTAL}
+        periodLabel={PERIOD_LABEL}
+      />,
+    );
+    const text = document.body.textContent ?? "";
+    expect(text).toMatch(/dotaci[oó]n de personal/i);
+    expect(text).toMatch(/no publica/i);
+    expect(text).toMatch(/costo por persona/i);
+    expect(text).toMatch(/Ordenanza 3638/);
+    const link = screen.getByRole("link", { name: /pedí la dotaci[oó]n/i });
+    expect(link.getAttribute("href")).toBe("/pedidos");
+  });
+
+  it("explains that even spend-per-employee would not be a salary (includes aportes patronales, aguinaldo, contratados), briefly and neutrally", () => {
+    render(
+      <PersonalSection
+        totals={TOTALS}
+        areas={AREAS}
+        shareOfTotal={SHARE_OF_TOTAL}
+        periodLabel={PERIOD_LABEL}
+      />,
+    );
+    const text = document.body.textContent ?? "";
+    expect(text).toMatch(/aportes patronales/i);
+    expect(text).toMatch(/aguinaldo/i);
+    expect(text).toMatch(/contratad/i);
+  });
+
+  it("never fabricates a headcount number anywhere in the dotación note (no digit adjacent to agentes/empleados/cargos)", () => {
+    render(
+      <PersonalSection
+        totals={TOTALS}
+        areas={AREAS}
+        shareOfTotal={SHARE_OF_TOTAL}
+        periodLabel={PERIOD_LABEL}
+      />,
+    );
+    const text = document.body.textContent ?? "";
+    expect(text).not.toMatch(/\d+\s*(agentes|empleados|cargos|trabajadores)/i);
+  });
+
   it("never names any official or uses adjectival/judgmental language in the FOIA caveat", () => {
     render(
       <PersonalSection
