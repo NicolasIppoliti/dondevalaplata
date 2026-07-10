@@ -24,12 +24,13 @@ const BASE_INPUT: PedidoFormInput = {
 };
 
 describe("PEDIDO_PRESETS", () => {
-  it("exposes exactly the 5 presets the generator form offers", () => {
+  it("exposes exactly the 6 presets the generator form offers", () => {
     expect(PEDIDO_PRESETS.map((p) => p.id)).toEqual([
       "detalle-gastos",
       "ordenes-compra",
       "padron-proveedores",
       "escala-salarial",
+      "dotacion-personal",
       "personalizado",
     ]);
   });
@@ -74,6 +75,17 @@ describe("generatePedidoText", () => {
       "2026-07-08",
     );
     expect(text).toContain("Art. 11 inciso c)");
+  });
+
+  it("cites Art. 11 inciso c) for the dotación de personal preset, requesting cantidad of agentes/cargos por área (not salarios)", () => {
+    const text = generatePedidoText(
+      { ...BASE_INPUT, objetoPreset: "dotacion-personal" },
+      "2026-07-08",
+    );
+    expect(text).toContain("Art. 11 inciso c)");
+    expect(text.toLowerCase()).toContain("dotación de personal");
+    expect(text.toLowerCase()).toMatch(/planta permanente/);
+    expect(text.toLowerCase()).toMatch(/planta temporaria|contratad/);
   });
 
   it("never cites a specific Art. 11 inciso for the personalizado preset, and uses the custom text", () => {

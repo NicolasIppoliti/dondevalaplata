@@ -24,6 +24,7 @@ export type PedidoObjetoPresetId =
   | "ordenes-compra"
   | "padron-proveedores"
   | "escala-salarial"
+  | "dotacion-personal"
   | "personalizado";
 
 export interface PedidoObjetoPreset {
@@ -58,6 +59,13 @@ export const PEDIDO_PRESETS: readonly PedidoObjetoPreset[] = [
   {
     id: "escala-salarial",
     label: "Escala salarial y gastos de personal",
+    ordenanzaInciso: "Art. 11 inciso c)",
+    needsPeriodo: false,
+  },
+  {
+    id: "dotacion-personal",
+    label:
+      "Dotación de personal por área (cantidad de agentes/cargos por secretaría, planta permanente y temporaria)",
     ordenanzaInciso: "Art. 11 inciso c)",
     needsPeriodo: false,
   },
@@ -126,6 +134,8 @@ function buildObjetoText(
       return "el padrón completo de proveedores del municipio";
     case "escala-salarial":
       return "el detalle de la escala salarial vigente y los gastos de contratación de personal del municipio";
+    case "dotacion-personal":
+      return "el detalle de la dotación de personal vigente del municipio, discriminada por área/secretaría, cargo y tipo de vinculación (planta permanente y planta temporaria/contratada)";
     case "personalizado": {
       const custom = objetoPersonalizado?.trim();
       return custom || "[COMPLETAR EL OBJETO DE TU PEDIDO]";
