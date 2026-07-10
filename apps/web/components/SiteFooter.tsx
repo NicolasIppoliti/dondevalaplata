@@ -21,9 +21,10 @@ export function SiteFooter() {
           <Link href="/acerca">Acerca de</Link>
         </nav>
         <p className="max-w-[62ch]">
-          ¿Dónde va la plata? — Coronel Rosales. Portal ciudadano
-          independiente, sin fines partidarios. Cada dato publicado enlaza a
-          su fuente oficial y a una copia archivada. Ver{" "}
+          ¿Dónde va la plata? — Coronel Rosales. Desarrollado por Fragua, un
+          estudio de software, como un proyecto cívico independiente y sin
+          fines partidarios. Cada dato publicado enlaza a su fuente oficial
+          y a una copia archivada. Ver{" "}
           <Link href="/acerca">declaración de neutralidad</Link>.
         </p>
       </div>

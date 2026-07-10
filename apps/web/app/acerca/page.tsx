@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: "Acerca de",
   description:
-    "Qué es este portal, su declaración de neutralidad y la nota sobre protección de datos personales (Ley 25.326).",
-};
+    "Qué es este portal, quién lo desarrolla, su declaración de neutralidad y la nota sobre protección de datos personales (Ley 25.326).",
+  path: "/acerca",
+});
 
 export default function AcercaPage() {
   return (
@@ -20,6 +21,28 @@ export default function AcercaPage() {
           Tribunal de Cuentas — a partir de fuentes oficiales, con el
           objetivo de que cualquier vecino o vecina pueda verificarlos por sí
           mismo/a.
+        </p>
+      </section>
+
+      <section
+        aria-labelledby="quien-lo-hizo-heading"
+        className="rounded-lg border border-rule bg-surface p-6 shadow-card"
+      >
+        <h2
+          id="quien-lo-hizo-heading"
+          className="font-display text-xl font-semibold text-ink"
+        >
+          ¿Quién lo hizo?
+        </h2>
+        <p className="mt-2 max-w-[62ch] text-ink">
+          Este portal fue desarrollado por <strong>Fragua</strong>, un
+          estudio de software, como un proyecto cívico independiente y sin
+          fines partidarios. Fragua no forma parte del municipio ni de
+          ningún partido político: eligió construir esta herramienta porque
+          los datos de coparticipación y de fallos del Tribunal de Cuentas
+          ya son públicos, pero estaban dispersos en formatos difíciles de
+          consultar. La metodología completa está documentada en{" "}
+          <Link href="/fuentes">fuentes y metodología</Link>.
         </p>
       </section>
 

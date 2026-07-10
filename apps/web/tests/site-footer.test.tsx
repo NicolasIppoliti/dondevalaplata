@@ -18,4 +18,9 @@ describe("SiteFooter — Fuentes/Acerca de links", () => {
     const acerca = within(nav).getByRole("link", { name: "Acerca de" });
     expect(acerca.getAttribute("href")).toBe("/acerca");
   });
+
+  it("attributes the portal to Fragua in the footer copy", () => {
+    render(<SiteFooter />);
+    expect(screen.getByText(/fragua/i)).toBeTruthy();
+  });
 });
