@@ -205,4 +205,14 @@ describe("/coparticipacion — share card button (feature H3b)", () => {
       screen.getByRole("button", { name: /compartir/i }),
     ).toBeTruthy();
   });
+
+  it("also offers WhatsApp/historia image-share links for the coparticipación fact (feature H4)", () => {
+    render(<Page />);
+    expect(
+      screen.getByRole("link", { name: /imagen para whatsapp/i }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("link", { name: /imagen para historia de instagram/i }),
+    ).toBeTruthy();
+  });
 });

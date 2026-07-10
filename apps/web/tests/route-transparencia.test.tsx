@@ -196,4 +196,16 @@ describe("/transparencia page", () => {
     const shareButtons = screen.getAllByRole("button", { name: /compartir/i });
     expect(shareButtons.length).toBeGreaterThanOrEqual(2);
   });
+
+  it("offers WhatsApp/historia image-share links for both the deuda and transparencia facts (feature H4)", () => {
+    render(<Page />);
+    expect(
+      screen.getAllByRole("link", { name: /imagen para whatsapp/i }).length,
+    ).toBe(2);
+    expect(
+      screen.getAllByRole("link", {
+        name: /imagen para historia de instagram/i,
+      }).length,
+    ).toBe(2);
+  });
 });

@@ -9,6 +9,7 @@ import { computeCoparticipacionTrend } from "@/lib/insight";
 import { formatArsHuman, formatArsPlain, formatPeriodEsAr } from "@/lib/format";
 import { computePerCapitaSeries } from "@/lib/perCapita";
 import { buildPageMetadata } from "@/lib/seo";
+import { buildShareImageOptions } from "@/lib/shareImage";
 import { getShareFact, shareTextFor, shareUrlFor } from "@/lib/shareFacts";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
@@ -143,6 +144,7 @@ export default function CoparticipacionPage() {
                 url={shareUrlFor(coparticipacionFact)}
                 title={coparticipacionFact.headline}
                 text={shareTextFor(coparticipacionFact)}
+                images={buildShareImageOptions(coparticipacionFact.id)}
               />
             </div>
           ) : null}

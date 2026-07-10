@@ -53,4 +53,23 @@ describe("CompartirFactView", () => {
       screen.getByText(/dondevalaplata\.fragua\.dev/),
     ).toBeTruthy();
   });
+
+  it("offers WhatsApp/historia image-share links pointing at the real static PNG routes (feature H4)", () => {
+    for (const factId of ["deuda", "transparencia", "coparticipacion"]) {
+      const { unmount } = render(<CompartirFactView factId={factId} />);
+      const whatsappLink = screen.getByRole("link", {
+        name: /imagen para whatsapp/i,
+      });
+      expect(whatsappLink.getAttribute("href")).toBe(
+        `https://dondevalaplata.fragua.dev/compartir/${factId}/whatsapp`,
+      );
+      const historiaLink = screen.getByRole("link", {
+        name: /imagen para historia de instagram/i,
+      });
+      expect(historiaLink.getAttribute("href")).toBe(
+        `https://dondevalaplata.fragua.dev/compartir/${factId}/historia`,
+      );
+      unmount();
+    }
+  });
 });

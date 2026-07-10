@@ -5,6 +5,7 @@ import { ShareButton } from "@/components/ShareButton";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { TransparenciaGauge } from "@/components/TransparenciaGauge";
 import { buildPageMetadata } from "@/lib/seo";
+import { buildShareImageOptions } from "@/lib/shareImage";
 import { getShareFact, shareTextFor, shareUrlFor } from "@/lib/shareFacts";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
 
@@ -108,6 +109,7 @@ export default function TransparenciaPage() {
               url={shareUrlFor(transparenciaFact)}
               title={transparenciaFact.headline}
               text={shareTextFor(transparenciaFact)}
+              images={buildShareImageOptions(transparenciaFact.id)}
             />
           </div>
         ) : null}
@@ -137,6 +139,7 @@ export default function TransparenciaPage() {
           url={shareUrlFor(deudaFact)}
           title={deudaFact.headline}
           text={shareTextFor(deudaFact)}
+          images={buildShareImageOptions(deudaFact.id)}
         />
       ) : null}
 

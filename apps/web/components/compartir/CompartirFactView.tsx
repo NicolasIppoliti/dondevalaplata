@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ShareButton } from "@/components/ShareButton";
 import { SourcesFooter } from "@/components/SourcesFooter";
+import { buildShareImageOptions } from "@/lib/shareImage";
 import { getShareFact, shareTextFor, shareUrlFor } from "@/lib/shareFacts";
 import { SITE_HOST } from "@/lib/site";
 import { getPortalData, resolveSourceRefs } from "@/lib/sources";
@@ -35,6 +36,7 @@ export function CompartirFactView({ factId }: CompartirFactViewProps) {
   const sourceLinks = resolveSourceRefs(fact.sourceRefs, manifest);
   const shareUrl = shareUrlFor(fact);
   const shareText = shareTextFor(fact);
+  const shareImages = buildShareImageOptions(fact.id);
 
   return (
     <div className="space-y-8">
@@ -55,7 +57,12 @@ export function CompartirFactView({ factId }: CompartirFactViewProps) {
       </section>
 
       <section className="flex flex-wrap items-center gap-3">
-        <ShareButton url={shareUrl} title={fact.headline} text={shareText} />
+        <ShareButton
+          url={shareUrl}
+          title={fact.headline}
+          text={shareText}
+          images={shareImages}
+        />
         <Link
           href={fact.pageHref}
           className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border-2 border-ink px-4 font-sans text-sm font-semibold text-ink no-underline transition-colors hover:bg-ink hover:text-surface"
