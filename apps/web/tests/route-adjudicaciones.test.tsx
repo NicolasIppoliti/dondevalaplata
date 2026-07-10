@@ -72,50 +72,31 @@ describe("/adjudicaciones page", () => {
     expect(screen.getAllByText(first.proveedor).length).toBeGreaterThan(0);
   });
 
-  it("expanding RUMAX in the padrón reveals its real curated socios with the date-cut label and dual-link provenance", () => {
-    render(<Page />);
+  it("never renders titularidad registral markup, its toggle button, or any socio name -- TITULARIDAD_ENABLED is false (feature parked 2026-07-10, see DESIGN.md)", () => {
+    const { container } = render(<Page />);
     fireEvent.click(screen.getByRole("tab", { name: /padrón de proveedores/i }));
 
-    fireEvent.click(
-      screen.getByRole("button", {
+    const text = container.textContent ?? "";
+    // Real socio names from the curated RUMAX edicto (verified groundtruth,
+    // see DESIGN.md's titularidad decision entry) must NEVER render while
+    // the feature is parked, regardless of which proveedor row exists.
+    expect(text).not.toContain("Juan Esteban Iglesias");
+    expect(text).not.toContain("Maximiliano Marcelo Márquez");
+    expect(text).not.toMatch(/titularidad registral/i);
+    expect(
+      screen.queryByRole("button", {
         name: /ver titularidad de equipos de servicios portuarios rumax s\.r\.l/i,
       }),
-    );
-
-    expect(screen.getByText("Juan Esteban Iglesias")).toBeTruthy();
-    expect(screen.getAllByText(/socio gerente/i).length).toBeGreaterThan(0);
-    expect(screen.getByText("Maximiliano Marcelo Márquez")).toBeTruthy();
-    expect(
-      screen.getAllByText(/seg[uú]n el edicto de constituci[oó]n del 18 de julio de 2023/i)
-        .length,
-    ).toBeGreaterThan(0);
-    const links = screen.getAllByRole("link", { name: /fuente original/i });
-    expect(links.length).toBeGreaterThan(0);
+    ).toBeNull();
+    expect(screen.queryByRole("button", { name: /ver titularidad de/i })).toBeNull();
   });
 
-  it("expanding a vendor with no curated edicto shows 'no disponible públicamente' and never a DNI/domicilio (triangulation: opposite code path)", () => {
-    render(<Page />);
-    fireEvent.click(screen.getByRole("tab", { name: /padrón de proveedores/i }));
-
-    fireEvent.click(screen.getByRole("button", { name: /ver titularidad de rimsol s\.a/i }));
-
-    expect(screen.getAllByText(/no disponible p[uú]blicamente/i).length).toBeGreaterThan(0);
-    const text = document.body.textContent ?? "";
-    // The real socio's DNI (verified in engram groundtruth research) must
-    // NEVER render anywhere on this page, regardless of which vendor row
-    // is expanded.
-    expect(text).not.toMatch(/26\.333\.949/);
-    expect(text).not.toMatch(/Castelli 603/);
-  });
-
-  it("discloses the titularidad methodology (partial coverage, minimization, legal basis) and a visible rectification channel", () => {
+  it("never renders the titularidad methodology/rectification section while the flag is off", () => {
     const { container } = render(<Page />);
     const text = container.textContent ?? "";
 
-    expect(text).toMatch(/edicto de constituci[oó]n oficial/i);
-    expect(text).toMatch(/25\.326/);
-    expect(text).toMatch(/rectificar/i);
-    expect(screen.getByRole("link", { name: /escribinos/i })).toBeTruthy();
+    expect(text).not.toMatch(/metodolog[ií]a y l[ií]mites/i);
+    expect(screen.queryByRole("link", { name: /escribinos/i })).toBeNull();
   });
 });
 

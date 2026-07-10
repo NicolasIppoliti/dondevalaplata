@@ -52,7 +52,13 @@ export function AdjudicacionesExplorer({
 }: {
   records: AdjudicacionWithSource[];
   proveedores: ProveedorRecord[];
-  titularidadByProveedor: Record<string, ProveedorTitularidad>;
+  /**
+   * Optional on purpose: the caller (`app/adjudicaciones/page.tsx`) omits
+   * it entirely while `TITULARIDAD_ENABLED` (`lib/site.ts`) is off, so no
+   * titularidad markup, toggle, or socio name ever reaches this component
+   * -- see the page's comment on why an empty object would not be safe.
+   */
+  titularidadByProveedor?: Record<string, ProveedorTitularidad>;
 }) {
   const [tab, setTab] = useState<"adjudicaciones" | "proveedores">(
     "adjudicaciones",
@@ -472,7 +478,7 @@ function ProveedoresPadron({
   onSort: (key: ProveedorSortKey) => void;
   query: string;
   onSelectProveedor: (proveedor: string) => void;
-  titularidadByProveedor: Record<string, ProveedorTitularidad>;
+  titularidadByProveedor?: Record<string, ProveedorTitularidad>;
 }) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
@@ -547,16 +553,18 @@ function ProveedoresPadron({
                     onClick={() => onSort("count")}
                   />
                 </th>
-                <th scope="col" className="py-2 pl-2">
-                  <span className="sr-only">Titularidad</span>
-                </th>
+                {titularidadByProveedor ? (
+                  <th scope="col" className="py-2 pl-2">
+                    <span className="sr-only">Titularidad</span>
+                  </th>
+                ) : null}
               </tr>
             </thead>
             <tbody>
               {proveedores.map((proveedor) => {
                 const isOpen = expanded.has(proveedor.proveedor);
                 const detailId = `titularidad-${proveedor.proveedor}`;
-                const titularidad = titularidadByProveedor[proveedor.proveedor] ?? {
+                const titularidad = titularidadByProveedor?.[proveedor.proveedor] ?? {
                   status: "no-disponible" as const,
                   noDisponibleReason:
                     "todavía no verificamos un edicto oficial que confirme su titularidad societaria.",
@@ -586,22 +594,24 @@ function ProveedoresPadron({
                       <td className="py-2.5 text-right font-mono tabular-nums text-ink">
                         {proveedor.count}
                       </td>
-                      <td className="py-2.5 pl-2 text-right">
-                        <button
-                          type="button"
-                          aria-expanded={isOpen}
-                          aria-controls={detailId}
-                          onClick={() => toggleExpanded(proveedor.proveedor)}
-                          className="min-h-11 min-w-11 no-underline"
-                        >
-                          <span aria-hidden="true">{isOpen ? "▲" : "▼"}</span>
-                          <span className="sr-only">
-                            Ver titularidad de {proveedor.proveedor}
-                          </span>
-                        </button>
-                      </td>
+                      {titularidadByProveedor ? (
+                        <td className="py-2.5 pl-2 text-right">
+                          <button
+                            type="button"
+                            aria-expanded={isOpen}
+                            aria-controls={detailId}
+                            onClick={() => toggleExpanded(proveedor.proveedor)}
+                            className="min-h-11 min-w-11 no-underline"
+                          >
+                            <span aria-hidden="true">{isOpen ? "▲" : "▼"}</span>
+                            <span className="sr-only">
+                              Ver titularidad de {proveedor.proveedor}
+                            </span>
+                          </button>
+                        </td>
+                      ) : null}
                     </tr>
-                    {isOpen ? (
+                    {titularidadByProveedor && isOpen ? (
                       <tr>
                         <td
                           colSpan={4}

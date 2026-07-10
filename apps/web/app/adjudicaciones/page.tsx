@@ -4,7 +4,7 @@ import { AdjudicacionesExplorer } from "@/components/adjudicaciones/Adjudicacion
 import type { ProveedorTitularidad } from "@/components/adjudicaciones/TitularidadField";
 import { SourcesFooter } from "@/components/SourcesFooter";
 import { formatDateEsAr } from "@/lib/format";
-import { RECTIFICATION_EMAIL } from "@/lib/site";
+import { RECTIFICATION_EMAIL, TITULARIDAD_ENABLED } from "@/lib/site";
 import { getPortalData, resolveSourceRef, resolveSourceRefs } from "@/lib/sources";
 import { inferUnavailableReason, resolveTitularidad } from "@/lib/titularidad";
 
@@ -55,29 +55,40 @@ export default function AdjudicacionesPage() {
   // provenance resolved here) or the honest, generic "no disponible"
   // reason -- "no disponible" is the expected DEFAULT (requirement 7 of
   // the titularidad guardrails), never an error state.
-  const titularidadByProveedor: Record<string, ProveedorTitularidad> =
-    Object.fromEntries(
-      proveedores.proveedores.map((proveedor) => {
-        const record = resolveTitularidad(proveedor.proveedor, titularidad);
-        if (record) {
-          return [
-            proveedor.proveedor,
-            {
-              status: "disponible" as const,
-              record,
-              sourceLink: resolveSourceRef(record.sourceRef, manifest),
-            },
-          ];
-        }
-        return [
-          proveedor.proveedor,
-          {
-            status: "no-disponible" as const,
-            noDisponibleReason: inferUnavailableReason(proveedor.proveedor),
-          },
-        ];
-      }),
-    );
+  //
+  // PARKED (2026-07-10, see `lib/site.ts`'s TITULARIDAD_ENABLED and
+  // DESIGN.md's titularidad decision entry): while the flag is off this is
+  // left `undefined` on purpose, not an empty object -- Next.js serializes
+  // every prop passed to a client component into the page's HTML/RSC
+  // payload for hydration, so computing real socio data here and merely
+  // hiding it in the client would still ship every socio name in the
+  // built output. Not computing it at all is the only guarantee that no
+  // name ships while the feature is parked.
+  const titularidadByProveedor: Record<string, ProveedorTitularidad> | undefined =
+    TITULARIDAD_ENABLED
+      ? Object.fromEntries(
+          proveedores.proveedores.map((proveedor) => {
+            const record = resolveTitularidad(proveedor.proveedor, titularidad);
+            if (record) {
+              return [
+                proveedor.proveedor,
+                {
+                  status: "disponible" as const,
+                  record,
+                  sourceLink: resolveSourceRef(record.sourceRef, manifest),
+                },
+              ];
+            }
+            return [
+              proveedor.proveedor,
+              {
+                status: "no-disponible" as const,
+                noDisponibleReason: inferUnavailableReason(proveedor.proveedor),
+              },
+            ];
+          }),
+        )
+      : undefined;
 
   return (
     <div className="space-y-8">
@@ -141,56 +152,58 @@ export default function AdjudicacionesPage() {
         />
       </section>
 
-      <section
-        aria-labelledby="titularidad-metodologia-heading"
-        className="rounded-lg border border-rule bg-surface p-6 shadow-card"
-      >
-        <h2
-          id="titularidad-metodologia-heading"
-          className="font-display text-xl font-semibold text-ink"
+      {TITULARIDAD_ENABLED ? (
+        <section
+          aria-labelledby="titularidad-metodologia-heading"
+          className="rounded-lg border border-rule bg-surface p-6 shadow-card"
         >
-          Titularidad registral: metodología y límites
-        </h2>
-        <div className="mt-3 max-w-[68ch] space-y-3 text-sm text-ink-2">
-          <p>
-            Para cada proveedor, la fila «Titularidad registral» del padrón
-            muestra quiénes eran sus socios (S.R.L.) o su director al momento
-            de constituirse la empresa, según el edicto de constitución
-            oficial publicado en el Boletín Oficial correspondiente — leído
-            directamente por nosotros, nunca a través de un agregador de
-            datos de terceros. La cobertura es parcial y lo decimos de forma
-            explícita: solo publicamos un nombre cuando pudimos verificar el
-            edicto original en detalle; para el resto de los proveedores, la
-            fila muestra «Titularidad no disponible públicamente».
-          </p>
-          <p>
-            Cada socio se muestra únicamente con nombre y rol (socio, socio
-            gerente o director) — nunca DNI, domicilio particular, fecha de
-            nacimiento ni estado civil, aunque el edicto original los incluya
-            (Ley 25.326, art. 4, principio de finalidad). La fecha citada es
-            siempre la del edicto de constitución, nunca la titularidad
-            actual: la composición societaria puede haber cambiado desde
-            entonces por cesión de cuotas.
-          </p>
-          <p>
-            Base legal: el edicto de constitución es una fuente de acceso
-            público (Ley 25.326, arts. 5.2 y 11.3) y su publicación es una
-            exigencia de la Ley 19.550 (art. 10). Este dato es un hecho
-            registral en una fecha puntual, publicado junto al proveedor de
-            la misma forma que cualquier otro dato de esta página — sin
-            agregar interpretación ni vincularlo a ninguna persona fuera del
-            edicto citado.
-          </p>
-          <p>
-            ¿Sos socio de una empresa proveedora y querés rectificar o
-            actualizar este dato?{" "}
-            <a href={`mailto:${RECTIFICATION_EMAIL}`}>Escribinos</a> (derecho
-            de rectificación, Ley 25.326 art. 16 — la AAIP, Agencia de
-            Acceso a la Información Pública, es la autoridad de aplicación
-            que garantiza este derecho).
-          </p>
-        </div>
-      </section>
+          <h2
+            id="titularidad-metodologia-heading"
+            className="font-display text-xl font-semibold text-ink"
+          >
+            Titularidad registral: metodología y límites
+          </h2>
+          <div className="mt-3 max-w-[68ch] space-y-3 text-sm text-ink-2">
+            <p>
+              Para cada proveedor, la fila «Titularidad registral» del padrón
+              muestra quiénes eran sus socios (S.R.L.) o su director al momento
+              de constituirse la empresa, según el edicto de constitución
+              oficial publicado en el Boletín Oficial correspondiente — leído
+              directamente por nosotros, nunca a través de un agregador de
+              datos de terceros. La cobertura es parcial y lo decimos de forma
+              explícita: solo publicamos un nombre cuando pudimos verificar el
+              edicto original en detalle; para el resto de los proveedores, la
+              fila muestra «Titularidad no disponible públicamente».
+            </p>
+            <p>
+              Cada socio se muestra únicamente con nombre y rol (socio, socio
+              gerente o director) — nunca DNI, domicilio particular, fecha de
+              nacimiento ni estado civil, aunque el edicto original los incluya
+              (Ley 25.326, art. 4, principio de finalidad). La fecha citada es
+              siempre la del edicto de constitución, nunca la titularidad
+              actual: la composición societaria puede haber cambiado desde
+              entonces por cesión de cuotas.
+            </p>
+            <p>
+              Base legal: el edicto de constitución es una fuente de acceso
+              público (Ley 25.326, arts. 5.2 y 11.3) y su publicación es una
+              exigencia de la Ley 19.550 (art. 10). Este dato es un hecho
+              registral en una fecha puntual, publicado junto al proveedor de
+              la misma forma que cualquier otro dato de esta página — sin
+              agregar interpretación ni vincularlo a ninguna persona fuera del
+              edicto citado.
+            </p>
+            <p>
+              ¿Sos socio de una empresa proveedora y querés rectificar o
+              actualizar este dato?{" "}
+              <a href={`mailto:${RECTIFICATION_EMAIL}`}>Escribinos</a> (derecho
+              de rectificación, Ley 25.326 art. 16 — la AAIP, Agencia de
+              Acceso a la Información Pública, es la autoridad de aplicación
+              que garantiza este derecho).
+            </p>
+          </div>
+        </section>
+      ) : null}
 
       <SourcesFooter
         links={resolveSourceRefs(adjudicaciones.sourceRefs, manifest)}
