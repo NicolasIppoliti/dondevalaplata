@@ -127,6 +127,9 @@ export function PedidoGenerator() {
               </option>
             ))}
           </select>
+          {selectedPreset.helperNote ? (
+            <p className="mt-1.5 text-xs text-muted">{selectedPreset.helperNote}</p>
+          ) : null}
         </div>
 
         {selectedPreset.needsPeriodo ? (

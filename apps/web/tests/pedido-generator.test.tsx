@@ -58,6 +58,38 @@ describe("PedidoGenerator", () => {
     expect(screen.getByLabelText(/redactá qué información pedís/i)).toBeTruthy();
   });
 
+  it("offers the 3 new Ordenanza 3638 presets (Fondo Educativo, Tasa de Seguridad e Higiene, obra del SUM para CINDI) in the objeto select", () => {
+    render(<PedidoGenerator />);
+    const options = screen.getAllByRole("option") as HTMLOptionElement[];
+    const labels = options.map((option) => option.textContent);
+    expect(labels.some((label) => /fondo de financiamiento educativo/i.test(label ?? ""))).toBe(
+      true,
+    );
+    expect(
+      labels.some((label) => /tasa de seguridad e higiene/i.test(label ?? "")),
+    ).toBe(true);
+    expect(labels.some((label) => /obra del sum para cindi/i.test(label ?? ""))).toBe(
+      true,
+    );
+  });
+
+  it("shows the aggregate-data helper note when the Tasa de Seguridad e Higiene preset is selected, and hides it for other presets", () => {
+    render(<PedidoGenerator />);
+    expect(screen.queryByText(/no afecta el secreto fiscal/i)).toBeNull();
+    fireEvent.change(screen.getByLabelText(/qué querés pedir/i), {
+      target: { value: "tasa-seguridad-higiene" },
+    });
+    expect(screen.getByText(/no afecta el secreto fiscal/i)).toBeTruthy();
+  });
+
+  it("shows the provincial-financing clarification note when the obra del SUM para CINDI preset is selected", () => {
+    render(<PedidoGenerator />);
+    fireEvent.change(screen.getByLabelText(/qué querés pedir/i), {
+      target: { value: "obra-sum-cindi" },
+    });
+    expect(screen.getByText(/no es una denuncia/i)).toBeTruthy();
+  });
+
   it("renders a live preview that reflects typed form data, citing Ordenanza 3638", async () => {
     render(<PedidoGenerator />);
     fireEvent.change(screen.getByLabelText(/^nombre y apellido$/i), {
