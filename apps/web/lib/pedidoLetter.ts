@@ -25,16 +25,28 @@ export type PedidoObjetoPresetId =
   | "padron-proveedores"
   | "escala-salarial"
   | "dotacion-personal"
+  | "fondo-financiamiento-educativo"
+  | "tasa-seguridad-higiene"
+  | "obra-sum-cindi"
   | "personalizado";
 
 export interface PedidoObjetoPreset {
   id: PedidoObjetoPresetId;
   label: string;
-  /** `null` when this preset has no single Art. 11 inciso to cite (only
-   * "personalizado" -- a custom request may or may not fall under Art. 11,
-   * so the letter never guesses a citation the requester didn't confirm). */
+  /** `null` when this preset has no single Art. 11 inciso to cite -- either
+   * because it's "personalizado" (a custom request may or may not fall
+   * under Art. 11, so the letter never guesses a citation the requester
+   * didn't confirm), or because the request targets something Art. 11
+   * doesn't already oblige the site to publish (e.g. aggregate tax
+   * revenue, or a clarification about one specific obra's execution
+   * instrument) -- see `tasa-seguridad-higiene` and `obra-sum-cindi`. */
   ordenanzaInciso: string | null;
   needsPeriodo: boolean;
+  /** Optional one-line neutral clarification shown in the UI next to the
+   * preset (e.g. "this only asks for aggregate figures"). Never legal
+   * boilerplate -- purely a UX note, omitted from the generated letter
+   * itself. */
+  helperNote?: string;
 }
 
 export const PEDIDO_PRESETS: readonly PedidoObjetoPreset[] = [
@@ -68,6 +80,30 @@ export const PEDIDO_PRESETS: readonly PedidoObjetoPreset[] = [
       "Dotación de personal por área (cantidad de agentes/cargos por secretaría, planta permanente y temporaria)",
     ordenanzaInciso: "Art. 11 inciso c)",
     needsPeriodo: false,
+  },
+  {
+    id: "fondo-financiamiento-educativo",
+    label:
+      "Aplicación del Fondo de Financiamiento Educativo (ejercicios 2023-2026)",
+    ordenanzaInciso: "Art. 11 inciso a)",
+    needsPeriodo: false,
+  },
+  {
+    id: "tasa-seguridad-higiene",
+    label:
+      "Recaudación de la Tasa de Seguridad e Higiene (datos agregados, ejercicios 2022-2025)",
+    ordenanzaInciso: null,
+    needsPeriodo: false,
+    helperNote:
+      "Pide solo cifras agregadas (monto total y porcentaje) -- nunca datos de un contribuyente en particular, así que no afecta el secreto fiscal.",
+  },
+  {
+    id: "obra-sum-cindi",
+    label: "Obra del SUM para CINDI (instrumento de ejecución)",
+    ordenanzaInciso: null,
+    needsPeriodo: false,
+    helperNote:
+      "Esta obra aparece financiada por la Provincia; el pedido busca confirmar cómo se ejecuta y quién la financia, no es una denuncia.",
   },
   {
     id: "personalizado",
@@ -136,6 +172,12 @@ function buildObjetoText(
       return "el detalle de la escala salarial vigente y los gastos de contratación de personal del municipio";
     case "dotacion-personal":
       return "el detalle de la dotación de personal vigente del municipio, discriminada por área/secretaría, cargo y tipo de vinculación (planta permanente y planta temporaria/contratada)";
+    case "fondo-financiamiento-educativo":
+      return "el detalle de aplicación del Fondo de Financiamiento Educativo (afectación específica del art. 7 de la Ley Nacional 26.075) percibido por el Municipio en los ejercicios 2023, 2024, 2025 y 2026: (a) monto total percibido por año; (b) imputación de su aplicación por objeto del gasto y por finalidad y función; (c) porcentaje efectivamente ejecutado en infraestructura escolar, a fin de verificar el cumplimiento del piso mínimo del 40% previsto para los municipios no conurbano por la Resolución 292/2024 de la DGCyE; y (d) copia de los convenios y rendiciones de aplicación del fondo presentadas ante la Provincia";
+    case "tasa-seguridad-higiene":
+      return "el monto total recaudado por la Tasa por Inspección de Seguridad e Higiene en los ejercicios 2022, 2023, 2024 y 2025, y su participación porcentual en el total de recursos tributarios municipales de cada año";
+    case "obra-sum-cindi":
+      return "información respecto de la obra 'Construcción del Salón de Usos Múltiples (SUM) para CINDI' (terreno de calle Colón al 200, Punta Alta), en particular: (a) bajo qué instrumento se ejecuta la obra (licitación, convenio, u otro) y qué organismo la financia y contrata; (b) si el Municipio aporta fondos propios además de la cesión del terreno; y (c) copia del convenio o acto administrativo por el cual el Municipio cedió el terreno y de cualquier instrumento municipal vinculado a la obra";
     case "personalizado": {
       const custom = objetoPersonalizado?.trim();
       return custom || "[COMPLETAR EL OBJETO DE TU PEDIDO]";

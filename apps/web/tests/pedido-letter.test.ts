@@ -24,13 +24,16 @@ const BASE_INPUT: PedidoFormInput = {
 };
 
 describe("PEDIDO_PRESETS", () => {
-  it("exposes exactly the 6 presets the generator form offers", () => {
+  it("exposes exactly the 9 presets the generator form offers", () => {
     expect(PEDIDO_PRESETS.map((p) => p.id)).toEqual([
       "detalle-gastos",
       "ordenes-compra",
       "padron-proveedores",
       "escala-salarial",
       "dotacion-personal",
+      "fondo-financiamiento-educativo",
+      "tasa-seguridad-higiene",
+      "obra-sum-cindi",
       "personalizado",
     ]);
   });
@@ -86,6 +89,47 @@ describe("generatePedidoText", () => {
     expect(text.toLowerCase()).toContain("dotación de personal");
     expect(text.toLowerCase()).toMatch(/planta permanente/);
     expect(text.toLowerCase()).toMatch(/planta temporaria|contratad/);
+  });
+
+  it("cites Art. 11 inciso a) for the Fondo de Financiamiento Educativo preset, requesting the 2023-2026 breakdown and the 40% infraestructura escolar floor", () => {
+    const text = generatePedidoText(
+      { ...BASE_INPUT, objetoPreset: "fondo-financiamiento-educativo" },
+      "2026-07-08",
+    );
+    expect(text).toContain("Art. 11 inciso a)");
+    expect(text.toLowerCase()).toContain("fondo de financiamiento educativo");
+    expect(text).toContain("art. 7 de la Ley Nacional 26.075");
+    expect(text).toContain("2023, 2024, 2025 y 2026");
+    expect(text).toContain("Resolución 292/2024 de la DGCyE");
+    expect(text.toLowerCase()).toContain("infraestructura escolar");
+  });
+
+  it("never cites a specific Art. 11 inciso for the Tasa de Seguridad e Higiene preset, and requests only aggregate figures", () => {
+    const text = generatePedidoText(
+      { ...BASE_INPUT, objetoPreset: "tasa-seguridad-higiene" },
+      "2026-07-08",
+    );
+    expect(text).not.toMatch(/Art\. 11 inciso/);
+    expect(text.toLowerCase()).toContain(
+      "tasa por inspección de seguridad e higiene",
+    );
+    expect(text).toContain("2022, 2023, 2024 y 2025");
+    expect(text.toLowerCase()).toContain("monto total recaudado");
+    expect(text.toLowerCase()).toContain("participación porcentual");
+  });
+
+  it("never cites a specific Art. 11 inciso for the obra del SUM para CINDI preset, and asks for the execution instrument without naming any company", () => {
+    const text = generatePedidoText(
+      { ...BASE_INPUT, objetoPreset: "obra-sum-cindi" },
+      "2026-07-08",
+    );
+    expect(text).not.toMatch(/Art\. 11 inciso/);
+    expect(text).toContain(
+      "Salón de Usos Múltiples (SUM) para CINDI",
+    );
+    expect(text).toContain("Colón al 200");
+    expect(text.toLowerCase()).toContain("licitación, convenio, u otro");
+    expect(text.toLowerCase()).toContain("cesión del terreno");
   });
 
   it("never cites a specific Art. 11 inciso for the personalizado preset, and uses the custom text", () => {
@@ -148,5 +192,56 @@ describe("generatePedidoText", () => {
       );
       expect(text.toLowerCase()).not.toContain("undefined");
     }
+  });
+});
+
+/**
+ * Neutrality guard (Ordenanza 3638 presets): every objeto text must stay
+ * factual and non-accusatory -- a pedido asks a public body to disclose
+ * information it should already publish, it never accuses anyone of
+ * wrongdoing. Same doctrine as `tests/titularidad-field.test.tsx`'s
+ * "CERO ADJETIVOS" blocklist guard, applied here to the full generated
+ * letter for every preset (not just the 3 new ones added for this batch).
+ */
+describe("Neutrality guard — no accusatory or imputation language in any preset", () => {
+  const BLOCKLIST = [
+    "estafa",
+    "corrupci",
+    "sospech",
+    "acomodo",
+    "conflicto de inter",
+    "irregular",
+    "coima",
+    "prebenda",
+    "favoritismo",
+    "connivencia",
+    "testaferro",
+    "delito",
+    "fraude",
+    "malversaci",
+    "sin licitaci",
+  ];
+
+  it("no generated letter, for any preset, contains a blocklisted accusatory word", () => {
+    for (const preset of PEDIDO_PRESETS) {
+      const text = generatePedidoText(
+        { ...BASE_INPUT, objetoPreset: preset.id },
+        "2026-07-08",
+      ).toLowerCase();
+      for (const word of BLOCKLIST) {
+        expect(text).not.toContain(word);
+      }
+    }
+  });
+
+  it("the obra del SUM para CINDI preset never names a private company or person", () => {
+    const text = generatePedidoText(
+      { ...BASE_INPUT, objetoPreset: "obra-sum-cindi" },
+      "2026-07-08",
+    );
+    // The objeto text may only mention public entities (Municipio, Provincia) --
+    // never a private contractor/company name, which the source investigation
+    // deliberately withheld from this preset's wording.
+    expect(text).not.toMatch(/\bS\.?A\.?\b|\bS\.?R\.?L\.?\b/);
   });
 });
