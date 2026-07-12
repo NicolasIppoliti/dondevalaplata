@@ -13,6 +13,17 @@ export interface DrawerProps {
   description?: string;
   children: React.ReactNode;
   className?: string;
+  /**
+   * Desktop panel width utility (the `sm:` breakpoint slides in from the
+   * right; mobile is always a full-width bottom sheet). Passed as a single
+   * `sm:w-*` token so it REPLACES the default rather than appending a
+   * second same-specificity width utility -- appending would resolve by
+   * stylesheet source order, not class order (see the translate note
+   * below), making the override unreliable. Default fits text/forms; wide
+   * data tables (e.g. the 6-municipio coparticipación comparison) pass a
+   * wider value.
+   */
+  panelWidthClassName?: string;
 }
 
 /**
@@ -45,6 +56,7 @@ export function Drawer({
   description,
   children,
   className,
+  panelWidthClassName = "sm:w-[min(560px,94vw)]",
 }: DrawerProps) {
   const titleId = useId();
   const descriptionId = useId();
@@ -151,7 +163,7 @@ export function Drawer({
         style={
           dragOffset ? { transform: `translateY(${dragOffset}px)` } : undefined
         }
-        className={`fixed z-[61] flex max-h-[88dvh] flex-col rounded-t-2xl bg-surface text-ink shadow-card transition-transform duration-300 ease-out inset-x-0 bottom-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:max-h-none sm:w-[min(560px,94vw)] sm:rounded-none sm:rounded-l-2xl ${
+        className={`fixed z-[61] flex max-h-[88dvh] flex-col rounded-t-2xl bg-surface text-ink shadow-card transition-transform duration-300 ease-out inset-x-0 bottom-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:max-h-none ${panelWidthClassName} sm:rounded-none sm:rounded-l-2xl ${
           /* The "closed" and "open" translate utilities MUST be mutually
              exclusive in the rendered class list, never both present at
              once. Tailwind v4 compiles `translate-*` utilities to the

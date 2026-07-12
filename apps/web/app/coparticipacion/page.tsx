@@ -162,6 +162,10 @@ export default function CoparticipacionPage() {
           triggerLabel="Ver todos los números"
           title="Coparticipación — todos los números"
           description={`en pesos constantes de ${baseMonthLabel} · datos hasta ${dataThroughLabel}`}
+          /* Wider than the default drawer: this panel hosts the 6-municipio
+             comparison tables, which need the room so all columns fit on
+             desktop before the inner overflow-x-auto scroll kicks in. */
+          panelWidthClassName="sm:w-[min(1040px,94vw)]"
         >
         <div className="space-y-10">
           <section aria-labelledby="comparacion-per-capita-heading">

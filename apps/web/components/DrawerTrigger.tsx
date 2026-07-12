@@ -18,12 +18,14 @@ export function DrawerTrigger({
   description,
   children,
   triggerClassName,
+  panelWidthClassName,
 }: {
   triggerLabel: string;
   title: string;
   description?: string;
   children: React.ReactNode;
   triggerClassName?: string;
+  panelWidthClassName?: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -46,6 +48,7 @@ export function DrawerTrigger({
         onClose={() => setOpen(false)}
         title={title}
         description={description}
+        panelWidthClassName={panelWidthClassName}
       >
         {children}
       </Drawer>
