@@ -33,7 +33,7 @@ const CAPABILITY_ORDER = [
 // -- lets a reader decide whether to open a group without opening it first.
 const CAPABILITY_INTROS: Record<string, string> = {
   "coparticipacion-viewer":
-    "Transferencias mensuales de coparticipación a los 4 municipios.",
+    "Transferencias mensuales de coparticipación a los 6 municipios.",
   "htc-fallos": "Fallos del Tribunal de Cuentas sobre las cuentas municipales.",
   ipc: "Índice de Precios al Consumidor usado para ajustar por inflación.",
   electoral: "Resultados electorales oficiales.",

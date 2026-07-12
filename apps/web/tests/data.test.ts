@@ -219,7 +219,7 @@ describe("loadPoblacionCenso2022", () => {
   it("accepts a valid poblacion-censo fixture", () => {
     const data = loadPoblacionCenso2022(poblacionCensoValid);
     expect(data.censusYear).toBe(2022);
-    expect(data.municipios).toHaveLength(4);
+    expect(data.municipios).toHaveLength(6);
     const coronelRosales = data.municipios.find(
       (m) => m.municipioId === "06182",
     );
@@ -302,7 +302,7 @@ describe("loaders reading real build-time JSON with no argument", () => {
     }
   });
 
-  it("loads the real data/poblacion-censo-2022.json (feature H3a): the same 4 municipios as coparticipacion", () => {
+  it("loads the real data/poblacion-censo-2022.json (feature H3a): the same municipios as coparticipacion", () => {
     const poblacionCenso = loadPoblacionCenso2022();
     const coparticipacion = loadCoparticipacion();
     expect(poblacionCenso.censusYear).toBe(2022);

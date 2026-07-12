@@ -110,7 +110,7 @@ describe("/coparticipacion — inverted hierarchy (conclusion first, big chart, 
     ).toBeTruthy();
   });
 
-  it("never silently truncates municipios on mobile: the comparison table always lists all 4 in the DOM", () => {
+  it("never silently truncates municipios on mobile: the comparison table always lists every municipio in the DOM", () => {
     const { coparticipacion } = getPortalData();
     render(<Page />);
     openDetailDrawer();
@@ -147,7 +147,7 @@ describe("/coparticipacion — per-cápita neighbor comparison (feature H3a)", (
     ).toBeTruthy();
   });
 
-  it("lists all 4 municipios in the per-cápita table, never silently truncating one", () => {
+  it("lists every municipio in the per-cápita table, never silently truncating one", () => {
     const { coparticipacion } = getPortalData();
     render(<Page />);
     openDetailDrawer();
@@ -162,6 +162,28 @@ describe("/coparticipacion — per-cápita neighbor comparison (feature H3a)", (
     for (const series of coparticipacion.series) {
       expect(columnHeaders).toContain(series.municipio);
     }
+  });
+
+  it("explains the Ley 10.559 distribution formula so per-cápita differences are not misread as discretionary (D8 follow-up)", () => {
+    render(<Page />);
+    openDetailDrawer();
+    expect(
+      screen.getByText(/Ley 10\.559/),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/no una decisión discrecional/),
+    ).toBeTruthy();
+  });
+
+  it("includes the same-size peers Coronel Suárez and Tres Arroyos in the comparison set (6 municipios total)", () => {
+    const { coparticipacion } = getPortalData();
+    expect(coparticipacion.series.map((s) => s.municipio)).toContain(
+      "Coronel Suárez",
+    );
+    expect(coparticipacion.series.map((s) => s.municipio)).toContain(
+      "Tres Arroyos",
+    );
+    expect(coparticipacion.series.length).toBe(6);
   });
 
   it("keeps the original absolute-pesos comparison available, now pointing to the per-cápita section", () => {

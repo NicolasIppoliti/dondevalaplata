@@ -6,6 +6,8 @@
     { "municipioId": "06182", "municipio": "Coronel Rosales", "poblacion": 67503 },
     { "municipioId": "06056", "municipio": "Bahía Blanca", "poblacion": 336557 },
     { "municipioId": "06553", "municipio": "Monte Hermoso", "poblacion": 8465 },
-    { "municipioId": "06875", "municipio": "Villarino", "poblacion": 32717 }
+    { "municipioId": "06875", "municipio": "Villarino", "poblacion": 32717 },
+    { "municipioId": "06203", "municipio": "Coronel Suárez", "poblacion": 42110 },
+    { "municipioId": "06833", "municipio": "Tres Arroyos", "poblacion": 62426 }
   ]
 }

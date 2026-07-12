@@ -180,8 +180,24 @@ export default function CoparticipacionPage() {
             <p className="mt-3 max-w-[62ch] text-sm text-ink">
               Coparticipación por habitante (Censo 2022, INDEC).
             </p>
+            {/* Neutral explanatory note (D8/H3a follow-up, see DESIGN.md
+                decision log): the per-cápita figures below vary a lot
+                between municipios BY DESIGN of the provincial distribution
+                formula, not by discretionary decision -- same "resalta, no
+                juzga" `--ocre` token used elsewhere for factual, non-
+                accusatory context. */}
+            <p className="mt-3 max-w-[62ch] border-l-[5px] border-ocre bg-surface py-3 pl-4 text-sm text-ink">
+              La coparticipación municipal en la Provincia de Buenos Aires se
+              reparte según una fórmula legal (Régimen de Coparticipación
+              Municipal, Ley 10.559) que pondera de forma inversa a la
+              población, además de la dispersión rural y la cantidad de
+              establecimientos de salud y educación de cada municipio. Por
+              eso los municipios más chicos o más rurales reciben más plata
+              por habitante — es un efecto estructural de la fórmula, no una
+              decisión discrecional de ningún gobierno.
+            </p>
             <p className="mt-3 font-mono text-[11px] text-muted sm:hidden">
-              Desliza para ver los 4 municipios →
+              Desliza para ver los 6 municipios →
             </p>
             <div className="mt-3 overflow-x-auto">
               <DataTable
@@ -205,7 +221,7 @@ export default function CoparticipacionPage() {
               id="comparacion-heading"
               className="font-display text-xl font-semibold text-ink"
             >
-              Comparación con municipios vecinos
+              Comparación con otros municipios
             </h2>
             <p className="mt-1 max-w-[62ch] text-sm text-muted">
               Valores expresados en pesos constantes de {baseMonthLabel} (IPC
@@ -222,7 +238,7 @@ export default function CoparticipacionPage() {
               comparación por habitante arriba para una comparación justa.
             </p>
             <p className="mt-3 font-mono text-[11px] text-muted sm:hidden">
-              Desliza para ver los 4 municipios →
+              Desliza para ver los 6 municipios →
             </p>
             <div className="mt-3 overflow-x-auto">
               <DataTable
@@ -249,7 +265,7 @@ export default function CoparticipacionPage() {
               mes, distinto de la serie ajustada de arriba.
             </p>
             <p className="mt-3 font-mono text-[11px] text-muted sm:hidden">
-              Desliza para ver los 4 municipios →
+              Desliza para ver los 6 municipios →
             </p>
             <div className="mt-3 overflow-x-auto">
               <DataTable
