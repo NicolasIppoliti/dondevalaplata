@@ -106,7 +106,7 @@ export function DataTable({
                 return (
                   <td
                     key={s.id}
-                    className={`py-1.5 pr-4 text-right font-mono tabular-nums ${signClass}`}
+                    className={`py-1.5 pr-4 text-right font-mono tabular-nums whitespace-nowrap ${signClass}`}
                   >
                     {/* Explicit "no data" marker -- never a fabricated "0",
                       which would misrepresent an unpublished month as an
