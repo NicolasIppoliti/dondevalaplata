@@ -3,8 +3,9 @@
 The fixture (`fixtures/coparticipacion_sample.csv`) is a small, real-data
 excerpt cut directly from the archived
 `coparticipacion/transferencias-municipios` CSV (Dec-2023 and Jan-2024 rows
-for Coronel Rosales + the three comparison neighbors, plus one excluded
-municipio to prove the filter works).
+for Coronel Rosales + the five comparison municipios -- Bahía Blanca, Monte
+Hermoso, Villarino, and the same-size peers Coronel Suárez and Tres Arroyos
+-- plus one excluded municipio to prove the filter works).
 """
 
 from pathlib import Path
@@ -22,6 +23,8 @@ def test_target_municipios_pinned_to_real_ids() -> None:
         "06056": "Bahía Blanca",
         "06553": "Monte Hermoso",
         "06875": "Villarino",
+        "06203": "Coronel Suárez",
+        "06833": "Tres Arroyos",
     }
 
 
@@ -47,11 +50,26 @@ def test_parse_csv_row_shape_matches_source_columns() -> None:
     assert coronel_rosales_bruta.monto == 410301012.51
 
 
-def test_parse_csv_returns_all_rows_for_four_municipios_two_periods_three_concepts() -> None:
+def test_parse_csv_maps_same_size_peer_municipios_to_their_short_labels() -> None:
+    # Coronel Suárez (06203) and Tres Arroyos (06833) were added as
+    # same-size population peers to Coronel Rosales (D8/H3a decision log).
     rows = parse_csv(FIXTURE_PATH)
 
-    # 4 municipios x 2 periods x 3 concepts in the fixture.
-    assert len(rows) == 24
+    coronel_suarez = next(
+        row for row in rows if row.municipio_id == "06203" and row.period == "2023-12"
+    )
+    tres_arroyos = next(
+        row for row in rows if row.municipio_id == "06833" and row.period == "2023-12"
+    )
+    assert coronel_suarez.municipio == "Coronel Suárez"
+    assert tres_arroyos.municipio == "Tres Arroyos"
+
+
+def test_parse_csv_returns_all_rows_for_six_municipios_two_periods_three_concepts() -> None:
+    rows = parse_csv(FIXTURE_PATH)
+
+    # 6 municipios x 2 periods x 3 concepts in the fixture.
+    assert len(rows) == 36
 
 
 def test_aggregate_by_period_sums_all_concepts_per_municipio_and_month() -> None:
@@ -100,7 +118,7 @@ def test_build_series_joins_nominal_and_real_ars_matching_manual_calc() -> None:
     assert jan_2024["realArs"] == expected_nominal_jan_2024
 
 
-def test_build_series_covers_all_four_target_municipios() -> None:
+def test_build_series_covers_all_target_municipios() -> None:
     ipc = rebase_to_latest(
         "148.3_INIVELNAL_DICI_M_26",
         [("2023-12", 3533.1922), ("2024-01", 4261.5324)],

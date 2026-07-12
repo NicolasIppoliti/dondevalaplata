@@ -57,10 +57,10 @@ def test_build_poblacion_envelope_shape(result: dict) -> None:
     assert result["generatedAt"] == "2026-07-08T12:00:00Z"
     assert result["censusYear"] == 2022
     assert result["sourceRefs"] == [POBLACION_CSV_MANIFEST_ID]
-    assert len(result["municipios"]) == 4
+    assert len(result["municipios"]) == 6
 
 
-def test_build_poblacion_covers_all_four_target_municipios(result: dict) -> None:
+def test_build_poblacion_covers_all_target_municipios(result: dict) -> None:
     municipio_ids = {m["municipioId"] for m in result["municipios"]}
     assert municipio_ids == set(TARGET_MUNICIPIOS)
 
@@ -68,9 +68,12 @@ def test_build_poblacion_covers_all_four_target_municipios(result: dict) -> None
 def test_build_poblacion_known_real_values(result: dict) -> None:
     # Live-verified (2026-07-08) against the real archived CSV -- see
     # etl/etl/poblacion.py's module docstring for the cross-verification
-    # note.
+    # note. Coronel Suárez / Tres Arroyos added later as same-size
+    # population peers to Coronel Rosales (D8/H3a decision log).
     by_id = {m["municipioId"]: m["poblacion"] for m in result["municipios"]}
     assert by_id["06182"] == 67503  # Coronel Rosales
     assert by_id["06056"] == 336557  # Bahía Blanca
     assert by_id["06553"] == 8465  # Monte Hermoso
     assert by_id["06875"] == 32717  # Villarino
+    assert by_id["06203"] == 42110  # Coronel Suárez
+    assert by_id["06833"] == 62426  # Tres Arroyos

@@ -4,9 +4,10 @@
 
 **Honesty gate (task requirement)**: the H3 per-cápita coparticipación
 comparison is only published if a CITABLE, ARCHIVABLE Censo 2022 population
-figure exists for all four municipios (Coronel Rosales, Bahía Blanca, Monte
-Hermoso, Villarino) -- see DESIGN.md's decision log entry for D8/H3. This
-module is that source.
+figure exists for every municipio in `coparticipacion.TARGET_MUNICIPIOS`
+(Coronel Rosales, Bahía Blanca, Monte Hermoso, Villarino, Coronel Suárez,
+Tres Arroyos) -- see DESIGN.md's decision log entry for D8/H3. This module is
+that source.
 
 **Source**: "Población" dataset, published by the Dirección Provincial de
 Estadística (Ministerio de Economía de la Provincia de Buenos Aires) on
@@ -52,7 +53,7 @@ CENSUS_YEAR_COLUMN = "2022"
 def parse_censo_2022_population(path: Path) -> dict[str, int]:
     """Read the source CSV, returning ``{municipio_id: población}`` for
     `CENSUS_YEAR_COLUMN`, filtered to `TARGET_MUNICIPIOS` (the same
-    four-municipio set `coparticipacion.py` already uses, so the per-cápita
+    municipio set `coparticipacion.py` already uses, so the per-cápita
     join can never reference a municipio this module has no population
     for).
     """
@@ -76,10 +77,10 @@ def build_poblacion_censo_2022(
     """Build the full `data/poblacion-censo-2022.json` payload.
 
     HONESTY GATE: raises `ValueError` (writes no file, per `cli.py`'s
-    convention -- same pattern as `build_gasto_partida`) if any of the four
-    target municipios is missing a population figure, rather than
-    publishing a partial per-cápita source that would silently omit a
-    municipio from the comparison.
+    convention -- same pattern as `build_gasto_partida`) if any of the
+    target municipios (`coparticipacion.TARGET_MUNICIPIOS`) is missing a
+    population figure, rather than publishing a partial per-cápita source
+    that would silently omit a municipio from the comparison.
     """
     csv_path = resolve_archived_path(manifest_path, POBLACION_CSV_MANIFEST_ID)
     populations = parse_censo_2022_population(csv_path)

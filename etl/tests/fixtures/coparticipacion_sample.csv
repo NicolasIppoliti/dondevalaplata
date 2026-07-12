@@ -11,6 +11,12 @@ anio,mes,municipio_id,municipio_nombre,concepto,monto
 2023,12,06875,Villarino,Coparticipación Bruta,605828358.7399999
 2023,12,06875,Villarino,Descentralización Tributaria,20690176.0317783
 2023,12,06875,Villarino,Fondo Inclusión Social,9817595.46
+2023,12,06203,Coronel Suárez,Coparticipación Bruta,710565415.25
+2023,12,06203,Coronel Suárez,Descentralización Tributaria,52552450.52805638
+2023,12,06203,Coronel Suárez,Fondo Inclusión Social,7543813.76
+2023,12,06833,Tres Arroyos,Coparticipación Bruta,686706520.99
+2023,12,06833,Tres Arroyos,Descentralización Tributaria,76963469.04176877
+2023,12,06833,Tres Arroyos,Fondo Inclusión Social,12951247.83
 2024,1,06056,Bahía Blanca,Coparticipación Bruta,1991265388.69
 2024,1,06056,Bahía Blanca,Descentralización Tributaria,25201044.167943
 2024,1,06056,Bahía Blanca,Fondo Inclusión Social,60772033.88
@@ -23,5 +29,11 @@ anio,mes,municipio_id,municipio_nombre,concepto,monto
 2024,1,06875,Villarino,Coparticipación Bruta,825665311.3399999
 2024,1,06875,Villarino,Descentralización Tributaria,3266827.765098521
 2024,1,06875,Villarino,Fondo Inclusión Social,10350638.6
+2024,1,06203,Coronel Suárez,Coparticipación Bruta,994205533.1300001
+2024,1,06203,Coronel Suárez,Descentralización Tributaria,8121501.846441721
+2024,1,06203,Coronel Suárez,Fondo Inclusión Social,7953402.67
+2024,1,06833,Tres Arroyos,Coparticipación Bruta,942437139.86
+2024,1,06833,Tres Arroyos,Descentralización Tributaria,12308847.43216272
+2024,1,06833,Tres Arroyos,Fondo Inclusión Social,13654431.6
 2023,12,06007,Adolfo Alsina,Coparticipación Bruta,473470379.35
 2024,1,06007,Adolfo Alsina,Coparticipación Bruta,658432068.73

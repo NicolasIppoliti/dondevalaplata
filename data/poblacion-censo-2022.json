@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-08T20:40:43Z",
+  "generatedAt": "2026-07-12T18:21:15Z",
   "censusYear": 2022,
   "sourceRefs": [
     "poblacion-censo/proyecciones-poblacion-2010-2025"
@@ -24,6 +24,16 @@
       "municipioId": "06875",
       "municipio": "Villarino",
       "poblacion": 32717
+    },
+    {
+      "municipioId": "06203",
+      "municipio": "Coronel Suárez",
+      "poblacion": 42110
+    },
+    {
+      "municipioId": "06833",
+      "municipio": "Tres Arroyos",
+      "poblacion": 62426
     }
   ]
 }

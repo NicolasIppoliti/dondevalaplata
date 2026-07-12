@@ -23,12 +23,17 @@ from .ipc import RebasedIpcSeries
 
 # Pinned by inspecting the real archived CSV (see apply-progress, task 3.2):
 # Coronel Rosales is municipio_id 06182; comparison neighbors resolved by
-# municipio_nombre in the same CSV export.
+# municipio_nombre in the same CSV export. Coronel Suárez (06203) and Tres
+# Arroyos (06833) were added later as same-size population peers to Rosales
+# (per-capita comparison decision log D8/H3a) so the per-cápita comparison
+# is not apples-to-oranges against much larger/smaller municipios.
 TARGET_MUNICIPIOS: dict[str, str] = {
     "06182": "Coronel Rosales",
     "06056": "Bahía Blanca",
     "06553": "Monte Hermoso",
     "06875": "Villarino",
+    "06203": "Coronel Suárez",
+    "06833": "Tres Arroyos",
 }
 
 # The CSV's own municipio_nombre spells out the municipio's full legal name;
