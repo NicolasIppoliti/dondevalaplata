@@ -2,14 +2,17 @@
 Planilla C) into a quarterly headline-total series (feature H2a,
 `data/deuda-historica.json`).
 
-The municipality published exactly THREE of these before it stopped: 1er,
-2do and 3er trimestre 2025 (cierre 30/09/2025) -- see `etl/cadencia.yaml`'s
-`deuda` block (already live-verified, feature G1). No 4to trimestre 2025 or
-later quarter has been published as of this build. This module only PARSES
-the three existing PDFs into a series; the "stopped publishing" framing
-itself (days/quarters elapsed) is already computed live by `cadencia.py`
-from the same source document and reused as-is by the web layer, never
-duplicated here.
+The municipality published 1er/2do/3er trimestre 2025 (cierre 30/09/2025),
+then went quiet for a while -- see `etl/cadencia.yaml`'s `deuda` block
+history. On 2026-07-13 it backfilled 4to trimestre 2025, 1er trimestre 2026
+and 2do trimestre 2026 in a single batch (verified live; WordPress slugs for
+1er/2do trimestre collide with the same-named 2025 documents and are
+disambiguated with a `-2` suffix by the CMS, e.g.
+`stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2`). This module only
+PARSES the archived PDFs into a series; the "how stale is the latest one"
+framing itself (days/quarters elapsed) is already computed live by
+`cadencia.py` from the same source document and reused as-is by the web
+layer, never duplicated here.
 
 Text-extraction notes (verified by hand against the three real archived
 PDFs, `archive/mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-{1o,2o,3o}-trimestre.pdf`):
@@ -61,12 +64,20 @@ from typing import Any
 from .fallos import extract_pdf_text
 from .manifest import resolve_archived_path
 
-# In document-date order (oldest first) -- the only three quarters ever
-# published, per `etl/cadencia.yaml`'s `deuda` block.
+# In document-date order (oldest first). 1er/2do/3er trimestre 2025 were
+# published on the original cadence; 4to trimestre 2025, 1er trimestre 2026
+# and 2do trimestre 2026 were all backfilled on 2026-07-13 -- see module
+# docstring. `parse_deuda_stock_pdf` derives each entry's real `period` from
+# the PDF's own "SALDO AL" date, so the ORDER of manifest ids here only
+# needs to be a valid archive lookup list; `build_deuda_historica` re-sorts
+# the series by parsed `fecha` regardless.
 DEUDA_HISTORICA_MANIFEST_IDS = [
     "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre",
     "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre",
     "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre",
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre",
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre-2",
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2",
 ]
 
 _SALDO_DATE_PATTERN = re.compile(r"ORGANISMO ACREEDOR\s+(\d{2})/(\d{2})/(\d{4})")

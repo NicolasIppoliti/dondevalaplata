@@ -1,6 +1,40 @@
 {
-  "generatedAt": "2026-07-08T20:10:04Z",
+  "generatedAt": "2026-07-13T17:42:06Z",
   "events": [
+    {
+      "id": "seed-stock-de-deuda-backfill-2026-07-13",
+      "kind": "seeded",
+      "date": "2026-07-13",
+      "title": "El municipio publicó el Stock de Deuda y Perfil de Vencimientos del 4to trimestre 2025, 1er trimestre 2026 y 2do trimestre 2026",
+      "detail": "Publicación simultánea, el mismo día, de las tres planillas pendientes -- saldo al 2do trimestre 2026 (30/06/2026): $ 110.097.259,09. Dimensión ASAP \"Stock de deuda y perfil de vencimientos\" (ver data/cadencia.json).",
+      "sourceRefs": [
+        "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre",
+        "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre-2",
+        "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2"
+      ]
+    },
+    {
+      "id": "seed-ejecucion-presupuestaria-2do-trimestre-2026-07-13",
+      "kind": "seeded",
+      "date": "2026-07-13",
+      "title": "El municipio publicó la Ejecución Presupuestaria de Gastos y de Recursos del 2do trimestre 2026",
+      "detail": "Ambas series (Gastos y Recursos) quedaron publicadas al mismo trimestre. Dimensión ASAP \"Ejecución presupuestaria trimestral\" (ver data/cadencia.json).",
+      "sourceRefs": [
+        "mcr-docs/ejecucion-presupuestaria-de-gastos-2o-trimestre-2",
+        "mcr-docs/ejecucion-presupuestaria-de-recursos-2o-trimestre-2"
+      ]
+    },
+    {
+      "id": "seed-gastos-por-finalidad-y-funcion-2do-trimestre-2026-07-13",
+      "kind": "seeded",
+      "date": "2026-07-13",
+      "title": "El municipio publicó Gastos por finalidad y función del 1er y 2do trimestre 2026",
+      "detail": "Dimensión ASAP \"Gastos por finalidad y función\" (ver data/cadencia.json).",
+      "sourceRefs": [
+        "mcr-docs/gastos-por-finalidad-y-funcion-1o-trimestre",
+        "mcr-docs/gastos-por-finalidad-y-funcion-2o-trimestre"
+      ]
+    },
     {
       "id": "seed-situacion-economico-financiera-1er-semestre-2026",
       "kind": "seeded",
@@ -22,27 +56,6 @@
       ]
     },
     {
-      "id": "auto-stale-ejecucion-presupuestaria-trimestral",
-      "kind": "auto-stale",
-      "date": "2026-04-15",
-      "title": "Sigue sin actualizar al día “Ejecución presupuestaria trimestral” (2 meses de rezago)",
-      "detail": "Rezago entre las dos series de la misma dimensión: al corte del informe de mayo 2026, Ejecución de Gastos ya estaba publicada al 1er trimestre 2026, pero Ejecución de Recursos seguía publicada solo hasta el 4to trimestre 2025 -- un trimestre de rezago entre ambas.",
-      "sourceRefs": [
-        "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre",
-        "mcr-docs/estado-de-ejecucion-presupuestaria-de-recursos-4to-trimestre"
-      ]
-    },
-    {
-      "id": "auto-stale-gastos-por-finalidad-y-funcion",
-      "kind": "auto-stale",
-      "date": "2026-04-15",
-      "title": "Sigue sin actualizar al día “Gastos por finalidad y función” (2 meses de rezago)",
-      "detail": "Al 31/03/2026 (corte del informe de mayo 2026), lo último publicado online era el 3er trimestre 2025 -- medio año de rezago. El 4to trimestre 2025 recién se publicó el 15/04/2026, después del corte, así que no llegó a contar para este informe.",
-      "sourceRefs": [
-        "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-por-finalidad-y-funcion-4to-trimestre"
-      ]
-    },
-    {
       "id": "seed-presupuesto-gastos-por-objeto-2026",
       "kind": "seeded",
       "date": "2026-03-16",
@@ -51,24 +64,18 @@
       "sourceRefs": [
         "mcr-docs/presupuesto-de-gastos-por-objeto"
       ]
-    },
-    {
-      "id": "auto-stale-deuda",
-      "kind": "auto-stale",
-      "date": "2025-09-30",
-      "title": "Sigue sin actualizar el Stock de deuda pública y perfil de vencimientos (281 días / 3 trimestres sin publicar)",
-      "detail": "Último dato publicado: 3er trimestre 2025 (cierre 2025-09-30), por $ 46.876.896,86.",
-      "sourceRefs": [
-        "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
-      ]
     }
   ],
   "sourceRefs": [
+    "mcr-docs/ejecucion-presupuestaria-de-gastos-2o-trimestre-2",
+    "mcr-docs/ejecucion-presupuestaria-de-recursos-2o-trimestre-2",
     "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre",
-    "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-por-finalidad-y-funcion-4to-trimestre",
-    "mcr-docs/estado-de-ejecucion-presupuestaria-de-recursos-4to-trimestre",
+    "mcr-docs/gastos-por-finalidad-y-funcion-1o-trimestre",
+    "mcr-docs/gastos-por-finalidad-y-funcion-2o-trimestre",
     "mcr-docs/presupuesto-de-gastos-por-objeto",
     "mcr-docs/situacion-economica-financiera-primer-semestre-2026",
-    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre-2",
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2",
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre"
   ]
 }

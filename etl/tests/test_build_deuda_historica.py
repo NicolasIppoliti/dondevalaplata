@@ -58,17 +58,19 @@ def result(tmp_path: Path) -> dict:
 def test_build_deuda_historica_envelope_shape(result: dict) -> None:
     assert result["generatedAt"] == "2026-07-08T12:00:00Z"
     assert result["sourceRefs"] == DEUDA_HISTORICA_MANIFEST_IDS
-    assert len(result["series"]) == 3
+    assert len(result["series"]) == len(DEUDA_HISTORICA_MANIFEST_IDS)
 
 
 def test_build_deuda_historica_series_is_oldest_first(result: dict) -> None:
     periods = [entry["period"] for entry in result["series"]]
-    assert periods == ["2025-Q1", "2025-Q2", "2025-Q3"]
+    assert periods == ["2025-Q1", "2025-Q2", "2025-Q3", "2025-Q4", "2026-Q1", "2026-Q2"]
 
 
 def test_build_deuda_historica_known_real_totals(result: dict) -> None:
-    # Live-verified (2026-07-08) against the real archived PDFs -- see
-    # etl/deuda_historica.py's module docstring for the parsing approach.
+    # Live-verified (2026-07-08 for Q1-Q3 2025; 2026-07-13 for the
+    # 2026-07-13 backfill of Q4-2025/Q1-2026/Q2-2026) against the real
+    # archived PDFs -- see etl/deuda_historica.py's module docstring for the
+    # parsing approach.
     by_period = {entry["period"]: entry for entry in result["series"]}
 
     assert by_period["2025-Q1"]["totalArs"] == pytest.approx(194447135.09)
@@ -81,4 +83,16 @@ def test_build_deuda_historica_known_real_totals(result: dict) -> None:
     assert by_period["2025-Q3"]["fecha"] == "2025-09-30"
     assert by_period["2025-Q3"]["sourceRef"] == (
         "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
+    )
+
+    assert by_period["2025-Q4"]["totalArs"] == pytest.approx(1826113416.70)
+    assert by_period["2025-Q4"]["fecha"] == "2025-12-31"
+
+    assert by_period["2026-Q1"]["totalArs"] == pytest.approx(169183140.12)
+    assert by_period["2026-Q1"]["fecha"] == "2026-03-31"
+
+    assert by_period["2026-Q2"]["totalArs"] == pytest.approx(110097259.09)
+    assert by_period["2026-Q2"]["fecha"] == "2026-06-30"
+    assert by_period["2026-Q2"]["sourceRef"] == (
+        "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2"
     )

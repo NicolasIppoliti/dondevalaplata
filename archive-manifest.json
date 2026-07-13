@@ -153,7 +153,9 @@
     "bytes": 926424,
     "fetched_at": "2026-07-07T05:30:32Z",
     "status": "ok",
-    "notes": "SITUACION ECONOMICA FINANCIERA PRIMER SEMESTRE 2026 (published 2026-07-01T12:53:56)"
+    "notes": "SITUACION ECONOMICA FINANCIERA PRIMER SEMESTRE 2026 (published 2026-07-01T12:53:56)",
+    "last_error": "SITUACION ECONOMICA FINANCIERA PRIMER SEMESTRE 2026 (published 2026-07-01T12:53:56) [HTTP 429]",
+    "last_error_at": "2026-07-13T17:29:19Z"
   },
   {
     "id": "mcr-docs/talleres-culturales",
@@ -167,7 +169,9 @@
     "bytes": 2487999,
     "fetched_at": "2026-07-07T05:30:37Z",
     "status": "ok",
-    "notes": "Talleres culturales (published 2026-06-23T11:51:46)"
+    "notes": "Talleres culturales (published 2026-06-23T11:51:46)",
+    "last_error": "Talleres culturales (published 2026-06-23T11:51:46) [HTTP 429]",
+    "last_error_at": "2026-07-13T17:29:28Z"
   },
   {
     "id": "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-1o-trimestre",
@@ -179,7 +183,7 @@
     "sha256": "b43d03b7c9481673e12fbeded20cfaba7188e0bf78ca58bf42e8354980608103",
     "mime": "application/pdf",
     "bytes": 2024734,
-    "fetched_at": "2026-07-07T05:30:42Z",
+    "fetched_at": "2026-07-13T17:29:38Z",
     "status": "ok",
     "notes": "Estado de Ejecución Presupuestaria de Gastos 1º Trimestre (published 2026-04-15T23:53:18)"
   },
@@ -195,7 +199,9 @@
     "bytes": 526733,
     "fetched_at": "2026-07-07T05:30:47Z",
     "status": "ok",
-    "notes": "BALANCE DE SUMAS Y SALDOS 1º TRIMESTRE (published 2026-04-15T23:48:56)"
+    "notes": "BALANCE DE SUMAS Y SALDOS 1º TRIMESTRE (published 2026-04-15T23:48:56)",
+    "last_error": "BALANCE DE SUMAS Y SALDOS 1º TRIMESTRE (published 2026-04-15T23:48:56) [HTTP 429]",
+    "last_error_at": "2026-07-13T17:29:50Z"
   },
   {
     "id": "mcr-docs/situacion-economica-financiera-1o-semestre",
@@ -209,7 +215,9 @@
     "bytes": 453913,
     "fetched_at": "2026-07-07T05:30:52Z",
     "status": "ok",
-    "notes": "SITUACION ECONOMICA FINANCIERA 1º TRIMESTRE (published 2026-04-15T23:47:33)"
+    "notes": "SITUACION ECONOMICA FINANCIERA 1º TRIMESTRE (published 2026-04-15T23:47:33)",
+    "last_error": "SITUACION ECONOMICA FINANCIERA 1º TRIMESTRE (published 2026-04-15T23:47:33) [HTTP 429]",
+    "last_error_at": "2026-07-13T17:29:59Z"
   },
   {
     "id": "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-4to-trimestre",
@@ -221,11 +229,9 @@
     "sha256": "c90983c1791dfe49e5d7201405c117406d229d4c698f33e04427e1eec6993dcd",
     "mime": "application/pdf",
     "bytes": 2218986,
-    "fetched_at": "2026-07-07T02:50:34Z",
+    "fetched_at": "2026-07-13T17:30:10Z",
     "status": "ok",
-    "notes": "Estado de Ejecución Presupuestaria de Gastos 4to Trimestre (published 2026-04-15T23:39:28)",
-    "last_error": "Estado de Ejecución Presupuestaria de Gastos 4to Trimestre (published 2026-04-15T23:39:28) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:30:57Z"
+    "notes": "Estado de Ejecución Presupuestaria de Gastos 4to Trimestre (published 2026-04-15T23:39:28)"
   },
   {
     "id": "mcr-docs/estado-de-ejecucion-presupuestaria-de-recursos-4to-trimestre",
@@ -239,7 +245,9 @@
     "bytes": 582910,
     "fetched_at": "2026-07-07T05:31:06Z",
     "status": "ok",
-    "notes": "Estado de Ejecución Presupuestaria de Recursos 4to Trimestre (published 2026-04-15T23:37:46)"
+    "notes": "Estado de Ejecución Presupuestaria de Recursos 4to Trimestre (published 2026-04-15T23:37:46)",
+    "last_error": "Estado de Ejecución Presupuestaria de Recursos 4to Trimestre (published 2026-04-15T23:37:46) [HTTP 429]",
+    "last_error_at": "2026-07-13T17:30:19Z"
   },
   {
     "id": "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-por-finalidad-y-funcion-4to-trimestre",
@@ -255,7 +263,7 @@
     "status": "ok",
     "notes": "Estado de Ejecución Presupuestaria de Gastos por finalidad y función 4to Trimestre (published 2026-04-15T23:36:16)",
     "last_error": "Estado de Ejecución Presupuestaria de Gastos por finalidad y función 4to Trimestre (published 2026-04-15T23:36:16) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:31:11Z"
+    "last_error_at": "2026-07-13T17:30:28Z"
   },
   {
     "id": "mcr-docs/memoria-general-anual-ejercicio-2025",
@@ -267,11 +275,9 @@
     "sha256": "a8d60ddacf7bc04d4372a29c0d003bae630b8c66153efa6cb3377ce4bfcf80fd",
     "mime": "application/pdf",
     "bytes": 67411,
-    "fetched_at": "2026-07-07T02:50:34Z",
+    "fetched_at": "2026-07-13T17:30:38Z",
     "status": "ok",
-    "notes": "Memoria General Anual Ejercicio 2025 (published 2026-04-01T10:24:49)",
-    "last_error": "Memoria General Anual Ejercicio 2025 (published 2026-04-01T10:24:49) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:31:20Z"
+    "notes": "Memoria General Anual Ejercicio 2025 (published 2026-04-01T10:24:49)"
   },
   {
     "id": "mcr-docs/2244",
@@ -285,7 +291,9 @@
     "bytes": 363585,
     "fetched_at": "2026-07-07T05:31:28Z",
     "status": "ok",
-    "notes": "Situación Económica Financiera 4to Trimestre (published 2026-03-30T08:51:04)"
+    "notes": "Situación Económica Financiera 4to Trimestre (published 2026-03-30T08:51:04)",
+    "last_error": "Situación Económica Financiera 4to Trimestre (published 2026-03-30T08:51:04) [HTTP 429]",
+    "last_error_at": "2026-07-13T17:30:48Z"
   },
   {
     "id": "mcr-docs/2241",
@@ -301,7 +309,7 @@
     "status": "ok",
     "notes": "Estado de Situación Económico Financiera (published 2026-03-30T08:49:27)",
     "last_error": "Estado de Situación Económico Financiera (published 2026-03-30T08:49:27) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:31:37Z"
+    "last_error_at": "2026-07-13T17:30:58Z"
   },
   {
     "id": "mcr-docs/2238",
@@ -313,11 +321,9 @@
     "sha256": "adb35fc41a7d0c567c172788a1906529be17ad198e921233ad40dc1aad0af0af",
     "mime": "application/pdf",
     "bytes": 527539,
-    "fetched_at": "2026-07-07T02:44:31Z",
+    "fetched_at": "2026-07-13T17:31:08Z",
     "status": "ok",
-    "notes": "Balance de Sumas y Saldos 4to Trimestre (published 2026-03-30T08:44:52)",
-    "last_error": "Balance de Sumas y Saldos 4to Trimestre (published 2026-03-30T08:44:52) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:31:46Z"
+    "notes": "Balance de Sumas y Saldos 4to Trimestre (published 2026-03-30T08:44:52)"
   },
   {
     "id": "mcr-docs/presupuesto-de-gastos-por-objeto",
@@ -333,7 +339,7 @@
     "status": "ok",
     "notes": "Presupuesto de Gastos por Objeto (published 2026-03-16T09:30:20)",
     "last_error": "Presupuesto de Gastos por Objeto (published 2026-03-16T09:30:20) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:31:54Z"
+    "last_error_at": "2026-07-13T17:31:19Z"
   },
   {
     "id": "mcr-docs/listado-de-presupuesto-de-gastos-por-estructura-programatica",
@@ -347,7 +353,9 @@
     "bytes": 629042,
     "fetched_at": "2026-07-07T05:32:02Z",
     "status": "ok",
-    "notes": "Listado de Presupuesto de Gastos por Estructura Programática (published 2026-03-16T09:23:03)"
+    "notes": "Listado de Presupuesto de Gastos por Estructura Programática (published 2026-03-16T09:23:03)",
+    "last_error": "Listado de Presupuesto de Gastos por Estructura Programática (published 2026-03-16T09:23:03) [HTTP 429]",
+    "last_error_at": "2026-07-13T17:31:28Z"
   },
   {
     "id": "mcr-docs/presupuesto-de-gastos-por-caracter-economico",
@@ -359,11 +367,9 @@
     "sha256": "53e86e60fd6070525fe73ebc104cb29a5a59a85839b101b5413449569d8d8936",
     "mime": "application/pdf",
     "bytes": 500560,
-    "fetched_at": "2026-07-07T02:45:05Z",
+    "fetched_at": "2026-07-13T17:31:38Z",
     "status": "ok",
-    "notes": "Presupuesto de Gastos por Carácter Económico (published 2026-03-16T09:16:07)",
-    "last_error": "Presupuesto de Gastos por Carácter Económico (published 2026-03-16T09:16:07) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:32:09Z"
+    "notes": "Presupuesto de Gastos por Carácter Económico (published 2026-03-16T09:16:07)"
   },
   {
     "id": "mcr-docs/situacion-economica-financiera-3o-trimestre",
@@ -379,7 +385,7 @@
     "status": "ok",
     "notes": "SITUACION ECONOMICA FINANCIERA 3º TRIMESTRE (published 2025-11-05T14:58:30)",
     "last_error": "SITUACION ECONOMICA FINANCIERA 3º TRIMESTRE (published 2025-11-05T14:58:30) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:32:18Z"
+    "last_error_at": "2026-07-13T17:31:49Z"
   },
   {
     "id": "mcr-docs/situacion-economica-financiera-2o-trimestre",
@@ -395,7 +401,7 @@
     "status": "ok",
     "notes": "SITUACION ECONOMICA FINANCIERA 2º TRIMESTRE (published 2025-11-05T14:57:49)",
     "last_error": "SITUACION ECONOMICA FINANCIERA 2º TRIMESTRE (published 2025-11-05T14:57:49) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:32:26Z"
+    "last_error_at": "2026-07-13T17:31:58Z"
   },
   {
     "id": "mcr-docs/situacion-economica-financiera-1o-trimestre",
@@ -407,7 +413,7 @@
     "sha256": "7d681f13c0cddcda957745d7bb81fe9d6231f6e884e8d503f6cbc4ff8280abb3",
     "mime": "application/pdf",
     "bytes": 530721,
-    "fetched_at": "2026-07-07T05:32:35Z",
+    "fetched_at": "2026-07-13T17:32:08Z",
     "status": "ok",
     "notes": "SITUACION ECONOMICA FINANCIERA 1º TRIMESTRE (published 2025-11-05T14:57:10)"
   },
@@ -425,7 +431,7 @@
     "status": "ok",
     "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 3º TRIMESTRE (published 2025-11-05T14:53:05)",
     "last_error": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 3º TRIMESTRE (published 2025-11-05T14:53:05) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:32:39Z"
+    "last_error_at": "2026-07-13T17:32:19Z"
   },
   {
     "id": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre",
@@ -441,7 +447,7 @@
     "status": "ok",
     "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 2º TRIMESTRE (published 2025-11-05T14:52:24)",
     "last_error": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 2º TRIMESTRE (published 2025-11-05T14:52:24) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:32:47Z"
+    "last_error_at": "2026-07-13T17:32:29Z"
   },
   {
     "id": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre",
@@ -453,11 +459,9 @@
     "sha256": "20b51fcafcf42ab4543774d8c4adca3132f24cc98b5ece707bef7fe8c1e49fcd",
     "mime": "application/pdf",
     "bytes": 74345,
-    "fetched_at": "2026-07-07T02:46:07Z",
+    "fetched_at": "2026-07-13T17:32:38Z",
     "status": "ok",
-    "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 1º TRIMESTRE (published 2025-11-05T14:51:46)",
-    "last_error": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 1º TRIMESTRE (published 2025-11-05T14:51:46) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:32:55Z"
+    "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 1º TRIMESTRE (published 2025-11-05T14:51:46)"
   },
   {
     "id": "mcr-docs/estado-por-finalidad-y-funcion-3o-trimestre",
@@ -471,7 +475,9 @@
     "bytes": 364153,
     "fetched_at": "2026-07-07T05:33:04Z",
     "status": "ok",
-    "notes": "ESTADO POR FINALIDAD Y FUNCION 3º TRIMESTRE (published 2025-11-05T14:38:05)"
+    "notes": "ESTADO POR FINALIDAD Y FUNCION 3º TRIMESTRE (published 2025-11-05T14:38:05)",
+    "last_error": "ESTADO POR FINALIDAD Y FUNCION 3º TRIMESTRE (published 2025-11-05T14:38:05) [HTTP 429]",
+    "last_error_at": "2026-07-13T17:32:49Z"
   },
   {
     "id": "mcr-docs/estado-por-finalidad-y-funcion-2o-trimestre",
@@ -487,7 +493,7 @@
     "status": "ok",
     "notes": "ESTADO POR FINALIDAD Y FUNCION 2º TRIMESTRE (published 2025-11-05T14:35:57)",
     "last_error": "ESTADO POR FINALIDAD Y FUNCION 2º TRIMESTRE (published 2025-11-05T14:35:57) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:33:08Z"
+    "last_error_at": "2026-07-13T17:32:58Z"
   },
   {
     "id": "mcr-docs/estado-por-finalidad-y-funcion-1o-trimestre",
@@ -503,7 +509,7 @@
     "status": "ok",
     "notes": "ESTADO POR FINALIDAD Y FUNCION 1º TRIMESTRE (published 2025-11-05T14:35:17)",
     "last_error": "ESTADO POR FINALIDAD Y FUNCION 1º TRIMESTRE (published 2025-11-05T14:35:17) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:33:16Z"
+    "last_error_at": "2026-07-13T17:33:08Z"
   },
   {
     "id": "mcr-docs/ejecucion-presupuestaria-de-recursos-3o-trimestre",
@@ -515,11 +521,9 @@
     "sha256": "0a34f28490416b398a44c41e35805cf3612b1a5007376391b9915b8c28507d90",
     "mime": "application/pdf",
     "bytes": 2323001,
-    "fetched_at": "2026-07-07T02:50:42Z",
+    "fetched_at": "2026-07-13T17:33:18Z",
     "status": "ok",
-    "notes": "EJECUCION PRESUPUESTARIA DE RECURSOS 3º TRIMESTRE (published 2025-11-05T14:33:53)",
-    "last_error": "EJECUCION PRESUPUESTARIA DE RECURSOS 3º TRIMESTRE (published 2025-11-05T14:33:53) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:33:25Z"
+    "notes": "EJECUCION PRESUPUESTARIA DE RECURSOS 3º TRIMESTRE (published 2025-11-05T14:33:53)"
   },
   {
     "id": "mcr-docs/ejecucion-presupuestaria-de-gastos-3o-trimeste",
@@ -533,7 +537,9 @@
     "bytes": 16992,
     "fetched_at": "2026-07-07T05:33:33Z",
     "status": "ok",
-    "notes": "EJECUCION PRESUPUESTARIA DE GASTOS 3º TRIMESTE (published 2025-11-05T14:32:20)"
+    "notes": "EJECUCION PRESUPUESTARIA DE GASTOS 3º TRIMESTE (published 2025-11-05T14:32:20)",
+    "last_error": "EJECUCION PRESUPUESTARIA DE GASTOS 3º TRIMESTE (published 2025-11-05T14:32:20) [HTTP 429]",
+    "last_error_at": "2026-07-13T17:33:24Z"
   },
   {
     "id": "mcr-docs/ejecucion-presupuestaria-de-recursos-2o-trimestre",
@@ -549,7 +555,7 @@
     "status": "ok",
     "notes": "EJECUCION PRESUPUESTARIA DE RECURSOS 2º TRIMESTRE (published 2025-11-05T14:26:11)",
     "last_error": "EJECUCION PRESUPUESTARIA DE RECURSOS 2º TRIMESTRE (published 2025-11-05T14:26:11) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:33:39Z"
+    "last_error_at": "2026-07-13T17:33:34Z"
   },
   {
     "id": "mcr-docs/ejecucion-presupuestaria-de-gastos-2o-trimestre",
@@ -561,11 +567,9 @@
     "sha256": "0aeb6dc5f282286f4766a800802c9550ee2555cbb56a9488c247e1fb7944a0bd",
     "mime": "application/pdf",
     "bytes": 16257261,
-    "fetched_at": "2026-07-07T02:50:42Z",
+    "fetched_at": "2026-07-13T17:33:44Z",
     "status": "ok",
-    "notes": "EJECUCION PRESUPUESTARIA DE GASTOS 2º TRIMESTRE (published 2025-11-05T14:25:25)",
-    "last_error": "EJECUCION PRESUPUESTARIA DE GASTOS 2º TRIMESTRE (published 2025-11-05T14:25:25) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:33:47Z"
+    "notes": "EJECUCION PRESUPUESTARIA DE GASTOS 2º TRIMESTRE (published 2025-11-05T14:25:25)"
   },
   {
     "id": "mcr-docs/ejecucion-presupuestaria-de-recursos-1o-trimestre",
@@ -581,7 +585,7 @@
     "status": "ok",
     "notes": "EJECUCION PRESUPUESTARIA DE RECURSOS 1º TRIMESTRE (published 2025-11-05T14:24:16)",
     "last_error": "EJECUCION PRESUPUESTARIA DE RECURSOS 1º TRIMESTRE (published 2025-11-05T14:24:16) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:33:56Z"
+    "last_error_at": "2026-07-13T17:33:57Z"
   },
   {
     "id": "mcr-docs/ejecucion-presupuestaria-de-gastos-1o-trimestre",
@@ -595,7 +599,9 @@
     "bytes": 1130019,
     "fetched_at": "2026-07-07T05:34:04Z",
     "status": "ok",
-    "notes": "EJECUCION PRESUPUESTARIA DE GASTOS 1º TRIMESTRE (published 2025-11-05T14:23:38)"
+    "notes": "EJECUCION PRESUPUESTARIA DE GASTOS 1º TRIMESTRE (published 2025-11-05T14:23:38)",
+    "last_error": "EJECUCION PRESUPUESTARIA DE GASTOS 1º TRIMESTRE (published 2025-11-05T14:23:38) [HTTP 429]",
+    "last_error_at": "2026-07-13T17:34:06Z"
   },
   {
     "id": "mcr-docs/balance-de-sumas-y-saldos-3o-trimestre",
@@ -607,11 +613,9 @@
     "sha256": "d44fcef6a7230d57d45f20b410eadb9127d74ee2f14aef9061bd4b02cdcbe220",
     "mime": "application/pdf",
     "bytes": 1073568,
-    "fetched_at": "2026-07-07T02:50:42Z",
+    "fetched_at": "2026-07-13T17:34:16Z",
     "status": "ok",
-    "notes": "BALANCE DE SUMAS Y SALDOS 3º TRIMESTRE (published 2025-11-05T14:19:15)",
-    "last_error": "BALANCE DE SUMAS Y SALDOS 3º TRIMESTRE (published 2025-11-05T14:19:15) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:34:10Z"
+    "notes": "BALANCE DE SUMAS Y SALDOS 3º TRIMESTRE (published 2025-11-05T14:19:15)"
   },
   {
     "id": "mcr-docs/balance-de-sumas-y-saldos-2o-trimestre",
@@ -627,7 +631,7 @@
     "status": "ok",
     "notes": "BALANCE DE SUMAS Y SALDOS 2º TRIMESTRE (published 2025-11-05T14:18:33)",
     "last_error": "BALANCE DE SUMAS Y SALDOS 2º TRIMESTRE (published 2025-11-05T14:18:33) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:34:19Z"
+    "last_error_at": "2026-07-13T17:34:22Z"
   },
   {
     "id": "mcr-docs/balance-de-sumas-y-saldos-1o-trimestre-2025",
@@ -643,7 +647,7 @@
     "status": "ok",
     "notes": "BALANCE DE SUMAS Y SALDOS 1º TRIMESTRE (published 2025-11-05T14:16:19)",
     "last_error": "BALANCE DE SUMAS Y SALDOS 1º TRIMESTRE (published 2025-11-05T14:16:19) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:34:27Z"
+    "last_error_at": "2026-07-13T17:34:32Z"
   },
   {
     "id": "mcr-docs/situacion-economico-financiera",
@@ -655,7 +659,7 @@
     "sha256": "929e497906be19a3b0524b6155f75f64f5ce172dc79bfcd2f7beaa21237de3a3",
     "mime": "application/pdf",
     "bytes": 748957,
-    "fetched_at": "2026-07-07T05:34:35Z",
+    "fetched_at": "2026-07-13T17:34:41Z",
     "status": "ok",
     "notes": "SITUACION ECONOMICA FINANCIERA 1º SEMESTRE (published 2025-07-11T12:39:37)"
   },
@@ -673,7 +677,7 @@
     "status": "ok",
     "notes": "R-56-2025 Alc.1 Departamento Ejecutivo responde por perdida de Liquidos Cloacales en Roca 1000 (published 2025-07-11T09:45:13)",
     "last_error": "R-56-2025 Alc.1 Departamento Ejecutivo responde por perdida de Liquidos Cloacales en Roca 1000 (published 2025-07-11T09:45:13) [HTTP 429]",
-    "last_error_at": "2026-07-07T05:34:39Z"
+    "last_error_at": "2026-07-13T17:34:53Z"
   },
   {
     "id": "sibom/boletin-086",
@@ -1494,12 +1498,12 @@
     "source_url": "https://mcr.gob.ar/wp-json/wp/v2/documentos?per_page=100",
     "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/mcr-docs-snapshot/documentos-snapshot.json",
     "archived_path": "archive/mcr-docs-snapshot/documentos-snapshot.json",
-    "sha256": "01b786bfa6a9fc4b059870bbef276eb1141f5d8ea54b4425ba20322f478888b1",
+    "sha256": "83e3daec0cac376d5469c2a27d7f53569e10dedddfa1fd770a2c04119ad4d493",
     "mime": "application/json",
-    "bytes": 77647,
-    "fetched_at": "2026-07-08T15:46:56Z",
+    "bytes": 97842,
+    "fetched_at": "2026-07-13T17:40:01Z",
     "status": "ok",
-    "notes": "Raw WordPress REST API listing snapshot of every \"documentos\" post (Gobierno Abierto) -- archived verbatim, sha256-pinned, so `build-cadencia` derives the live per-ASAP-dimension publish cadence (latest period + lag) from a single provenance-tracked source, distinct from the individual PDF attachments already archived one-by-one under the `mcr-docs` capability. A listing change (document added/removed) is itself detectable via manifest content-drift, same as any other archived source."
+    "notes": "Raw WordPress REST API listing snapshot of every \"documentos\" post (Gobierno Abierto) -- archived verbatim, sha256-pinned, so `build-cadencia` derives the live per-ASAP-dimension publish cadence (latest period + lag) from a single provenance-tracked source, distinct from the individual PDF attachments already archived one-by-one under the `mcr-docs` capability. A listing change (document added/removed) is itself detectable via manifest content-drift, same as any other archived source. [content drift detected vs prior capture]"
   },
   {
     "id": "sibom-actos/boletin-031-decreto-205-2022",
@@ -2130,5 +2134,131 @@
     "fetched_at": "2026-07-09T17:10:25Z",
     "status": "ok",
     "notes": "Boletín Oficial de la Provincia de Buenos Aires, edición 18/07/2023 (Año CXIV, Nº 29548), Sección Oficial - Sociedades. Contiene el edicto de constitución de EQUIPO DE SERVICIOS PORTUARIOS RUMAX S.R.L. (instrumento privado del 29/6/2023) -- socios Juan Esteban Iglesias (50%, socio gerente) y Maximiliano Marcelo Márquez (50%), curados en etl/titularidad.yaml. This URL returns the FULL day's Sección Oficial PDF (189 pages, every entity published that day), not a RUMAX-specific sub-document -- the source exposes no narrower URL. Verified live 2026-07-09: the PDF carries a real, searchable text layer (pdftotext extracts ~843KB across 189 pages, including the RUMAX paragraph verbatim) -- NOT a scanned image as an earlier internal note assumed; corrected here rather than left inaccurate. A full-document parser is deliberately NOT built: this single PDF also carries hundreds of unrelated people's DNI, domicilio and estado civil across every OTHER entity's edicto published the same day -- only the one verified RUMAX record is hand-curated for publication (minimization by construction, see titularidad.py). [R2 upload pending: no credentials configured]"
+  },
+  {
+    "id": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2",
+    "capability": "mcr-docs",
+    "source": "mcr.gob.ar",
+    "source_url": "https://mcr.gob.ar/wp-content/uploads/2026/07/STOCK-DE-DEUDA-Y-PERFIL-DE-VENCIMIENTOS-2o-TRIMESTRE.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2.pdf",
+    "archived_path": "archive/mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2.pdf",
+    "sha256": "813b165c9473ba9a7ee7e98b72a647732dad452e8dbcf04f09c0176a82dd2d42",
+    "mime": "application/pdf",
+    "bytes": 7953,
+    "fetched_at": "2026-07-13T17:28:10Z",
+    "status": "ok",
+    "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 2º TRIMESTRE (published 2026-07-13T00:45:06)"
+  },
+  {
+    "id": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre-2",
+    "capability": "mcr-docs",
+    "source": "mcr.gob.ar",
+    "source_url": "https://mcr.gob.ar/wp-content/uploads/2026/07/STOCK-DE-DEUDA-Y-PERFIL-DE-VENCIMIENTOS-1o-TRIMESTRE.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre-2.pdf",
+    "archived_path": "archive/mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre-2.pdf",
+    "sha256": "7ef57ef52c2cf95277e2d7760d2e4ac2c45e151113fcde34afd57610a12f5ab4",
+    "mime": "application/pdf",
+    "bytes": 8234,
+    "fetched_at": "2026-07-13T17:28:16Z",
+    "status": "ok",
+    "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 1º TRIMESTRE (published 2026-07-13T00:43:25)"
+  },
+  {
+    "id": "mcr-docs/gastos-por-finalidad-y-funcion-2o-trimestre",
+    "capability": "mcr-docs",
+    "source": "mcr.gob.ar",
+    "source_url": "https://mcr.gob.ar/wp-content/uploads/2026/07/GASTOS-POR-FINALIDAD-Y-FUNCION-2o-TRIMESTRE.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/mcr-docs/gastos-por-finalidad-y-funcion-2o-trimestre.pdf",
+    "archived_path": "archive/mcr-docs/gastos-por-finalidad-y-funcion-2o-trimestre.pdf",
+    "sha256": "df2824b1cdc33e2e892da5db780d4acd962d3413366c0c0c5131b5b9b12d3039",
+    "mime": "application/pdf",
+    "bytes": 362946,
+    "fetched_at": "2026-07-13T17:28:21Z",
+    "status": "ok",
+    "notes": "GASTOS POR FINALIDAD Y FUNCION 2º TRIMESTRE (published 2026-07-13T00:40:56)"
+  },
+  {
+    "id": "mcr-docs/gastos-por-finalidad-y-funcion-1o-trimestre",
+    "capability": "mcr-docs",
+    "source": "mcr.gob.ar",
+    "source_url": "https://mcr.gob.ar/wp-content/uploads/2026/07/GASTOS-POR-FINALIDAD-Y-FUNCION-1o-TRIMESTRE.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/mcr-docs/gastos-por-finalidad-y-funcion-1o-trimestre.pdf",
+    "archived_path": "archive/mcr-docs/gastos-por-finalidad-y-funcion-1o-trimestre.pdf",
+    "sha256": "66ae7854e404e7739e7d4ed5ce30e6e113dc4aa3fc3c7875772e4c183554037b",
+    "mime": "application/pdf",
+    "bytes": 363288,
+    "fetched_at": "2026-07-13T17:28:27Z",
+    "status": "ok",
+    "notes": "GASTOS POR FINALIDAD Y FUNCION 1º TRIMESTRE (published 2026-07-13T00:40:04)"
+  },
+  {
+    "id": "mcr-docs/ejecucion-presupuestaria-de-recursos-2o-trimestre-2",
+    "capability": "mcr-docs",
+    "source": "mcr.gob.ar",
+    "source_url": "https://mcr.gob.ar/wp-content/uploads/2026/07/EJECUCION-PRESUPUESTARIA-DE-RECURSOS-2o-TRIMESTRE.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/mcr-docs/ejecucion-presupuestaria-de-recursos-2o-trimestre-2.pdf",
+    "archived_path": "archive/mcr-docs/ejecucion-presupuestaria-de-recursos-2o-trimestre-2.pdf",
+    "sha256": "90c876323baca2be89910496034ba71c2a6621ac509bb8aaccb518dce555a5b3",
+    "mime": "application/pdf",
+    "bytes": 2146696,
+    "fetched_at": "2026-07-13T17:28:33Z",
+    "status": "ok",
+    "notes": "EJECUCION PRESUPUESTARIA DE RECURSOS 2º TRIMESTRE (published 2026-07-13T00:39:06)"
+  },
+  {
+    "id": "mcr-docs/ejecucion-presupuestaria-de-recursos-1o-trimestre-2",
+    "capability": "mcr-docs",
+    "source": "mcr.gob.ar",
+    "source_url": "https://mcr.gob.ar/wp-content/uploads/2026/07/EJECUCION-PRESUPUESTARIA-DE-RECURSOS-1o-TRIMESTRE.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/mcr-docs/ejecucion-presupuestaria-de-recursos-1o-trimestre-2.pdf",
+    "archived_path": "archive/mcr-docs/ejecucion-presupuestaria-de-recursos-1o-trimestre-2.pdf",
+    "sha256": "62ba38af3502de574e8a8b430116a253df69464b188d8a0a463e6c5aa6ed3f90",
+    "mime": "application/pdf",
+    "bytes": 1610186,
+    "fetched_at": "2026-07-13T17:28:40Z",
+    "status": "ok",
+    "notes": "EJECUCION PRESUPUESTARIA DE RECURSOS 1º TRIMESTRE (published 2026-07-13T00:38:15)"
+  },
+  {
+    "id": "mcr-docs/ejecucion-presupuestaria-de-gastos-2o-trimestre-2",
+    "capability": "mcr-docs",
+    "source": "mcr.gob.ar",
+    "source_url": "https://mcr.gob.ar/wp-content/uploads/2026/07/EJECUCION-PRESUPUESTARIA-DE-GASTOS-2o-TRIMESTRE_compressed.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/mcr-docs/ejecucion-presupuestaria-de-gastos-2o-trimestre-2.pdf",
+    "archived_path": "archive/mcr-docs/ejecucion-presupuestaria-de-gastos-2o-trimestre-2.pdf",
+    "sha256": "fd63e3cb931ae531973d256a8dccc4763b09894a3e918add3010dc5bf4c8c881",
+    "mime": "application/pdf",
+    "bytes": 587960,
+    "fetched_at": "2026-07-13T17:37:28Z",
+    "status": "ok",
+    "notes": "EJECUCION PRESUPUESTARIA DE GASTOS 2º TRIMESTRE (published 2026-07-13T00:37:06)"
+  },
+  {
+    "id": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre",
+    "capability": "mcr-docs",
+    "source": "mcr.gob.ar",
+    "source_url": "https://mcr.gob.ar/wp-content/uploads/2026/07/STOCK-DE-DEUDA-Y-PERFIL-DE-VENCIMIENTOS-4o-TRIMESTRE.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre.pdf",
+    "archived_path": "archive/mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre.pdf",
+    "sha256": "13a3dbbac71d2db98010cf4dba2e0e738b87bae2ecfcbedd5b6d4bf33dd77e15",
+    "mime": "application/pdf",
+    "bytes": 8018,
+    "fetched_at": "2026-07-13T17:37:17Z",
+    "status": "ok",
+    "notes": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 4º TRIMESTRE (published 2026-07-13T00:32:03)"
+  },
+  {
+    "id": "mcr-docs/gasto-por-finalidad-y-funcion-4o-trimestre",
+    "capability": "mcr-docs",
+    "source": "mcr.gob.ar",
+    "source_url": "https://mcr.gob.ar/wp-content/uploads/2026/07/GASTOS-POR-FINALIDAD-Y-FUNCION-4o-TRIMESTRE.pdf",
+    "archived_url": "https://pub-4e053d8ca3974b959431d02feb284443.r2.dev/mcr-docs/gasto-por-finalidad-y-funcion-4o-trimestre.pdf",
+    "archived_path": "archive/mcr-docs/gasto-por-finalidad-y-funcion-4o-trimestre.pdf",
+    "sha256": "8e6f1aff8d1daa77425abe87ac6ed01811e47201ffa141ac075ec83f5eea4a35",
+    "mime": "application/pdf",
+    "bytes": 363316,
+    "fetched_at": "2026-07-13T17:29:08Z",
+    "status": "ok",
+    "notes": "GASTO POR FINALIDAD Y FUNCIÓN 4º TRIMESTRE (published 2026-07-13T00:30:01)"
   }
 ]

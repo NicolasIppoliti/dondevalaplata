@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-08T20:09:21Z",
+  "generatedAt": "2026-07-13T17:38:12Z",
   "series": [
     {
       "period": "2025-Q1",
@@ -21,11 +21,35 @@
       "fecha": "2025-09-30",
       "totalArs": 46876896.86,
       "sourceRef": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
+    },
+    {
+      "period": "2025-Q4",
+      "periodLabel": "4to trimestre 2025",
+      "fecha": "2025-12-31",
+      "totalArs": 1826113416.7,
+      "sourceRef": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre"
+    },
+    {
+      "period": "2026-Q1",
+      "periodLabel": "1er trimestre 2026",
+      "fecha": "2026-03-31",
+      "totalArs": 169183140.12,
+      "sourceRef": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre-2"
+    },
+    {
+      "period": "2026-Q2",
+      "periodLabel": "2do trimestre 2026",
+      "fecha": "2026-06-30",
+      "totalArs": 110097259.09,
+      "sourceRef": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2"
     }
   ],
   "sourceRefs": [
     "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre",
     "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre",
-    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre",
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre",
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre-2",
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2"
   ]
 }
