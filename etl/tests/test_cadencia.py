@@ -33,7 +33,7 @@ FIXTURE_DOCUMENTOS = json.loads(
         encoding="utf-8"
     )
 )
-FIXED_NOW = datetime(2026, 7, 8, 12, 0, 0, tzinfo=UTC)
+FIXED_NOW = datetime(2026, 7, 13, 12, 0, 0, tzinfo=UTC)
 
 
 def test_normalize_lowercases_and_strips_accents() -> None:
@@ -60,7 +60,7 @@ def test_matches_document_respects_exclude_keywords() -> None:
 def test_latest_matching_returns_the_most_recent_match() -> None:
     doc = latest_matching(FIXTURE_DOCUMENTOS, ["stock de deuda"])
     assert doc is not None
-    assert doc["slug"] == "stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
+    assert doc["slug"] == "stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2"
 
 
 def test_latest_matching_returns_none_when_nothing_matches() -> None:
@@ -85,8 +85,8 @@ def test_load_curated_cadencia_has_six_dimensions_and_a_deuda_block() -> None:
 
     assert config.asap_report == "Mayo 2026"
     assert len(config.dimensions) == 6
-    assert config.deuda.last_period_label == "3er trimestre 2025"
-    assert config.deuda.last_figure_ars == pytest.approx(46876896.86)
+    assert config.deuda.last_period_label == "2do trimestre 2026"
+    assert config.deuda.last_figure_ars == pytest.approx(110097259.09)
 
 
 def test_derive_dimension_cadence_single_series_gap_dimension() -> None:
@@ -103,13 +103,12 @@ def test_derive_dimension_cadence_single_series_gap_dimension() -> None:
     assert result["name"] == "Gastos por finalidad y función"
     assert result["got"] == 3
     assert result["max"] == 10
-    assert "4to Trimestre" in result["lastPeriodPublished"]
-    assert result["lagMonths"] == 2  # 2026-04-15 -> 2026-07-08
+    assert "2º TRIMESTRE" in result["lastPeriodPublished"]
+    assert result["lagMonths"] == 0  # 2026-07-13T00:40:56 -> 2026-07-13T12:00
+    assert result["caughtUp"] is True
     assert "rezago" in result["reason"].lower()
     assert "+7" in result["toReach10"]
-    assert result["sourceRefs"] == [
-        "mcr-docs/estado-de-ejecucion-presupuestaria-de-gastos-por-finalidad-y-funcion-4to-trimestre"
-    ]
+    assert result["sourceRefs"] == ["mcr-docs/gastos-por-finalidad-y-funcion-2o-trimestre"]
 
 
 def test_derive_dimension_cadence_sub_series_combines_both_labels() -> None:
@@ -124,10 +123,10 @@ def test_derive_dimension_cadence_sub_series_combines_both_labels() -> None:
     )
 
     assert "Ejecución de Gastos" in result["lastPeriodPublished"]
-    assert "1º Trimestre" in result["lastPeriodPublished"]
     assert "Ejecución de Recursos" in result["lastPeriodPublished"]
-    assert "4to Trimestre" in result["lastPeriodPublished"]
-    assert result["lagMonths"] == 2
+    assert "2º TRIMESTRE" in result["lastPeriodPublished"]
+    assert result["lagMonths"] == 0
+    assert result["caughtUp"] is True
     assert len(result["sourceRefs"]) == 2
 
 
@@ -167,13 +166,17 @@ def test_derive_dimension_cadence_raises_when_live_period_drifted_from_curated_t
     dim_config = next(
         d for d in config.dimensions if d.name == "Stock de deuda y perfil de vencimientos"
     )
+    # Must be NEWER than the fixture's real latest stock-de-deuda document
+    # (2026-07-13T00:45:06) to actually become "latest" -- and its title
+    # must not contain the curated marker ("2", see `expected_latest_
+    # period_contains` in `etl/cadencia.yaml`) to trip the tripwire.
     drifted_documentos = [
         *FIXTURE_DOCUMENTOS,
         {
-            "date": "2026-05-01T00:00:00",
-            "slug": "stock-de-deuda-y-perfil-de-vencimientos-4to-trimestre",
-            "title": {"rendered": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 4to TRIMESTRE"},
-            "link": "https://mcr.gob.ar/documentos/stock-de-deuda-y-perfil-de-vencimientos-4to-trimestre/",
+            "date": "2026-08-01T00:00:00",
+            "slug": "stock-de-deuda-y-perfil-de-vencimientos-3er-trimestre-2026",
+            "title": {"rendered": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 3ER TRIMESTRE"},
+            "link": "https://mcr.gob.ar/documentos/stock-de-deuda-y-perfil-de-vencimientos-3er-trimestre-2026/",
         },
     ]
 
@@ -188,12 +191,14 @@ def test_derive_deuda_cadence_happy_path() -> None:
 
     result = derive_deuda_cadence(config.deuda, FIXTURE_DOCUMENTOS, now=FIXED_NOW)
 
-    assert result["lastPeriod"] == "3er trimestre 2025"
-    assert result["lastFigureArs"] == pytest.approx(46876896.86)
-    assert result["quartersMissing"] == 3  # Q4-2025, Q1-2026, Q2-2026 closed since 30/09/2025
+    assert result["lastPeriod"] == "2do trimestre 2026"
+    assert result["lastFigureArs"] == pytest.approx(110097259.09)
+    # Cierre 30/06/2026, FIXED_NOW 13/07/2026 -- next quarter-end
+    # (30/09/2026) has not passed yet, so nothing is missing.
+    assert result["quartersMissing"] == 0
     assert result["elapsedDays"] > 0
     assert result["sourceRefs"] == [
-        "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
+        "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2"
     ]
 
 
@@ -202,10 +207,10 @@ def test_derive_deuda_cadence_raises_when_a_newer_document_is_live() -> None:
     documentos_with_newer_deuda = [
         *FIXTURE_DOCUMENTOS,
         {
-            "date": "2026-05-01T00:00:00",
-            "slug": "stock-de-deuda-y-perfil-de-vencimientos-4to-trimestre",
-            "title": {"rendered": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 4to TRIMESTRE"},
-            "link": "https://mcr.gob.ar/documentos/stock-de-deuda-y-perfil-de-vencimientos-4to-trimestre/",
+            "date": "2026-08-01T00:00:00",
+            "slug": "stock-de-deuda-y-perfil-de-vencimientos-3er-trimestre-2026",
+            "title": {"rendered": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 3ER TRIMESTRE"},
+            "link": "https://mcr.gob.ar/documentos/stock-de-deuda-y-perfil-de-vencimientos-3er-trimestre-2026/",
         },
     ]
 

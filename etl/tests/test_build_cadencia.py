@@ -20,7 +20,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 MANIFEST_PATH = REPO_ROOT / "archive-manifest.json"
 CADENCIA_CURATED_PATH = REPO_ROOT / "etl" / "cadencia.yaml"
 ASAP_CURATED_PATH = REPO_ROOT / "etl" / "asap_transparencia.yaml"
-FIXED_NOW = datetime(2026, 7, 8, 12, 0, 0, tzinfo=UTC)
+FIXED_NOW = datetime(2026, 7, 13, 12, 0, 0, tzinfo=UTC)
 
 _REAL_DOCUMENTOS_SNAPSHOT_PATH = (
     REPO_ROOT / "archive" / "mcr-docs-snapshot" / "documentos-snapshot.json"
@@ -51,7 +51,7 @@ def _result() -> dict:
 def test_build_cadencia_envelope_shape() -> None:
     result = _result()
 
-    assert result["generatedAt"] == "2026-07-08T12:00:00Z"
+    assert result["generatedAt"] == "2026-07-13T12:00:00Z"
     assert result["asapReport"] == "Mayo 2026"
     assert len(result["dimensions"]) == 6
     assert "deuda" in result
@@ -70,10 +70,12 @@ def test_build_cadencia_honesty_invariant() -> None:
     assert all(d["got"] <= d["max"] for d in result["dimensions"])
 
 
-def test_build_cadencia_recursos_lags_behind_gastos() -> None:
-    """Live-verified (2026-07-08): Ejecución de Recursos is still published
-    only through 4to trimestre 2025 while Ejecución de Gastos already
-    reached 1er trimestre 2026 -- the exact cadence gap costing +5 points.
+def test_build_cadencia_recursos_and_gastos_caught_up_after_2026_07_13_backfill() -> None:
+    """Live-verified (2026-07-13): the municipality backfilled Ejecución de
+    Recursos and Ejecución de Gastos to 2do trimestre 2026 the same day,
+    closing the cadence gap between the two series. `got`/`max` stay frozen
+    to the curated ASAP score (never fabricated -- ASAP has not re-scored),
+    but `caughtUp` reflects the live, current publication status.
     """
     result = _result()
     dim = next(
@@ -84,18 +86,19 @@ def test_build_cadencia_recursos_lags_behind_gastos() -> None:
     assert "Ejecución de Recursos" in dim["lastPeriodPublished"]
     assert dim["got"] == 5
     assert dim["max"] == 10
+    assert dim["caughtUp"] is True
 
 
-def test_build_cadencia_deuda_still_stuck_at_q3_2025() -> None:
-    """Live-verified (2026-07-08): the last published stock-de-deuda figure
-    is still 3er trimestre 2025 ($ 46.876.896,86, cierre 30/09/2025) -- no
-    Q4-2025/Q1-2026 publication exists yet.
+def test_build_cadencia_deuda_caught_up_after_2026_07_13_backfill() -> None:
+    """Live-verified (2026-07-13): the municipality backfilled Stock de
+    deuda through 2do trimestre 2026 ($ 110.097.259,09, cierre 30/06/2026)
+    in the same batch as Q4-2025 and Q1-2026.
     """
     result = _result()
 
-    assert result["deuda"]["lastPeriod"] == "3er trimestre 2025"
-    assert result["deuda"]["lastFigureArs"] == pytest.approx(46876896.86)
-    assert result["deuda"]["quartersMissing"] >= 3
+    assert result["deuda"]["lastPeriod"] == "2do trimestre 2026"
+    assert result["deuda"]["lastFigureArs"] == pytest.approx(110097259.09)
+    assert result["deuda"]["quartersMissing"] == 0
 
 
 def test_build_cadencia_source_refs_include_the_live_snapshot() -> None:

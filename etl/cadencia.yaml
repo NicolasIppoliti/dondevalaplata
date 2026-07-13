@@ -27,10 +27,14 @@ asap_cutoff_label: "31 de marzo de 2026"
 killer_fact: >-
   En el informe de noviembre 2025, estas tres dimensiones (Ejecución
   presupuestaria trimestral, Gastos por finalidad y función, Stock de
-  deuda) estaban en el máximo -- 10 sobre 10 cada una. La caída a 5/3/3 en
-  el informe de mayo 2026 no es un problema de capacidad del municipio:
-  es un problema de cadencia de publicación. Llegar a 100 ya se demostró
-  posible.
+  deuda) sumaban 30 sobre 30 puntos -- el máximo. En el informe de mayo
+  2026 (datos al 31 de marzo de 2026) sumaban 11 sobre 30, por rezago de
+  publicación respecto del corte de ese informe. El 13 de julio de 2026 el
+  municipio publicó, el mismo día, Stock de deuda, Ejecución de Recursos y
+  Gastos por finalidad y función al 2do trimestre 2026 -- las tres series
+  quedaron al día. El puntaje que se muestra en esta página sigue siendo
+  el del informe de mayo 2026: ASAP todavía no publicó un informe
+  posterior que lo recalcule.
 killer_fact_source_ref: "asap-transparencia/informe-noviembre-2025"
 
 dimensions:
@@ -59,50 +63,56 @@ dimensions:
       - label: "Ejecución de Gastos"
         keywords: ["ejecución presupuestaria de gastos"]
         exclude_keywords: ["finalidad y función"]
-        expected_latest_period_contains: "1"
+        expected_latest_period_contains: "2"
       - label: "Ejecución de Recursos"
         keywords: ["ejecución presupuestaria de recursos"]
-        expected_latest_period_contains: "4"
+        expected_latest_period_contains: "2"
     reason: >-
-      Rezago entre las dos series de la misma dimensión: al corte del
-      informe de mayo 2026, Ejecución de Gastos ya estaba publicada al 1er
-      trimestre 2026, pero Ejecución de Recursos seguía publicada solo
-      hasta el 4to trimestre 2025 -- un trimestre de rezago entre ambas.
+      Al 31/03/2026 (corte del informe de mayo 2026), Ejecución de Gastos
+      estaba publicada al 1er trimestre 2026 pero Ejecución de Recursos
+      solo hasta el 4to trimestre 2025 -- un trimestre de rezago entre
+      ambas series. El 13 de julio de 2026 el municipio publicó Ejecución
+      de Recursos y Ejecución de Gastos al 2do trimestre 2026, cerrando
+      ese rezago.
     to_reach_10: >-
-      Publicar Ejecución de Recursos al mismo trimestre que Ejecución de
-      Gastos, con un rezago de a lo sumo 1 mes respecto del cierre del
-      trimestre. (+5 puntos)
+      El puntaje de esta dimensión corresponde al informe de mayo 2026; un
+      próximo informe de ASAP es el que podría reflejar la publicación del
+      13/07/2026. (+5 puntos posibles)
 
   - name: "Gastos por finalidad y función"
     keywords: ["finalidad y función"]
-    expected_latest_period_contains: "4"
+    expected_latest_period_contains: "2"
     reason: >-
       Al 31/03/2026 (corte del informe de mayo 2026), lo último publicado
       online era el 3er trimestre 2025 -- medio año de rezago. El 4to
-      trimestre 2025 recién se publicó el 15/04/2026, después del corte,
-      así que no llegó a contar para este informe.
+      trimestre 2025 recién se había publicado el 15/04/2026, después del
+      corte, así que no llegó a contar para este informe. El 13 de julio
+      de 2026 el municipio publicó esta serie al 1er y al 2do trimestre
+      2026.
     to_reach_10: >-
-      Publicar esta serie al 1er trimestre 2026, con un rezago de a lo
-      sumo 1 mes antes del próximo corte de ASAP. (+7 puntos)
+      El puntaje de esta dimensión corresponde al informe de mayo 2026; un
+      próximo informe de ASAP es el que podría reflejar la publicación del
+      13/07/2026. (+7 puntos posibles)
 
   - name: "Stock de deuda y perfil de vencimientos"
     keywords: ["stock de deuda"]
-    expected_latest_period_contains: "3"
+    expected_latest_period_contains: "2"
     reason: >-
-      El municipio dejó de actualizar esta serie: el último dato publicado
-      es el 3er trimestre 2025 (cierre 30/09/2025), sin 4to trimestre 2025
-      ni 1er trimestre 2026 publicados todavía.
+      Al 31/03/2026 (corte del informe de mayo 2026), el último dato
+      publicado era el 3er trimestre 2025 (cierre 30/09/2025). El 13 de
+      julio de 2026 el municipio publicó, el mismo día, el 4to trimestre
+      2025, el 1er trimestre 2026 y el 2do trimestre 2026.
     to_reach_10: >-
-      Publicar Stock de deuda al 4to trimestre 2025 y al 1er trimestre
-      2026, incluyendo perfil de vencimientos y deuda flotante. (+7
-      puntos)
+      El puntaje de esta dimensión corresponde al informe de mayo 2026; un
+      próximo informe de ASAP es el que podría reflejar la publicación del
+      13/07/2026. (+7 puntos posibles)
 
 deuda:
   dimension_name: "Stock de deuda y perfil de vencimientos"
-  last_period_label: "3er trimestre 2025"
-  last_period_end: "2025-09-30"
-  last_figure_ars: 46876896.86
-  last_figure_label: "$ 46.876.896,86"
+  last_period_label: "2do trimestre 2026"
+  last_period_end: "2026-06-30"
+  last_figure_ars: 110097259.09
+  last_figure_label: "$ 110.097.259,09"
   ordenanza_ref: "Ordenanza 3638 (Acceso a la Información Pública de Coronel Rosales)"
   ordenanza_article: "Art. 11"
   ordenanza_note: >-
@@ -110,7 +120,7 @@ deuda:
     entre otra información, el detalle de gastos de compras y
     contrataciones -- el stock de deuda pública es parte de esa
     transparencia fiscal exigida por la propia normativa local.
-  source_ref: "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-3o-trimestre"
+  source_ref: "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2"
 
 source_refs:
   - "mcr-docs-snapshot/documentos"

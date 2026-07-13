@@ -15,6 +15,40 @@
 # invariant, same as every other `data/*.json` artifact's provenance).
 
 events:
+  - id: "seed-stock-de-deuda-backfill-2026-07-13"
+    date: "2026-07-13"
+    title: "El municipio publicó el Stock de Deuda y Perfil de Vencimientos del 4to trimestre 2025, 1er trimestre 2026 y 2do trimestre 2026"
+    detail: >-
+      Publicación simultánea, el mismo día, de las tres planillas
+      pendientes -- saldo al 2do trimestre 2026 (30/06/2026): $
+      110.097.259,09. Dimensión ASAP "Stock de deuda y perfil de
+      vencimientos" (ver data/cadencia.json).
+    source_refs:
+      - "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre"
+      - "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre-2"
+      - "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2"
+
+  - id: "seed-ejecucion-presupuestaria-2do-trimestre-2026-07-13"
+    date: "2026-07-13"
+    title: "El municipio publicó la Ejecución Presupuestaria de Gastos y de Recursos del 2do trimestre 2026"
+    detail: >-
+      Ambas series (Gastos y Recursos) quedaron publicadas al mismo
+      trimestre. Dimensión ASAP "Ejecución presupuestaria trimestral" (ver
+      data/cadencia.json).
+    source_refs:
+      - "mcr-docs/ejecucion-presupuestaria-de-gastos-2o-trimestre-2"
+      - "mcr-docs/ejecucion-presupuestaria-de-recursos-2o-trimestre-2"
+
+  - id: "seed-gastos-por-finalidad-y-funcion-2do-trimestre-2026-07-13"
+    date: "2026-07-13"
+    title: "El municipio publicó Gastos por finalidad y función del 1er y 2do trimestre 2026"
+    detail: >-
+      Dimensión ASAP "Gastos por finalidad y función" (ver
+      data/cadencia.json).
+    source_refs:
+      - "mcr-docs/gastos-por-finalidad-y-funcion-1o-trimestre"
+      - "mcr-docs/gastos-por-finalidad-y-funcion-2o-trimestre"
+
   - id: "seed-presupuesto-gastos-por-objeto-2026"
     date: "2026-03-16"
     title: "El municipio publicó el Presupuesto de Gastos por Objeto 2026"

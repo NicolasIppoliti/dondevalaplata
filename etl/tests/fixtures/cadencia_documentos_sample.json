@@ -1,5 +1,59 @@
 [
   {
+    "date": "2026-07-13T00:45:06",
+    "slug": "stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2",
+    "title": { "rendered": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 2º TRIMESTRE" },
+    "link": "https://mcr.gob.ar/documentos/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2/"
+  },
+  {
+    "date": "2026-07-13T00:43:25",
+    "slug": "stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre-2",
+    "title": { "rendered": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 1º TRIMESTRE" },
+    "link": "https://mcr.gob.ar/documentos/stock-de-deuda-y-perfil-de-vencimientos-1o-trimestre-2/"
+  },
+  {
+    "date": "2026-07-13T00:40:56",
+    "slug": "gastos-por-finalidad-y-funcion-2o-trimestre",
+    "title": { "rendered": "GASTOS POR FINALIDAD Y FUNCION 2º TRIMESTRE" },
+    "link": "https://mcr.gob.ar/documentos/gastos-por-finalidad-y-funcion-2o-trimestre/"
+  },
+  {
+    "date": "2026-07-13T00:40:04",
+    "slug": "gastos-por-finalidad-y-funcion-1o-trimestre",
+    "title": { "rendered": "GASTOS POR FINALIDAD Y FUNCION 1º TRIMESTRE" },
+    "link": "https://mcr.gob.ar/documentos/gastos-por-finalidad-y-funcion-1o-trimestre/"
+  },
+  {
+    "date": "2026-07-13T00:39:06",
+    "slug": "ejecucion-presupuestaria-de-recursos-2o-trimestre-2",
+    "title": { "rendered": "EJECUCION PRESUPUESTARIA DE RECURSOS 2º TRIMESTRE" },
+    "link": "https://mcr.gob.ar/documentos/ejecucion-presupuestaria-de-recursos-2o-trimestre-2/"
+  },
+  {
+    "date": "2026-07-13T00:38:15",
+    "slug": "ejecucion-presupuestaria-de-recursos-1o-trimestre-2",
+    "title": { "rendered": "EJECUCION PRESUPUESTARIA DE RECURSOS 1º TRIMESTRE" },
+    "link": "https://mcr.gob.ar/documentos/ejecucion-presupuestaria-de-recursos-1o-trimestre-2/"
+  },
+  {
+    "date": "2026-07-13T00:37:06",
+    "slug": "ejecucion-presupuestaria-de-gastos-2o-trimestre-2",
+    "title": { "rendered": "EJECUCION PRESUPUESTARIA DE GASTOS 2º TRIMESTRE" },
+    "link": "https://mcr.gob.ar/documentos/ejecucion-presupuestaria-de-gastos-2o-trimestre-2/"
+  },
+  {
+    "date": "2026-07-13T00:32:03",
+    "slug": "stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre",
+    "title": { "rendered": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 4º TRIMESTRE" },
+    "link": "https://mcr.gob.ar/documentos/stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre/"
+  },
+  {
+    "date": "2026-07-13T00:30:01",
+    "slug": "gasto-por-finalidad-y-funcion-4o-trimestre",
+    "title": { "rendered": "GASTO POR FINALIDAD Y FUNCIÓN 4º TRIMESTRE" },
+    "link": "https://mcr.gob.ar/documentos/gasto-por-finalidad-y-funcion-4o-trimestre/"
+  },
+  {
     "date": "2026-07-01T12:53:56",
     "slug": "situacion-economica-financiera-primer-semestre-2026",
     "title": { "rendered": "SITUACION ECONOMICA FINANCIERA PRIMER SEMESTRE 2026" },
