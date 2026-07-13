@@ -92,6 +92,20 @@ export function formatArsHuman(value: number): string {
 }
 
 /**
+ * Formats a full-precision ARS amount WITH cents, e.g. `1826113416.70` ->
+ * `"$ 1.826.113.416,70"`. Unlike `formatArsHuman`/`formatArsCompact` (which
+ * round for headline/table legibility) or `formatArsPlain` (which rounds
+ * away the cents), this never rounds -- it is only for the rare case where
+ * a figure must be quoted digit-for-digit against its source, e.g. the
+ * deuda histórica anomaly callout, which has to match the municipality's
+ * own published number exactly so the disclosure itself stays verifiable.
+ */
+export function formatArsExact(value: number): string {
+  const sign = value < 0 ? "-" : "";
+  return `${sign}$ ${formatDecimalEsAr(Math.abs(value), 2)}`;
+}
+
+/**
  * Splits a `formatArsHuman`-formatted string into its numeric amount and
  * trailing unit word ("millones"/"mil millones"), for callers that want to
  * render the unit at a visually smaller/muted scale beside the amount

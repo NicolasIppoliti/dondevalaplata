@@ -24,7 +24,7 @@ const BASE_INPUT: PedidoFormInput = {
 };
 
 describe("PEDIDO_PRESETS", () => {
-  it("exposes exactly the 9 presets the generator form offers", () => {
+  it("exposes exactly the 10 presets the generator form offers", () => {
     expect(PEDIDO_PRESETS.map((p) => p.id)).toEqual([
       "detalle-gastos",
       "ordenes-compra",
@@ -34,6 +34,7 @@ describe("PEDIDO_PRESETS", () => {
       "fondo-financiamiento-educativo",
       "tasa-seguridad-higiene",
       "obra-sum-cindi",
+      "confirmar-deuda-q4-2025",
       "personalizado",
     ]);
   });
@@ -130,6 +131,20 @@ describe("generatePedidoText", () => {
     expect(text).toContain("Colón al 200");
     expect(text.toLowerCase()).toContain("licitación, convenio, u otro");
     expect(text.toLowerCase()).toContain("cesión del terreno");
+  });
+
+  it("never cites a specific Art. 11 inciso for the confirmar-deuda-q4-2025 preset, and cites the exact figure plus its two neighboring quarters", () => {
+    const text = generatePedidoText(
+      { ...BASE_INPUT, objetoPreset: "confirmar-deuda-q4-2025" },
+      "2026-07-08",
+    );
+    expect(text).not.toMatch(/Art\. 11 inciso/);
+    expect(text).toContain("$ 1.826.113.416,70");
+    expect(text.toLowerCase()).toContain("deuda pública");
+    expect(text).toContain("4to trimestre de 2025");
+    expect(text).toContain("$ 46.876.896,86");
+    expect(text).toContain("$ 169.183.140,12");
+    expect(text.toLowerCase()).toMatch(/confirme o.*rectifique/);
   });
 
   it("never cites a specific Art. 11 inciso for the personalizado preset, and uses the custom text", () => {

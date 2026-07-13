@@ -1,3 +1,5 @@
+import type { DeudaHistoricaPoint } from "@/lib/schemas";
+
 /**
  * Pure helpers for the deuda pública histórica chart (feature H2a,
  * `components/deuda-historica/DeudaHistoricaChart.tsx`). Kept side-effect
@@ -36,4 +38,22 @@ export function listMissingQuarterLabels(
     labels.push(`${QUARTER_ORDINAL_ES_AR[quarterIndex]} trimestre ${year}`);
   }
   return labels;
+}
+
+/**
+ * Returns the `period` keys flagged as a statistical anomaly
+ * (`point.anomaly?.flagged`) -- e.g. Q4-2025's debt figure, a
+ * VERIFIED-CORRECT extraction of the municipality's own published PDF that
+ * is nonetheless ~39x its neighboring quarters (see
+ * `data/deuda-historica.json`). Used to tell `SvgChart` which points to
+ * exclude from the y-axis domain and render clamped with an explicit
+ * "off-scale" marker, instead of either compressing every other point flat
+ * or silently dropping a real, faithfully-sourced figure.
+ */
+export function getAnomalousPeriods(
+  series: readonly Pick<DeudaHistoricaPoint, "period" | "anomaly">[],
+): Set<string> {
+  return new Set(
+    series.filter((point) => point.anomaly?.flagged).map((point) => point.period),
+  );
 }

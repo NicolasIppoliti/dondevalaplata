@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { listMissingQuarterLabels } from "@/lib/deudaHistorica";
+import { getAnomalousPeriods, listMissingQuarterLabels } from "@/lib/deudaHistorica";
 
 /**
  * `listMissingQuarterLabels` (feature H2a): enumerates the N quarter
@@ -34,5 +34,32 @@ describe("listMissingQuarterLabels", () => {
     expect(listMissingQuarterLabels("2026-03-31", 1)).toEqual([
       "2do trimestre 2026",
     ]);
+  });
+});
+
+/**
+ * `getAnomalousPeriods` (Q4-2025 debt-figure anomaly disclosure): picks out
+ * the `period` keys flagged `anomaly.flagged === true`, so `SvgChart` can
+ * exclude them from its y-axis domain and render them clamped with an
+ * off-scale marker instead of stretching every other point flat.
+ */
+describe("getAnomalousPeriods", () => {
+  it("returns an empty set when no point is flagged", () => {
+    expect(
+      getAnomalousPeriods([
+        { period: "2025-Q1" },
+        { period: "2025-Q2" },
+      ]),
+    ).toEqual(new Set());
+  });
+
+  it("picks out only the flagged period(s)", () => {
+    expect(
+      getAnomalousPeriods([
+        { period: "2025-Q3" },
+        { period: "2025-Q4", anomaly: { flagged: true, note: "39x" } },
+        { period: "2026-Q1" },
+      ]),
+    ).toEqual(new Set(["2025-Q4"]));
   });
 });

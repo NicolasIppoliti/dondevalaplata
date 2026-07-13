@@ -1,7 +1,13 @@
+import Link from "next/link";
 import { SvgChart } from "@/components/chart/SvgChart";
 import { DataTable } from "@/components/chart/DataTable";
-import { listMissingQuarterLabels } from "@/lib/deudaHistorica";
-import { formatArsHuman, formatArsPlain, formatDateEsAr } from "@/lib/format";
+import { getAnomalousPeriods, listMissingQuarterLabels } from "@/lib/deudaHistorica";
+import {
+  formatArsExact,
+  formatArsHuman,
+  formatArsPlain,
+  formatDateEsAr,
+} from "@/lib/format";
 import { shortHash, type SourceLink } from "@/lib/sources";
 import type { CadenciaDeuda, DeudaHistoricaData } from "@/lib/schemas";
 
@@ -29,6 +35,22 @@ import type { CadenciaDeuda, DeudaHistoricaData } from "@/lib/schemas";
  * see `etl/etl/deuda_historica.py`'s module docstring. Publishing only
  * what reconciles, never a guessed breakdown, honestly disclosed below the
  * chart.
+ *
+ * Anomaly disclosure (Q4-2025): one point (`point.anomaly?.flagged`,
+ * `lib/deudaHistorica.ts`'s `getAnomalousPeriods`) is a VERIFIED-CORRECT
+ * extraction of the municipality's own published PDF that is nonetheless a
+ * gross statistical outlier (~39x its neighboring quarters) -- almost
+ * certainly a data-entry error in the municipality's OWN report, but not
+ * provable as a typo vs. a real one-time spike. `totalArs` is NEVER
+ * altered or dropped for this: it's passed to `SvgChart` as
+ * `outlierPeriods` so the y-axis domain scales to the non-anomalous range
+ * (the other quarters stay legible) while the flagged point renders
+ * clamped at the top with an explicit "off-scale" marker + its real value.
+ * A neutral note below the chart states the figure, the inconsistency, and
+ * links to a pedido asking the municipality to confirm or correct it --
+ * this is a question about a number that doesn't reconcile, never an
+ * accusation (DESIGN.md chromatic-neutrality rule -- the `--ocre`
+ * "documental" token, never `--stamp`/alarm).
  */
 interface DeudaHistoricaChartProps {
   deudaHistorica: DeudaHistoricaData;
@@ -48,6 +70,10 @@ export function DeudaHistoricaChart({
   const missingQuarterLabels = listMissingQuarterLabels(
     deuda.lastPeriodEnd,
     deuda.quartersMissing,
+  );
+  const outlierPeriods = getAnomalousPeriods(deudaHistorica.series);
+  const anomalousPoints = deudaHistorica.series.filter(
+    (point) => point.anomaly?.flagged,
   );
 
   const series = [
@@ -97,6 +123,8 @@ export function DeudaHistoricaChart({
           showLastPointLabel
           showLegend={false}
           axisUnitLabel="Montos en pesos, stock total de deuda pública (sin ajustar por inflación)"
+          outlierPeriods={outlierPeriods}
+          formatOutlierValue={formatArsExact}
         />
       </div>
 
@@ -133,6 +161,29 @@ export function DeudaHistoricaChart({
           </p>
         </div>
       )}
+
+      {/* Anomaly disclosure: neutral, framed as an open question (never an
+          accusation) -- same `--ocre` "documental" token as the marker
+          above, NEVER `--stamp`/alarma (DESIGN.md chromatic-neutrality
+          rule). Only rendered when a point is actually flagged. */}
+      {anomalousPoints.length > 0
+        ? anomalousPoints.map((point) => (
+            <div
+              key={point.period}
+              className="mt-5 rounded-md border border-ocre border-l-[5px] bg-ocre-soft p-4"
+            >
+              <p className="font-sans text-sm font-bold text-ink">
+                <span aria-hidden="true">✱ </span>
+                Este trimestre no cierra con el resto de la serie
+              </p>
+              <p className="mt-1.5 max-w-[62ch] text-sm text-ink-2">
+                {point.anomaly?.note} Le pedimos al municipio que confirme o
+                corrija esta cifra —{" "}
+                <Link href="/pedidos">generá el pedido acá</Link>.
+              </p>
+            </div>
+          ))
+        : null}
 
       <div className="mt-5">
         <DataTable

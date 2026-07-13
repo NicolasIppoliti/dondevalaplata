@@ -354,13 +354,32 @@ export type PedidoRecord = z.infer<typeof pedidoRecordSchema>;
 export type PedidosData = z.infer<typeof pedidosDataSchema>;
 
 /**
+ * Optional per-quarter flag for a `totalArs` that is a VERIFIED-CORRECT
+ * extraction of the municipality's own published figure but is a gross
+ * statistical outlier vs. its neighboring quarters (e.g. Q4-2025, ~39x its
+ * neighbors) -- almost certainly a data-entry error in the municipality's
+ * OWN report, but not provable as a typo vs. a real one-time spike. Never
+ * used to alter or drop `totalArs` -- the portal shows the number
+ * faithfully either way (DESIGN.md "procedencia verificable") -- only to
+ * drive a neutral UI disclosure (chart off-scale marker + note) instead of
+ * either silently flattening the rest of the chart or omitting the
+ * disclosure. `flagged` is always `true` when present (absent/undefined
+ * means "not flagged", never `false`, so callers can branch on
+ * `point.anomaly?.flagged` directly).
+ */
+export const deudaHistoricaAnomalySchema = z.object({
+  flagged: z.literal(true),
+  note: z.string().min(1),
+});
+
+/**
  * Feature H2a: the deuda pública histórica quarterly series
- * (`etl/etl/deuda_historica.py`, `data/deuda-historica.json`) -- the three
- * quarters the municipality ever published (1er/2do/3er trimestre 2025)
- * before it stopped. `totalArs` is the ONLY figure this schema carries per
- * quarter -- deliberately no composition breakdown, see the ETL module
- * docstring for why a per-organismo-acreedor split could not be reconciled
- * against the headline total and was dropped rather than guessed.
+ * (`etl/etl/deuda_historica.py`, `data/deuda-historica.json`) -- every
+ * quarter the municipality has published. `totalArs` is the ONLY figure
+ * this schema carries per quarter -- deliberately no composition
+ * breakdown, see the ETL module docstring for why a per-organismo-acreedor
+ * split could not be reconciled against the headline total and was
+ * dropped rather than guessed.
  */
 export const deudaHistoricaPointSchema = z.object({
   period: z.string().regex(/^\d{4}-Q[1-4]$/),
@@ -368,6 +387,7 @@ export const deudaHistoricaPointSchema = z.object({
   fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   totalArs: z.number().nonnegative(),
   sourceRef: z.string().min(1),
+  anomaly: deudaHistoricaAnomalySchema.optional(),
 });
 
 export const deudaHistoricaDataSchema = z.object({
@@ -376,6 +396,7 @@ export const deudaHistoricaDataSchema = z.object({
   sourceRefs: z.array(z.string().min(1)).min(1),
 });
 
+export type DeudaHistoricaAnomaly = z.infer<typeof deudaHistoricaAnomalySchema>;
 export type DeudaHistoricaPoint = z.infer<typeof deudaHistoricaPointSchema>;
 export type DeudaHistoricaData = z.infer<typeof deudaHistoricaDataSchema>;
 

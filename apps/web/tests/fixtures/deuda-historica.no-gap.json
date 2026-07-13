@@ -27,7 +27,11 @@
       "periodLabel": "4to trimestre 2025",
       "fecha": "2025-12-31",
       "totalArs": 1826113416.7,
-      "sourceRef": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre"
+      "sourceRef": "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-4o-trimestre",
+      "anomaly": {
+        "flagged": true,
+        "note": "El municipio declaró $ 1.826.113.416,70 como \"1. Deuda Pública / Saldo\" del 4to trimestre 2025 — unas 39 veces el de los trimestres vecinos. Es una inconsistencia que no se explica en la fuente; la mostramos tal como fue publicada, sin corregirla."
+      }
     },
     {
       "period": "2026-Q1",

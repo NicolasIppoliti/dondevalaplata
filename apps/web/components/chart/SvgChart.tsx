@@ -1,4 +1,4 @@
-import type { ChartSeriesData } from "./types";
+import type { ChartPoint, ChartSeriesData } from "./types";
 
 /**
  * Server-rendered, zero-client-JS SVG line chart. Distinguishes series by
@@ -46,6 +46,15 @@ const LAST_POINT_LABEL_OFFSET_Y = 12;
 // original offset untouched.
 const HERO_LAST_POINT_LABEL_OFFSET_X = 8;
 const HERO_LAST_POINT_LABEL_OFFSET_Y = 26;
+// Extra top headroom reserved ONLY when `outlierPeriods` is non-empty, so
+// the "off-scale" arrow + value label (rendered above the clamped point,
+// itself pinned to the top of the plot area) has room without overlapping
+// the viewBox's top edge. Every existing caller that never sets
+// `outlierPeriods` keeps the exact same `BASE_PADDING.top` -- this never
+// changes layout for a chart with no outliers.
+const OUTLIER_HEADROOM = 28;
+const OUTLIER_ARROW_OFFSET_Y = 12;
+const OUTLIER_LABEL_OFFSET_Y = 26;
 
 // Design-token colors, referenced as CSS custom properties. Kept as plain
 // constants because <stroke>/<fill> are SVG attributes, not classNames --
@@ -110,6 +119,27 @@ interface SvgChartProps {
    * with viewport width (the "vertical blowout on wide viewports" bug).
    */
   fillHeight?: boolean;
+  /**
+   * Marks specific points (by `period`) as statistical outliers rather than
+   * unpublished/missing data -- their real value is faithfully sourced and
+   * shown elsewhere (data table, callout), but including it in the y-axis
+   * domain would flatten every other point. A point whose period is in this
+   * set is EXCLUDED from the min/max domain computation and rendered
+   * clamped to the top of the plot area with an explicit "↑" marker plus
+   * its real value as a text label, instead of either being plotted
+   * off-chart or silently rescaling every other point out of legibility.
+   * Empty/undefined by default -- every existing caller keeps its current
+   * behavior unchanged.
+   */
+  outlierPeriods?: ReadonlySet<string>;
+  /**
+   * Formatter used ONLY for an outlier's off-scale callout label. Defaults
+   * to `formatValue` (the same rounded formatter used for axis/last-point
+   * labels). Callers that need the callout to quote a source figure
+   * digit-for-digit (e.g. `formatArsExact`) can override it here without
+   * changing the rounded formatting used everywhere else in the chart.
+   */
+  formatOutlierValue?: (value: number) => string;
 }
 
 export function SvgChart({
@@ -125,7 +155,11 @@ export function SvgChart({
   heightClassName = "h-auto w-full",
   axisUnitLabel,
   fillHeight = false,
+  outlierPeriods,
+  formatOutlierValue,
 }: SvgChartProps) {
+  const resolvedFormatOutlierValue = formatOutlierValue ?? formatValue;
+  const hasOutliers = Boolean(outlierPeriods && outlierPeriods.size > 0);
   const VIEW_WIDTH = viewBoxWidth;
   const VIEW_HEIGHT = viewBoxHeight;
   const GRID_LINE_COUNT = Math.max(2, gridLineCount);
@@ -142,8 +176,21 @@ export function SvgChart({
   const periods = Array.from(periodSet).sort();
   const periodIndex = new Map(periods.map((period, index) => [period, index]));
   const allValues = series.flatMap((s) => s.points.map((point) => point.value));
-  const minValue = Math.min(...allValues, 0);
-  const maxValue = Math.max(...allValues, 0);
+  // The y-axis domain is driven by the NON-outlier points only, so a
+  // flagged statistical outlier (e.g. a data point ~39x its neighbors)
+  // never flattens every other point on the chart. Falls back to every
+  // value if outlierPeriods would otherwise exclude the entire series
+  // (defensive -- never leaves the domain empty).
+  const domainValues = hasOutliers
+    ? series.flatMap((s) =>
+        s.points
+          .filter((point) => !outlierPeriods!.has(point.period))
+          .map((point) => point.value),
+      )
+    : allValues;
+  const effectiveDomainValues = domainValues.length > 0 ? domainValues : allValues;
+  const minValue = Math.min(...effectiveDomainValues, 0);
+  const maxValue = Math.max(...effectiveDomainValues, 0);
   const valueRange = maxValue - minValue || 1;
 
   // Compute gridline VALUES first (only depends on min/max/count, not on
@@ -159,6 +206,7 @@ export function SvgChart({
   );
   const PADDING = {
     ...BASE_PADDING,
+    top: hasOutliers ? BASE_PADDING.top + OUTLIER_HEADROOM : BASE_PADDING.top,
     left: Math.max(
       BASE_PADDING.left,
       Math.ceil(longestLabelLength * AXIS_LABEL_CHAR_WIDTH) + AXIS_LABEL_GAP,
@@ -176,6 +224,13 @@ export function SvgChart({
   const yForValue = (value: number): number =>
     PADDING.top + innerHeight - ((value - minValue) / valueRange) * innerHeight;
 
+  // An outlier point is always rendered CLAMPED to the top of the plot
+  // area (never at its true, off-domain `yForValue`, which could land
+  // above the viewBox or even at a negative y) -- its real value is shown
+  // faithfully via the off-scale marker/label instead.
+  const yForPoint = (point: ChartPoint): number =>
+    outlierPeriods?.has(point.period) ? PADDING.top : yForValue(point.value);
+
   const gridLines = gridLineValues.map((value) => ({
     value,
     y: round(yForValue(value)),
@@ -191,7 +246,7 @@ export function SvgChart({
             ? null
             : {
                 x: round(xForIndex(index)),
-                y: round(yForValue(lastPoint.value)),
+                y: round(yForPoint(lastPoint)),
               };
         })()
       : null;
@@ -232,6 +287,7 @@ export function SvgChart({
               fontSize={AXIS_LABEL_FONT_SIZE}
               fill="var(--color-muted)"
               className="font-mono"
+              data-chart-gridline-value
             >
               {formatValue(line.value)}
             </text>
@@ -253,12 +309,55 @@ export function SvgChart({
                 const index = periodIndex.get(point.period);
                 return index === undefined
                   ? null
-                  : `${round(xForIndex(index))},${round(yForValue(point.value))}`;
+                  : `${round(xForIndex(index))},${round(yForPoint(point))}`;
               })
               .filter((coord): coord is string => coord !== null)
               .join(" ")}
           />
         ))}
+        {hasOutliers
+          ? series.flatMap((s) =>
+              s.points
+                .filter((point) => outlierPeriods!.has(point.period))
+                .map((point) => {
+                  const index = periodIndex.get(point.period);
+                  if (index === undefined) return null;
+                  const x = round(xForIndex(index));
+                  const y = PADDING.top;
+                  return (
+                    <g
+                      key={`outlier-${s.id}-${point.period}`}
+                      data-chart-outlier-marker
+                    >
+                      <text
+                        x={x}
+                        y={y - OUTLIER_ARROW_OFFSET_Y}
+                        textAnchor="middle"
+                        fontSize={13}
+                        fontWeight={700}
+                        fill="var(--color-ink-2)"
+                        className="font-mono"
+                        aria-hidden="true"
+                      >
+                        ↑
+                      </text>
+                      <text
+                        x={x}
+                        y={y - OUTLIER_LABEL_OFFSET_Y}
+                        textAnchor="middle"
+                        fontSize={11}
+                        fontWeight={600}
+                        fill="var(--color-ink)"
+                        className="font-mono"
+                        data-chart-outlier-value
+                      >
+                        {resolvedFormatOutlierValue(point.value)}
+                      </text>
+                    </g>
+                  );
+                }),
+            )
+          : null}
         {lastPointCoords ? (
           <g>
             <circle

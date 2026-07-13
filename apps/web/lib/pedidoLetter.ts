@@ -28,6 +28,7 @@ export type PedidoObjetoPresetId =
   | "fondo-financiamiento-educativo"
   | "tasa-seguridad-higiene"
   | "obra-sum-cindi"
+  | "confirmar-deuda-q4-2025"
   | "personalizado";
 
 export interface PedidoObjetoPreset {
@@ -106,6 +107,14 @@ export const PEDIDO_PRESETS: readonly PedidoObjetoPreset[] = [
       "Esta obra aparece financiada por la Provincia; el pedido busca confirmar cómo se ejecuta y quién la financia, no es una denuncia.",
   },
   {
+    id: "confirmar-deuda-q4-2025",
+    label: "Confirmar el Stock de Deuda del 4to trimestre 2025 (dato inconsistente)",
+    ordenanzaInciso: null,
+    needsPeriodo: false,
+    helperNote:
+      "Pide que el municipio confirme o corrija un valor que ya publicó -- no es información nueva: el Stock de Deuda declarado para el 4to trimestre de 2025 no resulta consistente con los trimestres vecinos de la misma serie.",
+  },
+  {
     id: "personalizado",
     label: "Otro (redactar el objeto vos mismo/a)",
     ordenanzaInciso: null,
@@ -178,6 +187,8 @@ function buildObjetoText(
       return "el monto total recaudado por la Tasa por Inspección de Seguridad e Higiene en los ejercicios 2022, 2023, 2024 y 2025, y su participación porcentual en el total de recursos tributarios municipales de cada año";
     case "obra-sum-cindi":
       return "información respecto de la obra 'Construcción del Salón de Usos Múltiples (SUM) para CINDI' (terreno de calle Colón al 200, Punta Alta), en particular: (a) bajo qué instrumento se ejecuta la obra (licitación, convenio, u otro) y qué organismo la financia y contrata; (b) si el Municipio aporta fondos propios además de la cesión del terreno; y (c) copia del convenio o acto administrativo por el cual el Municipio cedió el terreno y de cualquier instrumento municipal vinculado a la obra";
+    case "confirmar-deuda-q4-2025":
+      return 'que el Departamento Ejecutivo confirme o, en caso de corresponder, rectifique el valor de $ 1.826.113.416,70 consignado como "1. Deuda Pública / Saldo" (Stock de Deuda) correspondiente al 4to trimestre de 2025, dado que dicho monto no resulta consistente con los valores publicados para los trimestres inmediatamente anterior y posterior de la misma serie ($ 46.876.896,86 al 3er trimestre de 2025 y $ 169.183.140,12 al 1er trimestre de 2026, respectivamente)';
     case "personalizado": {
       const custom = objetoPersonalizado?.trim();
       return custom || "[COMPLETAR EL OBJETO DE TU PEDIDO]";

@@ -193,4 +193,87 @@ describe("DeudaHistoricaChart (no gap / série al día)", () => {
     );
     expect(screen.getByText(/serie al d[ií]a/i)).toBeTruthy();
   });
+
+  /**
+   * Anomaly disclosure (Q4-2025): the fixture's 4to trimestre 2025 point is
+   * flagged `anomaly.flagged: true` -- a VERIFIED-CORRECT figure that is
+   * nonetheless ~39x its neighboring quarters. The chart must stay
+   * readable for every OTHER quarter (never squash them flat scaling to
+   * the outlier) while still disclosing the real value faithfully.
+   */
+  it("renders an off-scale marker with the real value for the anomalous quarter", () => {
+    const { container } = render(
+      <DeudaHistoricaChart
+        deudaHistorica={deudaHistoricaUpToDate}
+        deuda={cadenciaUpToDate.deuda}
+        sourceLinks={sourceLinks}
+      />,
+    );
+    const marker = container.querySelector("[data-chart-outlier-marker]");
+    expect(marker).not.toBeNull();
+    expect(marker?.textContent).toContain("↑");
+    const valueLabel = container.querySelector("[data-chart-outlier-value]");
+    expect(valueLabel?.textContent).toBe("$ 1.826.113.416,70");
+  });
+
+  it("scales the y-axis to the non-anomalous range, not the Q4-2025 outlier", () => {
+    const { container } = render(
+      <DeudaHistoricaChart
+        deudaHistorica={deudaHistoricaUpToDate}
+        deuda={cadenciaUpToDate.deuda}
+        sourceLinks={sourceLinks}
+      />,
+    );
+    const gridlineTexts = Array.from(
+      container.querySelectorAll("[data-chart-gridline-value]"),
+    ).map((el) => el.textContent ?? "");
+    // The top gridline must land near the 2nd-highest point (1er trimestre
+    // 2025, $ 194.447.135,09 -> "$ 194 millones"), never near the outlier
+    // ("$ 1.830 millones") -- otherwise every non-anomalous quarter would
+    // be visually collapsed near the chart's floor.
+    expect(gridlineTexts.some((t) => t.includes("194"))).toBe(true);
+    expect(gridlineTexts.some((t) => t.includes("1.830"))).toBe(false);
+    expect(gridlineTexts.some((t) => t.includes("1.826"))).toBe(false);
+  });
+
+  it("shows a neutral note naming the exact figure, the inconsistency, and that it's shown as published", () => {
+    const { container } = render(
+      <DeudaHistoricaChart
+        deudaHistorica={deudaHistoricaUpToDate}
+        deuda={cadenciaUpToDate.deuda}
+        sourceLinks={sourceLinks}
+      />,
+    );
+    const text = container.textContent ?? "";
+    expect(text).toContain("$ 1.826.113.416,70");
+    expect(text).toMatch(/no cierra/i);
+    expect(text.toLowerCase()).toMatch(/tal como fue publicad/);
+    expect(text.toLowerCase()).toMatch(/confirme? o corrij/);
+  });
+
+  it("links the anomaly note to the pedido generator", () => {
+    render(
+      <DeudaHistoricaChart
+        deudaHistorica={deudaHistoricaUpToDate}
+        deuda={cadenciaUpToDate.deuda}
+        sourceLinks={sourceLinks}
+      />,
+    );
+    const link = screen.getByRole("link", { name: /generá el pedido acá/i });
+    expect(link.getAttribute("href")).toBe("/pedidos");
+  });
+
+  it("never uses an accusatory word in the anomaly note", () => {
+    const { container } = render(
+      <DeudaHistoricaChart
+        deudaHistorica={deudaHistoricaUpToDate}
+        deuda={cadenciaUpToDate.deuda}
+        sourceLinks={sourceLinks}
+      />,
+    );
+    const text = (container.textContent ?? "").toLowerCase();
+    for (const word of ["estafa", "corrupci", "escondi", "minti", "delito", "fraude"]) {
+      expect(text).not.toContain(word);
+    }
+  });
 });

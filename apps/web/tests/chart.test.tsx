@@ -241,6 +241,87 @@ describe("SvgChart — hero chart mode (coparticipación page)", () => {
   });
 });
 
+describe("SvgChart — outlierPeriods (off-scale anomaly marker)", () => {
+  const seriesWithOutlier: ChartSeriesData[] = [
+    {
+      id: "deuda-historica",
+      label: "Deuda pública",
+      points: [
+        { period: "2025-Q1", value: 194_447_135.09 },
+        { period: "2025-Q2", value: 46_286_612.42 },
+        { period: "2025-Q3", value: 46_876_896.86 },
+        { period: "2025-Q4", value: 1_826_113_416.7 },
+        { period: "2026-Q1", value: 169_183_140.12 },
+        { period: "2026-Q2", value: 110_097_259.09 },
+      ],
+    },
+  ];
+
+  it("scales the y-axis domain to the non-outlier points, not the outlier", () => {
+    const { container } = render(
+      <SvgChart
+        series={seriesWithOutlier}
+        ariaLabel="Serie con anomalía"
+        formatValue={(v) => String(Math.round(v))}
+        outlierPeriods={new Set(["2025-Q4"])}
+      />,
+    );
+    const gridlineValues = Array.from(
+      container.querySelectorAll("[data-chart-gridline-value]"),
+    ).map((el) => Number(el.textContent));
+    // The top gridline must sit at the 2nd-highest value (194.447.135,09,
+    // 2025-Q1) -- never at the outlier (1.826.113.416,70, 2025-Q4), which
+    // would otherwise squash every other quarter flat near the bottom.
+    expect(Math.max(...gridlineValues)).toBeCloseTo(194_447_135.09, 0);
+    expect(Math.max(...gridlineValues)).toBeLessThan(200_000_000);
+  });
+
+  it("renders the outlier point clamped to the top with an off-scale marker and its real value", () => {
+    const { container } = render(
+      <SvgChart
+        series={seriesWithOutlier}
+        ariaLabel="Serie con anomalía"
+        formatValue={(v) => `$ ${Math.round(v)}`}
+        outlierPeriods={new Set(["2025-Q4"])}
+      />,
+    );
+    const marker = container.querySelector("[data-chart-outlier-marker]");
+    expect(marker).not.toBeNull();
+    expect(marker?.textContent).toContain("↑");
+    const valueLabel = container.querySelector("[data-chart-outlier-value]");
+    expect(valueLabel?.textContent).toBe("$ 1826113417");
+  });
+
+  it("uses formatOutlierValue (not formatValue) for the off-scale callout when given", () => {
+    const { container } = render(
+      <SvgChart
+        series={seriesWithOutlier}
+        ariaLabel="Serie con anomalía"
+        formatValue={(v) => `$ ${Math.round(v)}`}
+        formatOutlierValue={() => "$ 1.826.113.416,70"}
+        outlierPeriods={new Set(["2025-Q4"])}
+      />,
+    );
+    expect(
+      container.querySelector("[data-chart-outlier-value]")?.textContent,
+    ).toBe("$ 1.826.113.416,70");
+  });
+
+  it("never renders an off-scale marker or shrinks the domain when outlierPeriods is not given (existing callers unaffected)", () => {
+    const { container } = render(
+      <SvgChart series={seriesWithOutlier} ariaLabel="Serie sin anomalía" />,
+    );
+    expect(container.querySelector("[data-chart-outlier-marker]")).toBeNull();
+    const gridlineValues = Array.from(
+      container.querySelectorAll("[data-chart-gridline-value]"),
+    ).map((el) => el.textContent);
+    // Default formatValue is identity-ish (String(value)); the top
+    // gridline must reflect the TRUE max (the outlier) when no
+    // outlierPeriods are given at all.
+    expect(gridlineValues.some((t) => t?.includes("1826113416"))).toBe(true);
+  });
+});
+
 describe("SvgChart — period-keyed indexing (missing middle month)", () => {
   it("skips the missing point instead of shifting later points leftward", () => {
     const { container } = render(

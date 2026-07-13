@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   formatArsCompact,
+  formatArsExact,
   formatArsHuman,
   formatArsPlain,
   formatDateEsAr,
@@ -60,6 +61,24 @@ describe("formatArsHuman", () => {
   it("never claims more precision than 3 significant figures", () => {
     // 6.751.250.530 -> 6751,25 millones -> 3 sig figs -> 6.750 millones.
     expect(formatArsHuman(6_751_250_530)).toBe("$ 6.750 millones");
+  });
+});
+
+describe("formatArsExact", () => {
+  // Unlike formatArsHuman (rounds to 3 sig figs) or formatArsPlain (drops
+  // cents), this must reproduce the source figure digit-for-digit -- the
+  // deuda histórica anomaly callout quotes the municipality's own PDF.
+  it("formats a large amount with cents and es-AR separators, no rounding", () => {
+    expect(formatArsExact(1_826_113_416.7)).toBe("$ 1.826.113.416,70");
+  });
+
+  it("pads a single decimal digit to two places", () => {
+    expect(formatArsExact(46_876_896.86)).toBe("$ 46.876.896,86");
+    expect(formatArsExact(110_097_259.09)).toBe("$ 110.097.259,09");
+  });
+
+  it("handles a negative amount with the sign in front of the $ sign", () => {
+    expect(formatArsExact(-1_826_113_416.7)).toBe("-$ 1.826.113.416,70");
   });
 });
 
