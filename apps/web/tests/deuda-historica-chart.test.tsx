@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import deudaHistoricaValid from "./fixtures/deuda-historica.valid.json";
+import deudaHistoricaNoGap from "./fixtures/deuda-historica.no-gap.json";
 import cadenciaValid from "./fixtures/cadencia.valid.json";
+import cadenciaNoGap from "./fixtures/cadencia.no-gap.json";
 import manifestValid from "./fixtures/manifest.valid.json";
 import { DeudaHistoricaChart } from "@/components/deuda-historica/DeudaHistoricaChart";
 import { loadCadencia, loadDeudaHistorica, loadManifest } from "@/lib/data";
@@ -133,5 +135,62 @@ describe("DeudaHistoricaChart", () => {
     );
     const text = container.textContent ?? "";
     expect(text).not.toMatch(/intendente|concejal|partido|corrupci[oó]n/i);
+  });
+});
+
+/**
+ * DeudaHistoricaChart with `quartersMissing === 0` (no gap): asserting
+ * "acá dejaron de publicar" or "antes de dejar de actualizar la serie"
+ * when the series is current would be factually false (PART 2 honesty
+ * fix, portal-backfill-fix).
+ */
+describe("DeudaHistoricaChart (no gap / série al día)", () => {
+  const deudaHistoricaUpToDate = loadDeudaHistorica(deudaHistoricaNoGap);
+  const cadenciaUpToDate = loadCadencia(cadenciaNoGap);
+  const manifestFixture = [
+    ...manifestValid,
+    ...deudaHistoricaUpToDate.series.map((point) => ({
+      id: point.sourceRef,
+      capability: "mcr-docs",
+      source: "mcr.gob.ar",
+      source_url: `https://mcr.gob.ar/${point.sourceRef}.pdf`,
+      archived_url: `https://pub-example.r2.dev/${point.sourceRef}.pdf`,
+      archived_path: `archive/${point.sourceRef}.pdf`,
+      sha256: "83e3daec0cac376d5469c2a27d7f53569e10dedddfa1fd770a2c04119ad4d493",
+      mime: "application/pdf",
+      bytes: 8000,
+      fetched_at: "2026-07-13T17:38:12Z",
+      status: "ok",
+      notes: "Fixture record for tests.",
+    })),
+  ];
+  const manifest = loadManifest(manifestFixture);
+  const sourceLinks = resolveSourceRefs(
+    deudaHistoricaUpToDate.series.map((p) => p.sourceRef),
+    manifest,
+  );
+
+  it('never shows the "acá dejaron de publicar" marker when there is no gap', () => {
+    const { container } = render(
+      <DeudaHistoricaChart
+        deudaHistorica={deudaHistoricaUpToDate}
+        deuda={cadenciaUpToDate.deuda}
+        sourceLinks={sourceLinks}
+      />,
+    );
+    const text = container.textContent ?? "";
+    expect(text.toLowerCase()).not.toMatch(/dejaron de publicar/);
+    expect(text.toLowerCase()).not.toMatch(/antes de dejar de actualizar/);
+  });
+
+  it('shows a neutral "serie al día" confirmation instead', () => {
+    render(
+      <DeudaHistoricaChart
+        deudaHistorica={deudaHistoricaUpToDate}
+        deuda={cadenciaUpToDate.deuda}
+        sourceLinks={sourceLinks}
+      />,
+    );
+    expect(screen.getByText(/serie al d[ií]a/i)).toBeTruthy();
   });
 });

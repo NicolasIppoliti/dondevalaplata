@@ -39,6 +39,19 @@ from .transparencia import load_curated_transparencia
 
 DOCUMENTOS_SNAPSHOT_MANIFEST_ID = "mcr-docs-snapshot/documentos"
 
+# A dimension's underlying document series counts as "caught up" (currently
+# published on time) once its lag is within this many whole months -- the
+# same "a lo sumo 1 mes" tolerance `etl/cadencia.yaml`'s own `to_reach_10`
+# prose already documents for "Ejecución presupuestaria trimestral" and
+# "Gastos por finalidad y función". This is DELIBERATELY separate from the
+# frozen `got`/`max` ASAP score (never re-derived here, see
+# `etl/asap_transparencia.yaml`'s honesty doctrine): a dimension can be
+# caught-up-live (fresh document, `caughtUp: true`) while still showing
+# `got < max` because ASAP itself has not re-scored the municipality yet --
+# the UI and `etl.novedades` use `caughtUp`, never `got`/`max`, to decide
+# whether a "still stale" watchdog fact should render.
+CAUGHT_UP_LAG_MONTHS_TOLERANCE = 1
+
 
 def normalize(text: str) -> str:
     """Lowercase and strip accents, for accent/case-insensitive keyword matching."""
@@ -270,6 +283,8 @@ def derive_dimension_cadence(
         lag_months = None
         source_refs = []
 
+    caught_up = lag_months is not None and lag_months <= CAUGHT_UP_LAG_MONTHS_TOLERANCE
+
     return {
         "name": dim_config.name,
         "got": got,
@@ -277,6 +292,7 @@ def derive_dimension_cadence(
         "lastPeriodPublished": last_period_published,
         "lastPublishedAt": last_published_at,
         "lagMonths": lag_months,
+        "caughtUp": caught_up,
         "reason": dim_config.reason,
         "toReach10": dim_config.to_reach_10,
         "sourceRefs": source_refs,

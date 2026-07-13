@@ -479,9 +479,10 @@ describe("getPortalData", () => {
     // docstring) -- it's a self-authored tracking file, not an
     // externally-sourced claim.
     expect(Array.isArray(portal.pedidos.pedidos)).toBe(true);
-    // Feature H2: deuda histórica (3 quarters) + novedades feed, both
-    // fully sourced.
-    expect(portal.deudaHistorica.series).toHaveLength(3);
+    // Feature H2: deuda histórica (6 quarters as of the 2026-07-13
+    // backfill: 1er/2do/3er trimestre 2025 + 4to trimestre 2025/1er/2do
+    // trimestre 2026) + novedades feed, both fully sourced.
+    expect(portal.deudaHistorica.series).toHaveLength(6);
     expect(portal.novedades.events.length).toBeGreaterThan(0);
     // Feature H3a: Censo 2022 population per municipio, sourced and
     // resolved, powering the /coparticipacion per-cápita comparison.

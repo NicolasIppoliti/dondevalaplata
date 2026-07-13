@@ -151,6 +151,15 @@ def derive_stale_events(cadencia: dict[str, Any]) -> list[dict[str, Any]]:
             continue
         if dimension["got"] >= dimension["max"]:
             continue
+        # A dimension whose underlying document series is CURRENTLY caught
+        # up (`caughtUp`, see `etl.cadencia`) never gets a "still stale"
+        # row, even when `got < max` -- that inequality only reflects that
+        # ASAP has not yet re-scored the municipality, not that the
+        # municipality is failing to publish right now. Using `.get()`
+        # keeps this backward-compatible with cadencia payloads/fixtures
+        # built before this field existed (treated as not caught up).
+        if dimension.get("caughtUp"):
+            continue
         # Skip a dimension already covered by the dedicated (more granular,
         # days-not-just-months) `auto-stale-deuda` row above -- detected via
         # shared sourceRefs rather than a hardcoded dimension name, so this

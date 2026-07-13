@@ -17,12 +17,28 @@ import type { CadenciaData } from "@/lib/schemas";
  * badge and the existing "Qué falta" cards) -- never `--stamp`/alarm-red.
  * This is deliberate: it is a dashboard about publication CADENCE, not a
  * scoreboard of a gestión's performance.
+ *
+ * `transparenciaTotal` (required): the ASAP headline total (currently 81),
+ * passed down from `data/transparencia.json` rather than hardcoded here --
+ * a literal "81" baked into this component would silently go stale the
+ * moment ASAP publishes a new report. The gap panel below still collapses
+ * automatically once every dimension reaches its own max (`gapDimensions`
+ * derives straight from the already-honest `got`/`max` pair, never
+ * re-decided here).
+ *
+ * `caughtUp` (per dimension, from `data/cadencia.json`): a gap dimension
+ * can be LIVE-current (`caughtUp: true`) while `got < max` still holds,
+ * because ASAP itself has not re-scored a publication the municipality
+ * already made -- see `etl.cadencia`'s module docstring. When that
+ * happens, this component adds a neutral clarifying note instead of
+ * implying the municipality is still failing to publish.
  */
 interface CadenceDashboardProps {
   cadencia: CadenciaData;
+  transparenciaTotal: number;
 }
 
-export function CadenceDashboard({ cadencia }: CadenceDashboardProps) {
+export function CadenceDashboard({ cadencia, transparenciaTotal }: CadenceDashboardProps) {
   const gapDimensions = cadencia.dimensions.filter((d) => d.got < d.max);
   const totalToReach100 = gapDimensions.reduce((acc, d) => acc + (d.max - d.got), 0);
 
@@ -51,7 +67,7 @@ export function CadenceDashboard({ cadencia }: CadenceDashboardProps) {
       {gapDimensions.length > 0 ? (
         <div className="rounded-lg border border-rule bg-surface p-4 shadow-card">
           <p className="font-mono text-xs tracking-[0.08em] text-muted uppercase">
-            Camino de 81 a 100
+            Camino de {transparenciaTotal} a 100
           </p>
           <ul className="mt-2 space-y-1 text-sm text-ink-2">
             {gapDimensions.map((d) => (
@@ -60,11 +76,17 @@ export function CadenceDashboard({ cadencia }: CadenceDashboardProps) {
                   +{d.max - d.got}
                 </span>{" "}
                 {d.name}
+                {d.caughtUp ? (
+                  <span className="ml-1.5 text-xs text-muted">
+                    (ya publicado; pendiente de reflejarse en el próximo
+                    informe ASAP)
+                  </span>
+                ) : null}
               </li>
             ))}
           </ul>
           <p className="mt-2 font-mono text-sm text-ink tabular-nums">
-            81 + {totalToReach100} = 100
+            {transparenciaTotal} + {totalToReach100} = 100
           </p>
         </div>
       ) : null}

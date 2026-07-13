@@ -4,14 +4,15 @@ import { shortHash, type SourceLink } from "@/lib/sources";
 import type { CadenciaDeuda } from "@/lib/schemas";
 
 /**
- * DeudaCounter (feature G1): a prominent, factual widget stating the
- * municipality has not updated its published stock-de-deuda since a given
- * date, with the days/quarters elapsed, the last published figure, and
- * (full variant only) the legal hook: Ordenanza 3638 (Acceso a la
- * Información Pública de Coronel Rosales), Art. 11, already obliges
- * publishing this. Dual-link provenance + short sha256, same pattern as
- * every other headline figure on the portal (DESIGN.md INVIOLABLE rule
- * #2).
+ * DeudaCounter (feature G1): a prominent, factual widget about the
+ * municipality's published stock-de-deuda -- days/quarters elapsed since
+ * the last publication when there IS a gap (`quartersMissing > 0`), or the
+ * current figure stated neutrally when the series is up to date
+ * (`quartersMissing === 0`). Full variant also shows the legal hook:
+ * Ordenanza 3638 (Acceso a la Información Pública de Coronel Rosales), Art.
+ * 11, which requires this information to be published. Dual-link
+ * provenance + short sha256, same pattern as every other headline figure
+ * on the portal (DESIGN.md INVIOLABLE rule #2).
  *
  * Every number here comes from `data/cadencia.json`, itself computed at
  * ETL build time -- `elapsedDays`/`quartersMissing` are NOT derived from
@@ -19,18 +20,21 @@ import type { CadenciaDeuda } from "@/lib/schemas";
  * server-rendered at build time or hydrated later, and never breaks
  * static prerendering.
  *
- * Neutrality note: this states a documented fact about a PUBLICATION
- * CADENCE (the municipality itself stopped publishing this series), never
- * an evaluation of a person or gestión -- framed with the same `--ocre`
- * "aviso documental" token DESIGN.md's Alerts pattern reserves for this
- * exact case, never `--stamp`/alarm-red.
+ * Neutrality note: when there IS a gap, this states a documented fact
+ * about a PUBLICATION CADENCE (the municipality has not published a newer
+ * figure yet), never an evaluation of a person or gestión -- framed with
+ * the `--ocre` "aviso documental" token DESIGN.md's Alerts pattern
+ * reserves for this exact case, never `--stamp`/alarm-red. When the series
+ * is current, the component must NOT assert a gap that no longer exists
+ * (would be factually false) -- it renders on a plain surface instead,
+ * same convention `CadenceDashboard` already uses for full-mark items.
  *
  * `historicoHref` (feature H2a, optional): when given, renders a "Ver
  * serie histórica →" link into the deuda pública histórica chart
- * (`DeudaHistoricaChart`) -- the counter states the CURRENT gap, the
- * histórica chart shows the full 3-quarter series + the same gap visually.
- * Omitted on the compact home variant's typical caller unless explicitly
- * passed; never rendered when absent, so every pre-existing caller is
+ * (`DeudaHistoricaChart`) -- the counter states the CURRENT status, the
+ * histórica chart shows the full series (+ any gap) visually. Omitted on
+ * the compact home variant's typical caller unless explicitly passed;
+ * never rendered when absent, so every pre-existing caller is
  * byte-identical.
  */
 interface DeudaCounterProps {
@@ -46,10 +50,16 @@ export function DeudaCounter({
   compact = false,
   historicoHref,
 }: DeudaCounterProps) {
+  const hasGap = deuda.quartersMissing > 0;
+
   return (
     <section
       aria-labelledby="deuda-counter-heading"
-      className="rounded-lg border border-ocre border-l-[5px] bg-ocre-soft p-5 shadow-card"
+      className={
+        hasGap
+          ? "rounded-lg border border-ocre border-l-[5px] bg-ocre-soft p-5 shadow-card"
+          : "rounded-lg border border-rule bg-surface p-5 shadow-card"
+      }
     >
       <h2
         id="deuda-counter-heading"
@@ -59,18 +69,32 @@ export function DeudaCounter({
             : "font-display text-xl font-semibold text-ink"
         }
       >
-        El municipio no actualiza su stock de deuda pública desde el{" "}
-        {formatDateEsAr(deuda.lastPeriodEnd)}
+        {hasGap ? (
+          <>
+            El municipio no actualiza su stock de deuda pública desde el{" "}
+            {formatDateEsAr(deuda.lastPeriodEnd)}
+          </>
+        ) : (
+          <>Stock de deuda pública al {formatDateEsAr(deuda.lastPeriodEnd)}</>
+        )}
       </h2>
 
-      <p className="mt-2 flex flex-wrap items-baseline gap-x-2 font-mono text-ink tabular-nums">
-        <span className={compact ? "text-3xl font-semibold" : "text-4xl font-semibold"}>
-          {deuda.elapsedDays}
-        </span>
-        <span className="text-sm text-ink-2">
-          días sin actualizar · {deuda.quartersMissing} trimestres sin publicar
-        </span>
-      </p>
+      {hasGap ? (
+        <p className="mt-2 flex flex-wrap items-baseline gap-x-2 font-mono text-ink tabular-nums">
+          <span className={compact ? "text-3xl font-semibold" : "text-4xl font-semibold"}>
+            {deuda.elapsedDays}
+          </span>
+          <span className="text-sm text-ink-2">
+            días sin actualizar · {deuda.quartersMissing} trimestres sin publicar
+          </span>
+        </p>
+      ) : (
+        <p className="mt-2 flex flex-wrap items-baseline gap-x-2 font-mono text-ink tabular-nums">
+          <span className={compact ? "text-3xl font-semibold" : "text-4xl font-semibold"}>
+            {deuda.lastFigureLabel}
+          </span>
+        </p>
+      )}
 
       <p className="mt-2 text-sm text-ink-2">
         Último dato publicado: <strong className="text-ink">{deuda.lastPeriod}</strong>{" "}
@@ -95,8 +119,18 @@ export function DeudaCounter({
       {!compact ? (
         <>
           <p className="mt-3 max-w-[64ch] text-sm text-ink-2">
-            {deuda.ordenanzaRef}, {deuda.ordenanzaArticle}, ya obliga a
-            publicar esta información en la web oficial. {deuda.ordenanzaNote}
+            {hasGap ? (
+              <>
+                {deuda.ordenanzaRef}, {deuda.ordenanzaArticle}, ya obliga a
+                publicar esta información en la web oficial. {deuda.ordenanzaNote}
+              </>
+            ) : (
+              <>
+                {deuda.ordenanzaRef}, {deuda.ordenanzaArticle}, exige que esta
+                información esté publicada en la web oficial — y lo está.{" "}
+                {deuda.ordenanzaNote}
+              </>
+            )}
           </p>
 
           <ul className="mt-4 space-y-2">

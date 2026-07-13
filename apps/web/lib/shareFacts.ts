@@ -36,6 +36,25 @@ export function isShareFactId(id: string): id is ShareFactId {
 
 function buildDeudaFact(portal: PortalData): ShareFact {
   const { deuda } = portal.cadencia;
+
+  // Only claim "no actualiza hace N días" while there IS a real gap
+  // (`quartersMissing > 0`) -- once the series is current, share a neutral
+  // current-state fact instead. Asserting a stale-publication headline
+  // when the municipality just published would be factually false, not
+  // just outdated copy (same guard as `DeudaCounter`/`DeudaHistoricaChart`).
+  if (deuda.quartersMissing === 0) {
+    return {
+      id: "deuda",
+      kicker: "Deuda pública",
+      headline: `Coronel Rosales: stock de deuda pública de ${deuda.lastFigureLabel} al ${deuda.lastPeriod}`,
+      value: deuda.lastFigureLabel,
+      caption: `Último dato publicado: ${deuda.lastPeriod} (${deuda.lastFigureLabel}).`,
+      sourceLabel: `${deuda.ordenanzaRef}, ${deuda.ordenanzaArticle}`,
+      pageHref: "/transparencia#deuda-counter-heading",
+      sourceRefs: deuda.sourceRefs,
+    };
+  }
+
   return {
     id: "deuda",
     kicker: "Deuda pública",

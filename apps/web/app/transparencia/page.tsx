@@ -274,7 +274,7 @@ export default function TransparenciaPage() {
         </ul>
       </section>
 
-      <CadenceDashboard cadencia={cadencia} />
+      <CadenceDashboard cadencia={cadencia} transparenciaTotal={transparencia.total} />
 
       <section
         aria-labelledby="alcance-heading"

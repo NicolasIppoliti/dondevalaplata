@@ -128,6 +128,15 @@ export const cadenciaDimensionSchema = z.object({
   lastPeriodPublished: z.string().min(1).nullable(),
   lastPublishedAt: z.string().min(1).nullable(),
   lagMonths: z.number().nullable(),
+  /** Whether the dimension's underlying document series is CURRENTLY
+   * published on time (see `etl.cadencia.CAUGHT_UP_LAG_MONTHS_TOLERANCE`) --
+   * independent of `got`/`max`, which stay frozen to the last curated ASAP
+   * report (never re-derived here). A dimension can be `caughtUp: true`
+   * while still showing `got < max`, meaning ASAP has not yet re-scored a
+   * publication the municipality already made. Optional so older cadencia
+   * payloads/fixtures built before this field existed keep parsing
+   * (treated as "unknown", never as a stale claim). */
+  caughtUp: z.boolean().optional(),
   reason: z.string().min(1),
   toReach10: z.string().min(1),
   sourceRefs: z.array(z.string().min(1)),

@@ -281,13 +281,16 @@ describe("loaders reading real build-time JSON with no argument", () => {
     }
   });
 
-  it("loads the real data/deuda-historica.json (feature H2a): 3 published quarters, oldest first", () => {
+  it("loads the real data/deuda-historica.json (feature H2a): 6 published quarters, oldest first", () => {
     const deudaHistorica = loadDeudaHistorica();
-    expect(deudaHistorica.series).toHaveLength(3);
+    expect(deudaHistorica.series).toHaveLength(6);
     expect(deudaHistorica.series.map((p) => p.period)).toEqual([
       "2025-Q1",
       "2025-Q2",
       "2025-Q3",
+      "2025-Q4",
+      "2026-Q1",
+      "2026-Q2",
     ]);
     for (const point of deudaHistorica.series) {
       expect(point.totalArs).toBeGreaterThan(0);

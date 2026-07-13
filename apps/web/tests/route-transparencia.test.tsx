@@ -153,9 +153,12 @@ describe("/transparencia page", () => {
   });
 
   it("renders the deuda counter widget, framed factually with a legal hook", () => {
+    // Real data currently has no publication gap (2026-07-13 backfill) --
+    // the widget states the current stock neutrally rather than "no
+    // actualiza", per the PART 2 honesty fix.
     const { container } = render(<Page />);
     const text = container.textContent ?? "";
-    expect(text.toLowerCase()).toMatch(/no actualiza/);
+    expect(text).toMatch(/110\.097\.259/);
     expect(text).toMatch(/Ordenanza 3638/);
     expect(text).not.toMatch(/intendente|concejal|partido|gesti[oó]n de/i);
   });
@@ -168,21 +171,23 @@ describe("/transparencia page", () => {
     expect(text.toLowerCase()).toMatch(/se recalcula/);
   });
 
-  it("cadence dashboard sourced Nov-2025 10/10/10 fact is present", () => {
+  it("cadence dashboard sourced Nov-2025 30/30 fact is present", () => {
     const { container } = render(<Page />);
     const text = container.textContent ?? "";
     expect(text).toMatch(/noviembre 2025/i);
-    expect(text).toMatch(/10\/10\/10|10 sobre 10/);
+    expect(text).toMatch(/30\/30|30 sobre 30/);
   });
 
-  it("renders the deuda histórica chart with the acá-dejaron-de-publicar marker (feature H2a)", () => {
+  it("renders the deuda histórica chart with a neutral up-to-date marker (feature H2a, no publication gap since 2026-07-13)", () => {
     render(<Page />);
     const heading = screen.getByRole("heading", {
       name: /c[oó]mo evolucion[oó] la deuda p[uú]blica/i,
     });
     expect(heading).toBeTruthy();
     const section = heading.closest("section");
-    expect(section?.textContent?.toLowerCase()).toMatch(/dejaron de publicar/);
+    const text = section?.textContent?.toLowerCase() ?? "";
+    expect(text).not.toMatch(/dejaron de publicar/);
+    expect(text).toMatch(/serie al d[ií]a/);
   });
 
   it("links the deuda counter to the deuda histórica chart (feature H2a)", () => {

@@ -253,21 +253,24 @@ describe("Home — dashboard landing (fidelity slice F2, Mockup A)", () => {
  * neutral, linking through to the full /transparencia cadence dashboard.
  */
 describe("Home — compact deuda counter (feature G1)", () => {
-  it("renders the compact deuda counter with the last figure, no ordenanza prose", () => {
+  // Real data currently has no publication gap (`quartersMissing === 0`,
+  // 2026-07-13 backfill) -- the widget renders its neutral "stock al
+  // {fecha}" state instead of a "no actualiza" gap, per the PART 2 honesty
+  // fix. See DeudaCounter's `hasGap` branch.
+  it("renders the compact deuda counter with the current stock figure, no ordenanza prose", () => {
     render(<Home />);
     const region = screen.getByRole("region", {
-      name: /no actualiza su stock de deuda/i,
+      name: /stock de deuda p[uú]blica al/i,
     });
     const text = region.textContent ?? "";
-    expect(text.toLowerCase()).toMatch(/no actualiza/);
-    expect(text).toMatch(/46\.876\.896/);
+    expect(text).toMatch(/110\.097\.259/);
     expect(text).not.toMatch(/Ordenanza 3638/);
   });
 
   it("is framed factually, never a judgment of a person or gestión (scoped to the widget itself)", () => {
     render(<Home />);
     const region = screen.getByRole("region", {
-      name: /no actualiza su stock de deuda/i,
+      name: /stock de deuda p[uú]blica al/i,
     });
     const text = region.textContent ?? "";
     expect(text).not.toMatch(/intendente|concejal|partido|gesti[oó]n de|corrupci[oó]n/i);

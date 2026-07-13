@@ -50,12 +50,34 @@ describe("getShareFacts", () => {
     }
   });
 
-  it("the deuda fact states the real elapsedDays from data/cadencia.json, never a hardcoded number", () => {
+  it("the deuda fact states the real current status from data/cadencia.json, never a hardcoded number", () => {
+    // Conditional on the real data's current gap state (see
+    // buildDeudaFact's `quartersMissing === 0` guard) rather than assuming
+    // either branch -- this must stay true whether or not the municipality
+    // currently has a publication gap.
     const { cadencia } = getPortalData();
     const facts = getShareFacts();
     const deuda = facts.find((f) => f.id === "deuda");
-    expect(deuda?.value).toBe(String(cadencia.deuda.elapsedDays));
-    expect(deuda?.headline).toContain(String(cadencia.deuda.elapsedDays));
+    if (cadencia.deuda.quartersMissing === 0) {
+      expect(deuda?.value).toBe(cadencia.deuda.lastFigureLabel);
+      expect(deuda?.headline).toContain(cadencia.deuda.lastFigureLabel);
+      expect(deuda?.headline.toLowerCase()).not.toMatch(/no actualiza/);
+    } else {
+      expect(deuda?.value).toBe(String(cadencia.deuda.elapsedDays));
+      expect(deuda?.headline).toContain(String(cadencia.deuda.elapsedDays));
+    }
+  });
+
+  it('never emits a "no actualiza hace N días" deuda headline while the series has no gap (quartersMissing === 0)', () => {
+    // Regression guard for the honesty fix: asserting a stale-publication
+    // headline when the municipality just published would be factually
+    // false, not just outdated copy.
+    const { cadencia } = getPortalData();
+    if (cadencia.deuda.quartersMissing !== 0) {
+      return; // Nothing to assert against the real data right now.
+    }
+    const deuda = getShareFacts().find((f) => f.id === "deuda");
+    expect(deuda?.headline.toLowerCase()).not.toMatch(/no actualiza hace \d+ d[ií]as/);
   });
 
   it("the transparencia fact states the real ASAP total/max from data/transparencia.json", () => {

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import cadenciaValid from "./fixtures/cadencia.valid.json";
+import cadenciaNoGap from "./fixtures/cadencia.no-gap.json";
 import manifestValid from "./fixtures/manifest.valid.json";
 import { DeudaCounter } from "@/components/DeudaCounter";
 import { loadCadencia, loadManifest } from "@/lib/data";
@@ -107,5 +108,61 @@ describe("DeudaCounter", () => {
   it("does not render a serie histórica link when historicoHref is omitted", () => {
     render(<DeudaCounter deuda={cadencia.deuda} sourceLinks={sourceLinks} />);
     expect(screen.queryByRole("link", { name: /serie hist[oó]rica/i })).toBeNull();
+  });
+});
+
+/**
+ * DeudaCounter with `quartersMissing === 0` (no gap): the series is
+ * current, so the component must NOT assert a publication gap that no
+ * longer exists -- it renders a neutral "stock al {fecha}" state instead
+ * (PART 2 honesty fix, portal-backfill-fix).
+ */
+describe("DeudaCounter (no gap / série al día)", () => {
+  const cadenciaUpToDate = loadCadencia(cadenciaNoGap);
+  const manifestFixture = [
+    ...manifestValid,
+    {
+      id: "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2",
+      capability: "mcr-docs",
+      source: "mcr.gob.ar",
+      source_url:
+        "https://mcr.gob.ar/wp-content/uploads/2026/07/STOCK-DE-DEUDA-Y-PERFIL-DE-VENCIMIENTOS-2o-TRIMESTRE.pdf",
+      archived_url: "https://pub-example.r2.dev/mcr-docs/stock-de-deuda-2o-trimestre-2026.pdf",
+      archived_path: "archive/mcr-docs/stock-de-deuda-2o-trimestre-2026.pdf",
+      sha256: "83e3daec0cac376d5469c2a27d7f53569e10dedddfa1fd770a2c04119ad4d493",
+      mime: "application/pdf",
+      bytes: 8200,
+      fetched_at: "2026-07-13T17:38:12Z",
+      status: "ok",
+      notes: "Fixture record for tests.",
+    },
+  ];
+  const manifest = loadManifest(manifestFixture);
+  const sourceLinks = resolveSourceRefs(cadenciaUpToDate.deuda.sourceRefs, manifest);
+
+  it('never renders "no actualiza" when quartersMissing is 0', () => {
+    const { container } = render(
+      <DeudaCounter deuda={cadenciaUpToDate.deuda} sourceLinks={sourceLinks} />,
+    );
+    const text = container.textContent ?? "";
+    expect(text.toLowerCase()).not.toMatch(/no actualiza/);
+    expect(text).not.toMatch(/d[ií]as sin actualizar/i);
+  });
+
+  it("shows the current stock figure prominently instead of a gap counter", () => {
+    const { container } = render(
+      <DeudaCounter deuda={cadenciaUpToDate.deuda} sourceLinks={sourceLinks} />,
+    );
+    const text = container.textContent ?? "";
+    expect(text).toMatch(/110\.097\.259/);
+    expect(text).toMatch(/2do trimestre 2026/);
+  });
+
+  it("is framed factually, never a judgment of a person or gestión", () => {
+    const { container } = render(
+      <DeudaCounter deuda={cadenciaUpToDate.deuda} sourceLinks={sourceLinks} />,
+    );
+    const text = container.textContent ?? "";
+    expect(text).not.toMatch(/intendente|concejal|partido|gesti[oó]n de|corrupci[oó]n/i);
   });
 });

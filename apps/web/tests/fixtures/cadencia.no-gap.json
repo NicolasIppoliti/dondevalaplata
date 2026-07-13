@@ -1,0 +1,104 @@
+{
+  "generatedAt": "2026-07-13T17:40:14Z",
+  "asapReport": "Mayo 2026",
+  "asapCutoffLabel": "31 de marzo de 2026",
+  "killerFact": "En el informe de noviembre 2025, estas tres dimensiones sumaban 30 sobre 30 puntos. El 13 de julio de 2026 el municipio publicó, el mismo día, Stock de deuda, Ejecución de Recursos y Gastos por finalidad y función al 2do trimestre 2026.",
+  "killerFactSourceRef": "asap-transparencia/informe-noviembre-2025",
+  "dimensions": [
+    {
+      "name": "Acceso web fácil a la información",
+      "got": 5,
+      "max": 5,
+      "lastPeriodPublished": null,
+      "lastPublishedAt": null,
+      "lagMonths": null,
+      "reason": "Dimensión al máximo en el informe.",
+      "toReach10": "Ya está en el máximo -- no falta nada.",
+      "sourceRefs": []
+    },
+    {
+      "name": "Presupuesto vigente publicado",
+      "got": 30,
+      "max": 30,
+      "lastPeriodPublished": "Presupuesto de Gastos por Objeto",
+      "lastPublishedAt": "2026-03-16T09:30:20",
+      "lagMonths": 3,
+      "reason": "Dimensión al máximo en el informe.",
+      "toReach10": "Ya está en el máximo -- no falta nada.",
+      "sourceRefs": ["mcr-docs/presupuesto-de-gastos-por-objeto"]
+    },
+    {
+      "name": "Situación económico-financiera (SEF) trimestral",
+      "got": 35,
+      "max": 35,
+      "lastPeriodPublished": "SITUACION ECONOMICA FINANCIERA PRIMER SEMESTRE 2026",
+      "lastPublishedAt": "2026-07-01T12:53:56",
+      "lagMonths": 0,
+      "reason": "Dimensión al máximo en el informe.",
+      "toReach10": "Ya está en el máximo -- no falta nada.",
+      "sourceRefs": ["mcr-docs/situacion-economica-financiera-primer-semestre-2026"]
+    },
+    {
+      "name": "Ejecución presupuestaria trimestral",
+      "got": 5,
+      "max": 10,
+      "lastPeriodPublished": "Ejecución de Gastos: EJECUCION PRESUPUESTARIA DE GASTOS 2º TRIMESTRE · Ejecución de Recursos: EJECUCION PRESUPUESTARIA DE RECURSOS 2º TRIMESTRE",
+      "lastPublishedAt": "2026-07-13T00:37:06",
+      "lagMonths": 0,
+      "caughtUp": true,
+      "reason": "El 13 de julio de 2026 el municipio publicó Ejecución de Recursos y Ejecución de Gastos al 2do trimestre 2026.",
+      "toReach10": "El puntaje de esta dimensión corresponde al informe de mayo 2026; un próximo informe de ASAP es el que podría reflejar la publicación del 13/07/2026. (+5 puntos posibles)",
+      "sourceRefs": [
+        "mcr-docs/ejecucion-presupuestaria-de-gastos-2o-trimestre-2",
+        "mcr-docs/ejecucion-presupuestaria-de-recursos-2o-trimestre-2"
+      ]
+    },
+    {
+      "name": "Gastos por finalidad y función",
+      "got": 3,
+      "max": 10,
+      "lastPeriodPublished": "GASTOS POR FINALIDAD Y FUNCION 2º TRIMESTRE",
+      "lastPublishedAt": "2026-07-13T00:40:56",
+      "lagMonths": 0,
+      "caughtUp": true,
+      "reason": "El 13 de julio de 2026 el municipio publicó esta serie al 1er y al 2do trimestre 2026.",
+      "toReach10": "El puntaje de esta dimensión corresponde al informe de mayo 2026; un próximo informe de ASAP es el que podría reflejar la publicación del 13/07/2026. (+7 puntos posibles)",
+      "sourceRefs": ["mcr-docs/gastos-por-finalidad-y-funcion-2o-trimestre"]
+    },
+    {
+      "name": "Stock de deuda y perfil de vencimientos",
+      "got": 3,
+      "max": 10,
+      "lastPeriodPublished": "STOCK DE DEUDA Y PERFIL DE VENCIMIENTOS 2º TRIMESTRE",
+      "lastPublishedAt": "2026-07-13T00:45:06",
+      "lagMonths": 0,
+      "caughtUp": true,
+      "reason": "El 13 de julio de 2026 el municipio publicó, el mismo día, el 4to trimestre 2025, el 1er trimestre 2026 y el 2do trimestre 2026.",
+      "toReach10": "El puntaje de esta dimensión corresponde al informe de mayo 2026; un próximo informe de ASAP es el que podría reflejar la publicación del 13/07/2026. (+7 puntos posibles)",
+      "sourceRefs": ["mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2"]
+    }
+  ],
+  "deuda": {
+    "lastPeriod": "2do trimestre 2026",
+    "lastPeriodEnd": "2026-06-30",
+    "lastFigureArs": 110097259.09,
+    "lastFigureLabel": "$ 110.097.259,09",
+    "quartersMissing": 0,
+    "elapsedDays": 13,
+    "ordenanzaRef": "Ordenanza 3638 (Acceso a la Información Pública de Coronel Rosales)",
+    "ordenanzaArticle": "Art. 11",
+    "ordenanzaNote": "El Art. 11 de la Ordenanza 3638 obliga a la web oficial a publicar el detalle de gastos.",
+    "sourceRefs": ["mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2"]
+  },
+  "sourceRefs": [
+    "asap-transparencia/informe-mayo-2026",
+    "asap-transparencia/informe-noviembre-2025",
+    "mcr-docs-snapshot/documentos",
+    "mcr-docs/ejecucion-presupuestaria-de-gastos-2o-trimestre-2",
+    "mcr-docs/ejecucion-presupuestaria-de-recursos-2o-trimestre-2",
+    "mcr-docs/gastos-por-finalidad-y-funcion-2o-trimestre",
+    "mcr-docs/presupuesto-de-gastos-por-objeto",
+    "mcr-docs/situacion-economica-financiera-primer-semestre-2026",
+    "mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-2o-trimestre-2"
+  ]
+}

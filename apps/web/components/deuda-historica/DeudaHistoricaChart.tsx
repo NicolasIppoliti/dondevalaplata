@@ -8,15 +8,19 @@ import type { CadenciaDeuda, DeudaHistoricaData } from "@/lib/schemas";
 /**
  * DeudaHistoricaChart (feature H2a): the "deuda pública histórica" series
  * -- server-rendered inline SVG (DESIGN.md canonical chart style, zero
- * client JS) showing the 3 quarters the municipality ever published
- * (1er/2do/3er trimestre 2025), plus a visually explicit "acá dejaron de
- * publicar" marker for what has been missing since -- the SAME live figures
- * (`elapsedDays`/`quartersMissing`) `DeudaCounter` (feature G1) already
- * computes at ETL build time from `data/cadencia.json`, reused here rather
- * than re-derived, so the two widgets never disagree on the gap. The marker
- * uses the `--ocre` "aviso documental" token (never `--stamp`/alarm-red):
- * this is a documented publication-cadence fact, not a judgment of any
- * person or gestión (DESIGN.md INVIOLABLE rule #1).
+ * client JS) showing every quarter the municipality has published, plus
+ * (only while a real gap exists, `deuda.quartersMissing > 0`) a visually
+ * explicit "acá dejaron de publicar" marker for what has been missing
+ * since -- the SAME live figures (`elapsedDays`/`quartersMissing`)
+ * `DeudaCounter` (feature G1) already computes at ETL build time from
+ * `data/cadencia.json`, reused here rather than re-derived, so the two
+ * widgets never disagree on the gap. The marker uses the `--ocre` "aviso
+ * documental" token (never `--stamp`/alarm-red): this is a documented
+ * publication-cadence fact, not a judgment of any person or gestión
+ * (DESIGN.md INVIOLABLE rule #1). When the series is current, this marker
+ * must not render at all (there is nothing to disclose) -- asserting an
+ * "acá dejaron de publicar" gap that no longer exists would be factually
+ * false, not just stale copy.
  *
  * Composition breakdown ("¿a quién le debe el municipio?") is deliberately
  * NOT shown: the source PDFs' own internal sub-totals (Deuda Pública
@@ -40,6 +44,7 @@ export function DeudaHistoricaChart({
   const periodLabelByPeriod = new Map(
     deudaHistorica.series.map((point) => [point.period, point.periodLabel]),
   );
+  const hasGap = deuda.quartersMissing > 0;
   const missingQuarterLabels = listMissingQuarterLabels(
     deuda.lastPeriodEnd,
     deuda.quartersMissing,
@@ -68,9 +73,19 @@ export function DeudaHistoricaChart({
         ¿Cómo evolucionó la deuda pública?
       </h2>
       <p className="mt-1 max-w-[62ch] text-sm text-ink-2">
-        Stock total de deuda pública declarado por el municipio, trimestre a
-        trimestre — los únicos {deudaHistorica.series.length} que publicó
-        antes de dejar de actualizar la serie.
+        {hasGap ? (
+          <>
+            Stock total de deuda pública declarado por el municipio,
+            trimestre a trimestre — los {deudaHistorica.series.length} que
+            publicó hasta ahora.
+          </>
+        ) : (
+          <>
+            Stock total de deuda pública declarado por el municipio,
+            trimestre a trimestre — {deudaHistorica.series.length} trimestres
+            publicados hasta la fecha.
+          </>
+        )}
       </p>
 
       <div className="mt-5">
@@ -88,20 +103,36 @@ export function DeudaHistoricaChart({
       {/* Visually explicit "acá dejaron de publicar" marker -- same token
           (`--ocre`, border izquierdo 5px) as `DeudaCounter`'s "aviso
           documental" treatment, never `--stamp`/alarma: this is a
-          documented fact about a publication cadence, not a judgment. */}
-      <div className="mt-5 rounded-md border border-ocre border-l-[5px] bg-ocre-soft p-4">
-        <p className="font-sans text-sm font-bold text-ink">
-          <span aria-hidden="true">⏸ </span>
-          Acá dejaron de publicar
-        </p>
-        <p className="mt-1.5 max-w-[62ch] text-sm text-ink-2">
-          Después del {formatDateEsAr(deuda.lastPeriodEnd)} ({deuda.lastPeriod}
-          ), el municipio no volvió a publicar el Stock de deuda. Faltan:{" "}
-          <strong className="text-ink">{missingQuarterLabels.join(", ")}</strong>
-          . Van {deuda.elapsedDays} días ({deuda.quartersMissing} trimestres)
-          sin actualizar.
-        </p>
-      </div>
+          documented fact about a publication cadence, not a judgment. Only
+          rendered while a real gap exists (`hasGap`) -- once the series is
+          current there is nothing to disclose here. */}
+      {hasGap ? (
+        <div className="mt-5 rounded-md border border-ocre border-l-[5px] bg-ocre-soft p-4">
+          <p className="font-sans text-sm font-bold text-ink">
+            <span aria-hidden="true">⏸ </span>
+            Acá dejaron de publicar
+          </p>
+          <p className="mt-1.5 max-w-[62ch] text-sm text-ink-2">
+            Después del {formatDateEsAr(deuda.lastPeriodEnd)} ({deuda.lastPeriod}
+            ), el municipio no volvió a publicar el Stock de deuda. Faltan:{" "}
+            <strong className="text-ink">{missingQuarterLabels.join(", ")}</strong>
+            . Van {deuda.elapsedDays} días ({deuda.quartersMissing} trimestres)
+            sin actualizar.
+          </p>
+        </div>
+      ) : (
+        <div className="mt-5 rounded-md border border-rule bg-surface p-4">
+          <p className="font-sans text-sm font-bold text-ink">
+            <span aria-hidden="true">✓ </span>
+            Serie al día
+          </p>
+          <p className="mt-1.5 max-w-[62ch] text-sm text-ink-2">
+            El último dato publicado es el {deuda.lastPeriod} (cierre{" "}
+            {formatDateEsAr(deuda.lastPeriodEnd)}), por{" "}
+            <strong className="text-ink">{deuda.lastFigureLabel}</strong>.
+          </p>
+        </div>
+      )}
 
       <div className="mt-5">
         <DataTable
