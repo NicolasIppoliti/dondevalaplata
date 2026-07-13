@@ -120,10 +120,10 @@ def test_build_deuda_historica_reproduces_the_curated_q4_2025_anomaly(result: di
         "flagged": True,
         "note": (
             "El municipio declaró $ 1.826.113.416,70 como \"1. Deuda "
-            "Pública / Saldo\" del 4to trimestre 2025 — unas 39 veces el "
-            "de los trimestres vecinos. Es una inconsistencia que no se "
-            "explica en la fuente; la mostramos tal como fue publicada, "
-            "sin corregirla."
+            "Pública / Saldo\" del 4to trimestre 2025 — entre 11 y 39 "
+            "veces los trimestres vecinos. Es una inconsistencia que no "
+            "se explica en la fuente; la mostramos tal como fue "
+            "publicada, sin corregirla."
         ),
     }
 

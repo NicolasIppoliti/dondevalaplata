@@ -36,7 +36,7 @@ def test_load_curated_anomalies_reads_the_real_q4_2025_entry() -> None:
     assert entry["note"].strip() != ""
     assert entry["note"] == (
         "El municipio declaró $ 1.826.113.416,70 como \"1. Deuda Pública / "
-        "Saldo\" del 4to trimestre 2025 — unas 39 veces el de los "
+        "Saldo\" del 4to trimestre 2025 — entre 11 y 39 veces los "
         "trimestres vecinos. Es una inconsistencia que no se explica en la "
         "fuente; la mostramos tal como fue publicada, sin corregirla."
     )
