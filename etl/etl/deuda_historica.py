@@ -52,6 +52,16 @@ PDFs, `archive/mcr-docs/stock-de-deuda-y-perfil-de-vencimientos-{1o,2o,3o}-trime
    -- never a composition it cannot verify. Anyone wanting the full
    line-item detail can read the cited archived PDF directly (dual-link +
    sha256 provenance, same as every other figure on the portal).
+
+Anomaly annotations (e.g. the 4to trimestre 2025 headline total, ~39x its
+neighbors -- a real, verified-correct figure in the municipality's own
+PDF, not a parsing bug) are NEVER hardcoded here: this module has zero
+anomaly concept of its own. `build_deuda_historica` merges each entry from
+the curated `etl/deuda_anomalies.yaml` table onto its matching period's
+parsed point (see `load_curated_anomalies`), so the annotation survives a
+real ETL re-run -- unlike a hand-edit to the committed
+`data/deuda-historica.json`, which the next `etl build-deuda-historica`
+would silently overwrite.
 """
 
 from __future__ import annotations
@@ -60,6 +70,8 @@ import re
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+import yaml
 
 from .fallos import extract_pdf_text
 from .manifest import resolve_archived_path
@@ -153,21 +165,62 @@ def parse_deuda_stock_pdf(text: str) -> dict[str, Any]:
     }
 
 
+def load_curated_anomalies(path: Path) -> dict[str, dict[str, Any]]:
+    """Load the curated per-quarter anomaly table (`etl/deuda_anomalies.yaml`
+    by default -- see its module comment for the durability rationale).
+
+    Returns a `{period: {"flagged": bool, "note": str}}` mapping.
+    `build_deuda_historica` merges each entry onto the matching parsed
+    point's `anomaly` field; the parser itself never invents or hardcodes
+    one. Raises `ValueError` if any entry's `note` is blank -- a curated
+    annotation with nothing to say is always a curation mistake, never
+    intentional (same discipline as `titularidad.py`'s loader guards).
+    """
+    raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    entries = raw.get("anomalies") or {}
+    anomalies: dict[str, dict[str, Any]] = {}
+    for period, entry in entries.items():
+        note = (entry.get("note") or "").strip()
+        if not note:
+            raise ValueError(
+                f"etl/deuda_anomalies.yaml entry for period {period!r} has a "
+                "blank note -- a curated anomaly annotation with nothing to "
+                "say is always a curation mistake"
+            )
+        anomalies[period] = {"flagged": bool(entry["flagged"]), "note": entry["note"]}
+    return anomalies
+
+
 def build_deuda_historica(
-    manifest_path: Path, *, now: datetime | None = None
+    manifest_path: Path,
+    curated_anomalies_path: Path,
+    *,
+    now: datetime | None = None,
 ) -> dict[str, Any]:
     """Build the full `data/deuda-historica.json` payload: the quarterly
     headline-total series for every archived stock-de-deuda PDF, oldest
     first. Raises `ValueError` if the series ends up with fewer entries
     than manifest ids (a parse failure) or a duplicate period (would
     silently overwrite one quarter's real figure with another's).
+
+    `curated_anomalies_path` points at the curated per-period anomaly
+    table (see `load_curated_anomalies`) -- any period found there gets an
+    `anomaly` field merged onto its point. This is the ONLY way an
+    `anomaly` field can appear in the output; the parser never invents
+    one, which is what makes it durable across ETL re-runs.
     """
+    anomalies = load_curated_anomalies(curated_anomalies_path)
+
     series = []
     for manifest_id in DEUDA_HISTORICA_MANIFEST_IDS:
         pdf_path = resolve_archived_path(manifest_path, manifest_id)
         text = extract_pdf_text(pdf_path)
         parsed = parse_deuda_stock_pdf(text)
-        series.append({**parsed, "sourceRef": manifest_id})
+        entry = {**parsed, "sourceRef": manifest_id}
+        anomaly = anomalies.get(parsed["period"])
+        if anomaly is not None:
+            entry["anomaly"] = anomaly
+        series.append(entry)
 
     series.sort(key=lambda entry: entry["fecha"])
 

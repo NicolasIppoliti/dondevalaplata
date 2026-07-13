@@ -1,0 +1,36 @@
+# Curated per-quarter anomaly annotations for the deuda pública histórica
+# series (data/deuda-historica.json, feature H2a). This is the SOURCE OF
+# TRUTH for any `anomaly` note attached to a quarter's headline total --
+# `etl/etl/deuda_historica.py`'s parser has zero anomaly concept of its own
+# (it only extracts numbers from the archived PDFs), so
+# `build_deuda_historica` MERGES each entry below onto the matching
+# period's parsed point. This makes the annotation DURABLE across ETL
+# re-runs: a future `etl build-deuda-historica` (e.g. a monthly cron)
+# reproduces the note instead of silently dropping it, which is exactly
+# what would happen if the note were only a hand-edit to the committed
+# `data/deuda-historica.json` (the next real parser run would overwrite
+# that file from scratch, with no memory of the hand-edit).
+#
+# CURATION DISCIPLINE: every entry here documents a REAL anomaly already
+# verified against the municipality's own official PDF -- never a parsing
+# bug, never a value this pipeline alters or corrects (see
+# `etl/etl/deuda_historica.py`'s module docstring for the verification).
+# Same curated-table pattern as `etl/titularidad.yaml`,
+# `etl/fallos_ficha_2022.yaml` and `etl/asap_transparencia.yaml`: a human
+# reviewer reads the primary source directly and transcribes the note
+# here, this file is never machine-generated.
+#
+# Keyed by `period` -- the exact `"<year>-Q<n>"` string
+# `parse_deuda_stock_pdf` derives from each PDF's own "SALDO AL" closing
+# date (see `_QUARTER_NUMBER_BY_CLOSING_MONTH`). A period with no entry
+# here renders with no `anomaly` field at all -- the default, and the
+# overwhelmingly common case. A typo'd period key here would silently
+# match nothing and never surface the note; see
+# etl/tests/test_build_deuda_historica.py's cross-check test, which fails
+# loudly if a curated key here doesn't match a real period the ETL
+# actually produced.
+
+anomalies:
+  "2025-Q4":
+    flagged: true
+    note: "El municipio declaró $ 1.826.113.416,70 como \"1. Deuda Pública / Saldo\" del 4to trimestre 2025 — unas 39 veces el de los trimestres vecinos. Es una inconsistencia que no se explica en la fuente; la mostramos tal como fue publicada, sin corregirla."

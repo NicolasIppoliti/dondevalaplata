@@ -63,6 +63,7 @@ DEFAULT_TRANSPARENCIA_CURATED_PATH = REPO_ROOT / "etl" / "asap_transparencia.yam
 DEFAULT_CADENCIA_CURATED_PATH = REPO_ROOT / "etl" / "cadencia.yaml"
 DEFAULT_NOVEDADES_SEED_PATH = REPO_ROOT / "etl" / "novedades_seed.yaml"
 DEFAULT_TITULARIDAD_CURATED_PATH = REPO_ROOT / "etl" / "titularidad.yaml"
+DEFAULT_DEUDA_ANOMALIES_CURATED_PATH = REPO_ROOT / "etl" / "deuda_anomalies.yaml"
 
 # From Nº31 (2023) onward, per design D4/tasks Slice 2 scope note.
 SIBOM_FROM_NUMBER = 31
@@ -333,13 +334,18 @@ def run_build_adjudicaciones(args: argparse.Namespace) -> int:
 
 def run_build_deuda_historica(args: argparse.Namespace) -> int:
     """Build `data/deuda-historica.json`: the quarterly deuda pública
-    histórica series (feature H2a), parsed from the three archived
-    "Stock de Deuda y Perfil de Vencimientos" PDFs. See
-    `etl.deuda_historica`'s module docstring for the deliberate decision to
-    publish only the reconciled headline total per quarter, never a
+    histórica series (feature H2a), parsed from the archived "Stock de
+    Deuda y Perfil de Vencimientos" PDFs, with any curated per-quarter
+    anomaly annotation merged in (see `etl.deuda_historica`'s module
+    docstring). Reads `etl/deuda_anomalies.yaml` by default (see
+    --deuda-anomalies-curated-path) so an annotation like the 4to
+    trimestre 2025 outlier survives a real re-run of this build instead
+    of only living in a hand-edited `data/deuda-historica.json`. See
+    `etl.deuda_historica`'s module docstring for the deliberate decision
+    to publish only the reconciled headline total per quarter, never a
     composition breakdown it cannot verify.
     """
-    result = build_deuda_historica(args.manifest_path)
+    result = build_deuda_historica(args.manifest_path, args.deuda_anomalies_curated_path)
     output_path = args.data_root / "deuda-historica.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps(result, indent=2, ensure_ascii=False) + "\n"
@@ -569,6 +575,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     build_deuda_historica_parser.add_argument(
         "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
+    )
+    build_deuda_historica_parser.add_argument(
+        "--deuda-anomalies-curated-path", type=Path,
+        default=DEFAULT_DEUDA_ANOMALIES_CURATED_PATH,
     )
     build_deuda_historica_parser.set_defaults(func=run_build_deuda_historica)
 
