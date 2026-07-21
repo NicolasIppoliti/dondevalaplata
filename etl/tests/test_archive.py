@@ -56,6 +56,82 @@ def test_archive_source_success_writes_local_copy_and_record(tmp_path) -> None:
     assert (tmp_path / "coparticipacion-viewer" / "file.csv").read_bytes() == data
 
 
+SIBOM_ACTO_ENTRY = {
+    "id": "sibom-actos/boletin-031-decreto-205-2022",
+    "capability": "sibom-actos",
+    "source": "sibom.slyt.gba.gob.ar",
+    "source_url": "https://sibom.slyt.gba.gob.ar/bulletins/7283/contents/1768533",
+    "mime": "text/html",
+    "notes": "Decreto Nº 205/2022 (adjudicación) -- boletin-031",
+}
+
+
+def _acto_html(csrf: str, paloma: str) -> bytes:
+    """A SIBOM act page carries three per-request volatile values that are
+    not part of the published act: a Rails CSRF token and the same Paloma
+    analytics timestamp twice.
+    """
+    return (
+        f'<meta name="csrf-token" content="{csrf}" />\n'
+        f'<div class="js-paloma-hook" data-palomaid="{paloma}">\n'
+        f'  var id = "{paloma}",\n'
+        f"<p>ARTICULO 1: Adjudicar a RO-BOT S.R.L</p>\n"
+    ).encode()
+
+
+def test_archive_source_strips_volatile_tokens_from_sibom_actos(tmp_path) -> None:
+    """Two fetches of the SAME unchanged act must archive identical bytes and
+    the same sha256. Without this, every archive run reports spurious content
+    drift, spawns a phantom dated manifest row, and leaves the superseded row
+    asserting a sha256 that its own (overwritten) file no longer has -- i.e.
+    the manifest would claim provenance it cannot honour.
+    """
+    first = _acto_html("7l49xlyn+RlE5k+W2xxWXvq3wMc2ymYL", "1784662724969")
+    second = _acto_html("ChZt23aOh3nZ81mcZSHyYzlMg6Hbb8xv", "1784662724941")
+    assert first != second  # the raw captures genuinely differ
+
+    records = []
+    for payload in (first, second):
+        fetcher = FakeFetcher({SIBOM_ACTO_ENTRY["source_url"]: FetchResponse(200, payload)})
+        records.append(
+            archive_source(
+                {**SIBOM_ACTO_ENTRY, "filename": "boletin-031-decreto-205-2022.html"},
+                fetcher=fetcher,
+                local_store=LocalArchiveStore(root=tmp_path),
+                r2_store=None,
+                now=FIXED_NOW,
+            ).record
+        )
+
+    assert records[0]["sha256"] == records[1]["sha256"]
+    archived = (tmp_path / "sibom-actos" / "boletin-031-decreto-205-2022.html").read_bytes()
+    assert records[0]["sha256"] == sha256_of(archived)
+    # The act's own text is preserved verbatim; only the volatile values go.
+    assert b"Adjudicar a RO-BOT S.R.L" in archived
+    assert b"7l49xlyn" not in archived
+    assert b"1784662724969" not in archived
+
+
+def test_archive_source_leaves_non_sibom_captures_byte_exact(tmp_path) -> None:
+    """Normalization is scoped to the one capability with a proven volatile
+    payload. Every other capability is still archived byte-for-byte.
+    """
+    data = b'<meta name="csrf-token" content="keepme" />\n'
+    fetcher = FakeFetcher({ENTRY["source_url"]: FetchResponse(200, data)})
+    local_store = LocalArchiveStore(root=tmp_path)
+
+    result = archive_source(
+        {**ENTRY, "filename": "file.csv"},
+        fetcher=fetcher,
+        local_store=local_store,
+        r2_store=None,
+        now=FIXED_NOW,
+    )
+
+    assert result.record["sha256"] == sha256_of(data)
+    assert (tmp_path / "coparticipacion-viewer" / "file.csv").read_bytes() == data
+
+
 def test_archive_source_records_archived_path_relative_to_local_store_root(tmp_path) -> None:
     """archived_path must be portable (repo-relative), never an absolute machine path."""
     data = b"a,b\n1,2\n"

@@ -7,6 +7,7 @@ only place in the ETL package that performs network I/O.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -31,6 +32,43 @@ POLITENESS_DELAY_SECONDS: dict[str, float] = {
     "sibom-actos": 0.75,
     "mcr-docs": 4.0,
 }
+
+
+# SIBOM serves each act page with three per-request values that are NOT part
+# of the published act: a Rails CSRF token, and the same Paloma analytics
+# millisecond timestamp twice. Two fetches of an unchanged act therefore
+# differ in sha256 while the decree text is byte-identical (verified against
+# the live site: 3 differing lines out of 74, identical byte length).
+#
+# Left alone, that breaks the archive's central promise. `upsert_record`
+# reads the changed hash as content drift, preserves the prior capture under
+# a dated id, and points that dated row at the SAME file the new capture just
+# overwrote -- so the manifest ends up asserting a sha256 no file on disk can
+# reproduce, and does it again for every act on every run, without bound.
+#
+# We therefore blank these values BEFORE hashing and BEFORE writing, so the
+# stored artifact is exactly what the recorded sha256 verifies. The trade-off
+# is explicit and narrow: the archived bytes are no longer the literal bytes
+# served, and the tokens are blanked in place (never deleted) so the document
+# stays structurally intact and the edit is visible to anyone inspecting it.
+_VOLATILE_CAPTURE_PATTERNS: dict[str, tuple[tuple[re.Pattern[bytes], bytes], ...]] = {
+    "sibom-actos": (
+        (re.compile(rb'(<meta name="csrf-token" content=")[^"]*(")'), rb"\1\2"),
+        (re.compile(rb'(data-palomaid=")\d*(")'), rb"\1\2"),
+        (re.compile(rb'(var id = ")\d*(")'), rb"\1\2"),
+    ),
+}
+
+
+def normalize_capture(capability: str, data: bytes) -> bytes:
+    """Blank per-request volatile values so a capability's captures are
+    byte-stable across runs. Capabilities without a proven volatile payload
+    are returned untouched -- normalization is opt-in per capability, never
+    a blanket rewrite of archived material.
+    """
+    for pattern, replacement in _VOLATILE_CAPTURE_PATTERNS.get(capability, ()):
+        data = pattern.sub(replacement, data)
+    return data
 
 
 class Fetcher(Protocol):
@@ -107,7 +145,7 @@ def archive_source(
             )
         )
 
-    data = response.content
+    data = normalize_capture(capability, response.content)
     digest = sha256_of(data)
     filename = entry.get("filename") or entry["id"].split("/")[-1]
     local_store.write(capability, filename, data)
