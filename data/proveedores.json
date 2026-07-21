@@ -1,6 +1,21 @@
 {
-  "generatedAt": "2026-07-21T20:15:45Z",
+  "generatedAt": "2026-07-21T21:07:06Z",
   "proveedores": [
+    {
+      "proveedor": "COMADAR S.R.L",
+      "totalArs": 1266175930,
+      "count": 6,
+      "firstDate": "2024-07-04",
+      "lastDate": "2026-03-18",
+      "decretoRefs": [
+        "324/2024",
+        "643/2024",
+        "351/2025",
+        "622/2025",
+        "98/2026",
+        "115/2026"
+      ]
+    },
     {
       "proveedor": "RIMSOL S.A",
       "totalArs": 721556789,
@@ -13,36 +28,13 @@
       ]
     },
     {
-      "proveedor": "COMADAR SRL",
-      "totalArs": 650126380,
-      "count": 1,
-      "firstDate": "2025-12-15",
-      "lastDate": "2025-12-15",
-      "decretoRefs": [
-        "622/2025"
-      ]
-    },
-    {
-      "proveedor": "COMADAR S.R.L",
-      "totalArs": 616049550,
-      "count": 5,
-      "firstDate": "2024-07-04",
-      "lastDate": "2026-03-18",
-      "decretoRefs": [
-        "324/2024",
-        "643/2024",
-        "351/2025",
-        "98/2026",
-        "115/2026"
-      ]
-    },
-    {
       "proveedor": "Sociedad de Anestesiología",
-      "totalArs": 486700000,
-      "count": 7,
-      "firstDate": "2024-07-01",
+      "totalArs": 523200000,
+      "count": 8,
+      "firstDate": "2024-04-09",
       "lastDate": "2026-03-31",
       "decretoRefs": [
+        "139/2024",
         "315/2024",
         "477/2024",
         "88/2025",
@@ -50,6 +42,42 @@
         "479/2025",
         "635/2025",
         "133/2026"
+      ]
+    },
+    {
+      "proveedor": "MG PHARMACORP S.R.L",
+      "totalArs": 353684642,
+      "count": 27,
+      "firstDate": "2023-06-28",
+      "lastDate": "2026-03-31",
+      "decretoRefs": [
+        "338/2023",
+        "339/2023",
+        "588/2023",
+        "75/2024",
+        "77/2024",
+        "78/2024",
+        "133/2024",
+        "135/2024",
+        "138/2024",
+        "312/2024",
+        "313/2024",
+        "474/2024",
+        "475/2024",
+        "664/2024",
+        "94/2025",
+        "95/2025",
+        "96/2025",
+        "251/2025",
+        "470/2025",
+        "471/2025",
+        "472/2025",
+        "623/2025",
+        "626/2025",
+        "627/2025",
+        "633/2025",
+        "129/2026",
+        "136/2026"
       ]
     },
     {
@@ -90,38 +118,13 @@
       ]
     },
     {
-      "proveedor": "MG PHARMACORP S.R.L",
-      "totalArs": 248993465,
-      "count": 17,
-      "firstDate": "2024-02-27",
-      "lastDate": "2026-03-31",
-      "decretoRefs": [
-        "75/2024",
-        "77/2024",
-        "78/2024",
-        "664/2024",
-        "94/2025",
-        "95/2025",
-        "96/2025",
-        "251/2025",
-        "470/2025",
-        "471/2025",
-        "472/2025",
-        "623/2025",
-        "626/2025",
-        "627/2025",
-        "633/2025",
-        "129/2026",
-        "136/2026"
-      ]
-    },
-    {
       "proveedor": "EQUIPOS DE SERVICIOS PORTUARIOS RUMAX S.R.L",
-      "totalArs": 183377670,
-      "count": 1,
-      "firstDate": "2024-12-04",
+      "totalArs": 191538900,
+      "count": 2,
+      "firstDate": "2024-08-02",
       "lastDate": "2024-12-04",
       "decretoRefs": [
+        "384/2024",
         "639/2024"
       ]
     },
@@ -151,35 +154,18 @@
       ]
     },
     {
-      "proveedor": "MG PHARMACORP SRL",
-      "totalArs": 104691177,
+      "proveedor": "DROGUERIA IB S.A",
+      "totalArs": 78887913,
       "count": 10,
-      "firstDate": "2023-06-28",
-      "lastDate": "2024-09-26",
-      "decretoRefs": [
-        "338/2023",
-        "339/2023",
-        "588/2023",
-        "133/2024",
-        "135/2024",
-        "138/2024",
-        "312/2024",
-        "313/2024",
-        "474/2024",
-        "475/2024"
-      ]
-    },
-    {
-      "proveedor": "DROGUERIA IB SA",
-      "totalArs": 68814726,
-      "count": 8,
-      "firstDate": "2023-09-29",
+      "firstDate": "2023-07-18",
       "lastDate": "2026-03-31",
       "decretoRefs": [
+        "392/2023",
         "589/2023",
         "134/2024",
         "316/2024",
         "478/2024",
+        "87/2025",
         "247/2025",
         "469/2025",
         "624/2025",
@@ -256,16 +242,6 @@
       ]
     },
     {
-      "proveedor": "Sociedad de Anestesia",
-      "totalArs": 36500000,
-      "count": 1,
-      "firstDate": "2024-04-09",
-      "lastDate": "2024-04-09",
-      "decretoRefs": [
-        "139/2024"
-      ]
-    },
-    {
       "proveedor": "HOSPITAL NAVAL PUERTO BELGRANO",
       "totalArs": 35000000,
       "count": 2,
@@ -298,12 +274,28 @@
     },
     {
       "proveedor": "Segusur S.H",
-      "totalArs": 28451473,
-      "count": 1,
-      "firstDate": "2024-10-07",
+      "totalArs": 31967312,
+      "count": 3,
+      "firstDate": "2022-05-10",
       "lastDate": "2024-10-07",
       "decretoRefs": [
+        "205/2022",
+        "194/2023",
         "503/2024"
+      ]
+    },
+    {
+      "proveedor": "Rodolfo A. De La Cereza",
+      "totalArs": 21206500,
+      "count": 5,
+      "firstDate": "2022-08-24",
+      "lastDate": "2024-11-01",
+      "decretoRefs": [
+        "425/2022",
+        "514/2022",
+        "664/2022",
+        "479/2024",
+        "562/2024"
       ]
     },
     {
@@ -325,17 +317,6 @@
       "decretoRefs": [
         "579/2023",
         "432/2024"
-      ]
-    },
-    {
-      "proveedor": "Rodolfo A. De La Cereza",
-      "totalArs": 17980000,
-      "count": 2,
-      "firstDate": "2024-09-26",
-      "lastDate": "2024-11-01",
-      "decretoRefs": [
-        "479/2024",
-        "562/2024"
       ]
     },
     {
@@ -395,17 +376,6 @@
       ]
     },
     {
-      "proveedor": "DROGUERIA IB S.A",
-      "totalArs": 10073187,
-      "count": 2,
-      "firstDate": "2023-07-18",
-      "lastDate": "2025-03-19",
-      "decretoRefs": [
-        "392/2023",
-        "87/2025"
-      ]
-    },
-    {
       "proveedor": "MAREGO S.A",
       "totalArs": 9818116,
       "count": 3,
@@ -425,16 +395,6 @@
       "lastDate": "2023-05-08",
       "decretoRefs": [
         "194/2023"
-      ]
-    },
-    {
-      "proveedor": "Equipo de Servicios Portuarios RUMAX S.R.L",
-      "totalArs": 8161230,
-      "count": 1,
-      "firstDate": "2024-08-02",
-      "lastDate": "2024-08-02",
-      "decretoRefs": [
-        "384/2024"
       ]
     },
     {
@@ -518,29 +478,6 @@
       "lastDate": "2023-07-24",
       "decretoRefs": [
         "415/2023"
-      ]
-    },
-    {
-      "proveedor": "SEGUSUR SH",
-      "totalArs": 3515839,
-      "count": 2,
-      "firstDate": "2022-05-10",
-      "lastDate": "2023-05-08",
-      "decretoRefs": [
-        "205/2022",
-        "194/2023"
-      ]
-    },
-    {
-      "proveedor": "Rodolfo De La Cereza",
-      "totalArs": 3226500,
-      "count": 3,
-      "firstDate": "2022-08-24",
-      "lastDate": "2022-12-15",
-      "decretoRefs": [
-        "425/2022",
-        "514/2022",
-        "664/2022"
       ]
     },
     {
