@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-21T21:07:06Z",
+  "generatedAt": "2026-07-21T23:02:11Z",
   "windowFrom": "2021-07-13",
   "windowTo": "2026-03-31",
   "bulletinsScanned": 56,
   "decreesScanned": 2845,
-  "skippedCount": 80,
+  "skippedCount": 82,
   "sourceRefs": [
     "sibom-actos/boletin-031-decreto-205-2022",
     "sibom-actos/boletin-031-decreto-241-2022",
@@ -21,6 +21,7 @@
     "sibom-actos/boletin-031-decreto-405-2022",
     "sibom-actos/boletin-031-decreto-425-2022",
     "sibom-actos/boletin-031-decreto-426-2022",
+    "sibom-actos/boletin-031-decreto-447-2022",
     "sibom-actos/boletin-031-decreto-458-2022",
     "sibom-actos/boletin-031-decreto-476-2022",
     "sibom-actos/boletin-031-decreto-480-2022",
@@ -65,6 +66,7 @@
     "sibom-actos/boletin-035-decreto-427-2023",
     "sibom-actos/boletin-035-decreto-429-2023",
     "sibom-actos/boletin-035-decreto-430-2023",
+    "sibom-actos/boletin-035-decreto-436-2023",
     "sibom-actos/boletin-035-decreto-453-2023",
     "sibom-actos/boletin-035-decreto-454-2023",
     "sibom-actos/boletin-035-decreto-506-2023",
@@ -143,6 +145,7 @@
     "sibom-actos/boletin-061-decreto-254-2025",
     "sibom-actos/boletin-063-decreto-278-2025",
     "sibom-actos/boletin-063-decreto-291-2025",
+    "sibom-actos/boletin-063-decreto-307-2025",
     "sibom-actos/boletin-065-decreto-351-2025",
     "sibom-actos/boletin-065-decreto-395-2025",
     "sibom-actos/boletin-067-decreto-407-2025",
@@ -166,6 +169,7 @@
     "sibom-actos/boletin-074-decreto-633-2025",
     "sibom-actos/boletin-074-decreto-635-2025",
     "sibom-actos/boletin-074-decreto-636-2025",
+    "sibom-actos/boletin-077-decreto-020-2026",
     "sibom-actos/boletin-082-decreto-098-2026",
     "sibom-actos/boletin-082-decreto-115-2026",
     "sibom-actos/boletin-082-decreto-128-2026",
@@ -331,17 +335,6 @@
       "sourceRef": "sibom-actos/boletin-031-decreto-383-2022"
     },
     {
-      "decreto": "405/2022",
-      "fecha": "2022-08-12",
-      "expediente": "S-025/22",
-      "proveedor": "Omar Marciano EBERS",
-      "montoArs": 29152814,
-      "procedimiento": "Licitación Pública Nº 7/22",
-      "objeto": "Adjudicar al Sr. Omar Marciano EBERS, la Licitación Pública No 7/22 instrumentada para la ejecución de la Obra denominada “ Puesta en valor de los locales del 1°, 2° 3° y 4 piso Ex Sanatorio Punta Alta ” por la suma de P",
-      "bulletinNumber": 31,
-      "sourceRef": "sibom-actos/boletin-031-decreto-405-2022"
-    },
-    {
       "decreto": "425/2022",
       "fecha": "2022-08-24",
       "expediente": "D-095/22",
@@ -362,6 +355,17 @@
       "objeto": "Adjudicar a OMAR MARCIANO EBERS la Licitación Pública No 6/22 instrumentada para la ejecución de la Obra denominada “Obra de cordón cuneta y pavimento para ordenamiento vehicular en Punta Alta” por la suma de PESOS TRECE",
       "bulletinNumber": 31,
       "sourceRef": "sibom-actos/boletin-031-decreto-426-2022"
+    },
+    {
+      "decreto": "447/2022",
+      "fecha": "2022-09-01",
+      "expediente": "S-025/22",
+      "proveedor": "Omar Marciano EBERS",
+      "montoArs": 29152814,
+      "procedimiento": "Licitación Pública Nº 7/22",
+      "objeto": "Adjudicase al Sr. Omar Marciano EBERS, la Licitación Pública No 7/22 instrumentada para la ejecución de la Obra denominada “Puesta en valor de los locales del 1°, 2° 3° y 4 piso Ex Sanatorio Punta Alta” por la suma de PE",
+      "bulletinNumber": 31,
+      "sourceRef": "sibom-actos/boletin-031-decreto-447-2022"
     },
     {
       "decreto": "458/2022",
@@ -859,6 +863,17 @@
       "sourceRef": "sibom-actos/boletin-035-decreto-430-2023"
     },
     {
+      "decreto": "436/2023",
+      "fecha": "2023-08-04",
+      "expediente": "J-13/23",
+      "proveedor": "González Carlos Enrique",
+      "montoArs": 1960610,
+      "procedimiento": null,
+      "objeto": "Adjudicase a la firma González Carlos Enrique la suma de PESOS UN MILLON NOVECIENTOS SESENTA MIL SEISCIENTOS DIEZ ($1.960.610,00) por la cantidad de 72 ambos según ítem 1 y 19 camperas tipo trucker según ítem 2 del concu",
+      "bulletinNumber": 35,
+      "sourceRef": "sibom-actos/boletin-035-decreto-436-2023"
+    },
+    {
       "decreto": "453/2023",
       "fecha": "2023-08-14",
       "expediente": "D-75/23",
@@ -879,17 +894,6 @@
       "objeto": "Autorizase la Contratación Directa con el proveedor Talleres B.J. Irrazabal S.A. para la Obra mencionada en el Artículo 1o por un valor de PESOS SEIS MILLONES DOSCIENTOS MIL ($ 6.200.000), con plazo de ejecución de NOVEN",
       "bulletinNumber": 35,
       "sourceRef": "sibom-actos/boletin-035-decreto-454-2023"
-    },
-    {
-      "decreto": "506/2023",
-      "fecha": "2023-08-30",
-      "expediente": "D-85/23",
-      "proveedor": "Explorar Servicios Geológicos",
-      "montoArs": 1305000,
-      "procedimiento": "Contratación Directa",
-      "objeto": "Autorizase la Contratación Directa con la firma Explorar Servicios Geológicos, de Ramiro San José, CUIT 20-369922733-8, por la suma de PESOS UN MILLON TRESCIENTOS CINCO MIL ($ 1.305.000,00), los servicios que obran detal",
-      "bulletinNumber": 35,
-      "sourceRef": "sibom-actos/boletin-035-decreto-506-2023"
     },
     {
       "decreto": "524/2023",
@@ -969,17 +973,6 @@
       "sourceRef": "sibom-actos/boletin-036-decreto-578-2023"
     },
     {
-      "decreto": "579/2023",
-      "fecha": "2023-09-28",
-      "expediente": "H-15/23",
-      "proveedor": "BERNARDO LEW SRL",
-      "montoArs": 12544740,
-      "procedimiento": "Contratación Directa",
-      "objeto": "Autorizase la Contratación Directa con la firma “BERNARDO LEW SRL.” para la prestación del servicio de alquiler de un equipo autoanalizador de hormonas modelo Clia 900 y servicios de acompañamiento técnico por el transcu",
-      "bulletinNumber": 36,
-      "sourceRef": "sibom-actos/boletin-036-decreto-579-2023"
-    },
-    {
       "decreto": "588/2023",
       "fecha": "2023-09-29",
       "expediente": "H-15/23",
@@ -1039,22 +1032,36 @@
       "fecha": "2023-11-28",
       "expediente": "S-160/23",
       "proveedor": "NININ GUSTAVO DANIEL",
-      "montoArs": 2519290,
+      "montoArs": 2949900,
       "procedimiento": "Contratación Directa",
       "objeto": "Autorizase la Contratación Directa con el proveedor NININ GUSTAVO DANIEL, “Servicios Generales de Mantenimiento y Construcción” para la Obra mencionada en el Artículo 1o por un valor de PESOS DOS MILLONES QUINIENTOS DIEC",
       "bulletinNumber": 37,
-      "sourceRef": "sibom-actos/boletin-037-decreto-696-2023"
+      "sourceRef": "sibom-actos/boletin-037-decreto-696-2023",
+      "montoArsOficialPublicado": 2519290,
+      "supersede": {
+        "instrumento": "799/2023",
+        "scope": "amount-only",
+        "motivo": "Corrección aritmética bajo el Art. 115 de la Ordenanza General 267. El Artículo 1 (aprobación del pliego) queda intacto; la obra y el proveedor no cambian.",
+        "quote": "ARTÍCULO 1o: Rectificase el Artículo 2o del Decreto Municipal No 696/23 con fecha 28 de Noviembre de 2023 el que quedará redactado de la siguiente manera ($ 2.949.900,00.-)"
+      }
     },
     {
       "decreto": "697/2023",
       "fecha": "2023-11-28",
       "expediente": "S-173/23",
       "proveedor": "NININ GUSTAVO DANIEL",
-      "montoArs": 1617862,
+      "montoArs": 1550800,
       "procedimiento": "Contratación Directa",
       "objeto": "Autorizase la Contratación Directa con el proveedor NININ GUSTAVO DANIEL, “Servicios Generales de Mantenimiento y Construcción” para la Obra mencionada en el Artículo 1o por un valor de PESOS UN MILLON SEISCIENTOS DIECIS",
       "bulletinNumber": 37,
-      "sourceRef": "sibom-actos/boletin-037-decreto-697-2023"
+      "sourceRef": "sibom-actos/boletin-037-decreto-697-2023",
+      "montoArsOficialPublicado": 1617862,
+      "supersede": {
+        "instrumento": "800/2023",
+        "scope": "amount-only",
+        "motivo": "Idéntico caso que 696/2023.",
+        "quote": "ARTÍCULO 1o: Rectificase el Artículo 2o del Decreto Municipal No 697/23 el que quedará redactado de la siguiente manera ($ 1.550.800,00.-)"
+      }
     },
     {
       "decreto": "42/2024",
@@ -1728,6 +1735,17 @@
       "sourceRef": "sibom-actos/boletin-063-decreto-291-2025"
     },
     {
+      "decreto": "307/2025",
+      "fecha": "2025-07-18",
+      "expediente": "EX-2025-00037946--MUNICRO-DCOM#SE",
+      "proveedor": "Simos Marcelo",
+      "montoArs": 10388000,
+      "procedimiento": "Concurso de Precios Nº 02/25",
+      "objeto": "Adjudicase el Concurso de Precios No02/25 al proveedor Simos Marcelo, D.N.I. 14198265, por la suma de PESOS Diez millones trescientos ochenta y ocho mil ($10.388.000) por la cantidad de 212 ambos según detalle en pedidos",
+      "bulletinNumber": 63,
+      "sourceRef": "sibom-actos/boletin-063-decreto-307-2025"
+    },
+    {
       "decreto": "351/2025",
       "fecha": "2025-08-05",
       "expediente": "S-63/25",
@@ -1981,15 +1999,37 @@
       "sourceRef": "sibom-actos/boletin-074-decreto-636-2025"
     },
     {
-      "decreto": "98/2026",
-      "fecha": "2026-03-06",
-      "expediente": "EX-2025-00102022-MUNICRO-DME#SG",
-      "proveedor": "COMADAR S.R.L",
-      "montoArs": 183268423,
-      "procedimiento": "Licitación Pública Nº 07/2025",
-      "objeto": "Adjudicar a COMADAR S.R.L. (CUIT 30-71823860-5) la Licitación Pública No 07/2025 instrumentada para la ejecución de la Obra denominada Nueva instalación eléctrica en talleres de la Escuela Educación Técnica No 1” por la",
-      "bulletinNumber": 82,
-      "sourceRef": "sibom-actos/boletin-082-decreto-098-2026"
+      "decreto": "20/2026",
+      "fecha": "2026-01-14",
+      "expediente": "EX-2025-00102576--MUNICRO-DCOM#SE",
+      "proveedor": "Equipo Gemico S.A",
+      "montoArs": 33403370,
+      "procedimiento": "Licitación Privada Nº 06/25",
+      "objeto": "Adjudicase a la firma Equipo Gemico S.A. por la suma de PESOS TREINTA Y TRES MILLONES CUATROCIENTOS TRES MIL TRESCIENTOS SETENTA ($ 33.403.370) por los ítems 1 2 3 4 5 6 7 9 10 11 12 13 14 16 18 19 20 21 22 23 25 27 28 2",
+      "bulletinNumber": 77,
+      "sourceRef": "sibom-actos/boletin-077-decreto-020-2026"
+    },
+    {
+      "decreto": "20/2026",
+      "fecha": "2026-01-14",
+      "expediente": "EX-2025-00102576--MUNICRO-DCOM#SE",
+      "proveedor": "Droguería IB S.A",
+      "montoArs": 7409055,
+      "procedimiento": "Licitación Privada Nº 06/25",
+      "objeto": "Adjudicase a la firma Droguería IB S.A. la suma de PESOS SIETE MILLONES CUATROCIENTOS NUEVE MIL CINCUENTA Y CINCO ($ 7.409.055,00) por los ítems 8 15 17 26 34 40 42 45 49 53 56 59 60 61 63 66 67 80 81 82 de la Licitación",
+      "bulletinNumber": 77,
+      "sourceRef": "sibom-actos/boletin-077-decreto-020-2026"
+    },
+    {
+      "decreto": "20/2026",
+      "fecha": "2026-01-14",
+      "expediente": "EX-2025-00102576--MUNICRO-DCOM#SE",
+      "proveedor": "Sigobo S.A",
+      "montoArs": 2178800,
+      "procedimiento": "Licitación Privada Nº 06/25",
+      "objeto": "Adjudicase a la firma Sigobo S.A la suma de PESOS DOS MILLONES CIENTO SETENTA Y OCHO MIL OCHOCIENTOS ($ 2.178.800,00) por los ítems 37 y 79 de la Licitación Privada No 6/25 conforme a las características emergentes de la",
+      "bulletinNumber": 77,
+      "sourceRef": "sibom-actos/boletin-077-decreto-020-2026"
     },
     {
       "decreto": "115/2026",
@@ -2067,6 +2107,72 @@
       "objeto": "Autorizase la contratación directa a la firma MG PHARMACORP S.R.L para la prestación del servicio de alquiler de un equipo auto analizador de hormonas modelo Clia 900 y servicios de acompañamiento técnico por el transcur",
       "bulletinNumber": 82,
       "sourceRef": "sibom-actos/boletin-082-decreto-136-2026"
+    }
+  ],
+  "supersessions": [
+    {
+      "decreto": "405/2022",
+      "fecha": "2022-08-12",
+      "expediente": "S-025/22",
+      "proveedor": "Omar Marciano EBERS",
+      "montoArs": 29152814,
+      "procedimiento": "Licitación Pública Nº 7/22",
+      "objeto": "Adjudicar al Sr. Omar Marciano EBERS, la Licitación Pública No 7/22 instrumentada para la ejecución de la Obra denominada “ Puesta en valor de los locales del 1°, 2° 3° y 4 piso Ex Sanatorio Punta Alta ” por la suma de P",
+      "bulletinNumber": 31,
+      "sourceRef": "sibom-actos/boletin-031-decreto-405-2022",
+      "estado": "anulado",
+      "supersededBy": "447/2022",
+      "replacedBy": "447/2022",
+      "motivo": "El monto adjudicado superaba la Solicitud de Pedido y de Gastos 2260/22; el municipio derogó y readjudicó la misma obra al mismo proveedor por el mismo importe.",
+      "quote": "ARTICULO 1o: Derogase el Decreto N° 405/22 de fecha 12 de agosto de 2022.-"
+    },
+    {
+      "decreto": "506/2023",
+      "fecha": "2023-08-30",
+      "expediente": "D-85/23",
+      "proveedor": "Explorar Servicios Geológicos",
+      "montoArs": 1305000,
+      "procedimiento": "Contratación Directa",
+      "objeto": "Autorizase la Contratación Directa con la firma Explorar Servicios Geológicos, de Ramiro San José, CUIT 20-369922733-8, por la suma de PESOS UN MILLON TRESCIENTOS CINCO MIL ($ 1.305.000,00), los servicios que obran detal",
+      "bulletinNumber": 35,
+      "sourceRef": "sibom-actos/boletin-035-decreto-506-2023",
+      "estado": "anulado",
+      "supersededBy": "546/2023",
+      "replacedBy": "546/2023",
+      "motivo": "Faltaba declarar la incompetencia en materia de geología del Municipio (Art. 148 LOM); 546/2023 subsana el paso omitido y reautoriza la misma contratación.",
+      "quote": "ARTICULO 1o : Deróguese el Decreto Municipal No 506/23.-"
+    },
+    {
+      "decreto": "579/2023",
+      "fecha": "2023-09-28",
+      "expediente": "H-15/23",
+      "proveedor": "BERNARDO LEW SRL",
+      "montoArs": 12544740,
+      "procedimiento": "Contratación Directa",
+      "objeto": "Autorizase la Contratación Directa con la firma “BERNARDO LEW SRL.” para la prestación del servicio de alquiler de un equipo autoanalizador de hormonas modelo Clia 900 y servicios de acompañamiento técnico por el transcu",
+      "bulletinNumber": 36,
+      "sourceRef": "sibom-actos/boletin-036-decreto-579-2023",
+      "estado": "anulado",
+      "supersededBy": "588/2023",
+      "replacedBy": "588/2023",
+      "motivo": "El decreto original nombró al adjudicatario equivocado. 588/2023 reemplaza la cláusula de adjudicación completa: contraparte, objeto e importe. Sin esta entrada el portal afirma que BERNARDO LEW SRL cobró fondos que el propio Municipio declara por escrito que nunca le adjudicó.",
+      "quote": "ARTICULO 1o : Rectificase el articulo N°1 del decreto N°579/23 el que quedara redactado de la siguiente manera: \"ARTICULO 1o: Autorizase la Contratación Directa con la firma \"MG PHARMACORP SRL\"\""
+    },
+    {
+      "decreto": "98/2026",
+      "fecha": "2026-03-06",
+      "expediente": "EX-2025-00102022-MUNICRO-DME#SG",
+      "proveedor": "COMADAR S.R.L",
+      "montoArs": 183268423,
+      "procedimiento": "Licitación Pública Nº 07/2025",
+      "objeto": "Adjudicar a COMADAR S.R.L. (CUIT 30-71823860-5) la Licitación Pública No 07/2025 instrumentada para la ejecución de la Obra denominada Nueva instalación eléctrica en talleres de la Escuela Educación Técnica No 1” por la",
+      "bulletinNumber": 82,
+      "sourceRef": "sibom-actos/boletin-082-decreto-098-2026",
+      "estado": "anulado",
+      "supersededBy": "114/2026",
+      "replacedBy": "115/2026",
+      "motivo": "Se omitió la solicitud de pedido y de gastos. 114/2026 anula y ordena dictar un nuevo acto; ese acto es 115/2026, que readjudica la misma obra a COMADAR S.R.L. por el mismo importe.",
+      "quote": "ARTICULO 1o: Anular el Decreto No 98 dictado el día 06 de marzo de 2026 atento los motivos expuestos en los considerandos:"
     }
   ]
 }
