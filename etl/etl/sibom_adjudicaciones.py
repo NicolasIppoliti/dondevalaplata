@@ -65,6 +65,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 from .manifest import load_manifest
 from .spanish_numbers import parse_ars_numeric, words_to_number
 
@@ -223,7 +225,11 @@ def _extract_vendor(clause: str) -> str | None:
         if not m:
             continue
         vendor = (m.groupdict().get("vendor") or m.group(1)).strip().strip('"“”').strip()
-        vendor = re.sub(r"\s+", " ", vendor).rstrip(".,")
+        # Strip trailing punctuation AND whitespace together: decretos are
+        # inconsistently spaced before the closing period ("DROGUERIA IB SA ."),
+        # and a lone `.rstrip(".,")` would leave the space behind, emitting a
+        # vendor name with an invisible trailing blank.
+        vendor = re.sub(r"\s+", " ", vendor).rstrip(" .,")
         if len(vendor) < 3:
             continue
         last_token = vendor.split()[-1].rstrip(".")
@@ -462,8 +468,44 @@ def build_adjudicaciones(
     }
 
 
+def load_vendor_aliases(path: Path) -> dict[str, str]:
+    """Load the curated vendor-name alias table (``etl/vendor_aliases.yaml``
+    -- see its header comment for the curation discipline).
+
+    Returns a ``{normalized variant: canonical display name}`` mapping.
+    ``build_proveedores`` consults it by EXACT match after normalization;
+    neither this loader nor the aggregation ever compares names for
+    similarity. Raises ``ValueError`` on a merge with blank evidence (a
+    merge nobody justified is always a curation mistake) or on a variant
+    claimed by two different canonical names (an unresolvable contradiction
+    that would silently depend on file order). Same loader-guard discipline
+    as ``deuda_historica.load_curated_anomalies``.
+    """
+    raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    aliases: dict[str, str] = {}
+    for entry in raw.get("aliases") or []:
+        canonical = entry["canonical"]
+        if not (entry.get("evidence") or "").strip():
+            raise ValueError(
+                f"etl/vendor_aliases.yaml entry for {canonical!r} has blank evidence "
+                "-- a curated merge nobody justified is always a curation mistake"
+            )
+        for variant in entry.get("variants") or []:
+            key = " ".join(variant.split()).upper()
+            if key in aliases and aliases[key] != canonical:
+                raise ValueError(
+                    f"etl/vendor_aliases.yaml variant {variant!r} is claimed by two "
+                    f"canonical names ({aliases[key]!r} and {canonical!r})"
+                )
+            aliases[key] = canonical
+    return aliases
+
+
 def build_proveedores(
-    rows: list[dict[str, Any]], *, now: datetime | None = None
+    rows: list[dict[str, Any]],
+    *,
+    aliases: dict[str, str] | None = None,
+    now: datetime | None = None,
 ) -> dict[str, Any]:
     """Aggregate adjudicación rows into the reconstructed proveedores padrón:
     one entry per vendor with totalArs, count, first/last award date, and
@@ -476,21 +518,39 @@ def build_proveedores(
     guesses that two different-looking names are the same real-world
     entity. The displayed name keeps the casing of the row that sorts
     first alphabetically, for a stable, deterministic choice.
+
+    ``aliases`` is the ONLY exception, and it is human-curated: a
+    ``{normalized variant: canonical}`` mapping from
+    ``load_vendor_aliases`` that folds spellings a reviewer verified
+    against the primary sources (shared CUIT, or an identical legal name
+    apart from one municipal typo) into a single entry. Omitted, nothing
+    merges beyond exact-string formatting variants -- the conservative
+    default. Similarity is never inferred here; see
+    ``etl/vendor_aliases.yaml`` for why that restraint matters.
     """
+    aliases = aliases or {}
     groups: dict[str, dict[str, Any]] = {}
     for row in rows:
         key = re.sub(r"\s+", " ", row["proveedor"]).strip().upper()
+        canonical = aliases.get(key)
+        display = canonical or row["proveedor"]
+        if canonical:
+            key = re.sub(r"\s+", " ", canonical).strip().upper()
         group = groups.setdefault(
             key,
             {
-                "proveedor": row["proveedor"],
+                "proveedor": display,
                 "totalArs": 0,
                 "count": 0,
                 "dates": [],
                 "decretoRefs": [],
             },
         )
-        if row["proveedor"] < group["proveedor"]:
+        # A curated canonical name always wins; the alphabetical tie-break
+        # only picks between formatting variants of the same literal string.
+        if canonical:
+            group["proveedor"] = canonical
+        elif row["proveedor"] < group["proveedor"]:
             group["proveedor"] = row["proveedor"]
         group["totalArs"] += row["montoArs"]
         group["count"] += 1

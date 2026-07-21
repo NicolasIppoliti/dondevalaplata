@@ -135,6 +135,24 @@ def test_parse_block_extracts_direct_contract_with_quoted_firma() -> None:
     assert result["procedimiento"] == "Contratación Directa"
 
 
+def test_parse_block_trims_trailing_space_before_the_closing_period() -> None:
+    """Decretos are inconsistently spaced before a name's closing period
+    ("DROGUERIA IB SA ."). Trailing punctuation and whitespace must both go,
+    or the vendor name carries an invisible blank into the padrón.
+    """
+    text = normalize_bulletin_text(
+        "Decreto Nº 589/2023\nCoronel Rosales, 15/12/2023\nVisto\nExpte. S-10/23\nDECRETA\n"
+        "ARTICULO 1º: Autorizase la Contratación Directa con la firma "
+        "“DROGUERIA IB SA .” para la prestación del servicio por la suma de "
+        "PESOS UN MILLON ($ 1.000.000,00.-).-"
+    )
+    block = extract_decree_blocks(text)[0]
+
+    result = parse_block(block)
+
+    assert result["rows"][0]["proveedor"] == "DROGUERIA IB SA"
+
+
 def test_parse_block_skips_direct_contract_with_inconsistent_amount() -> None:
     """The cross-validation rule applies identically to direct contracts.
     Decreto 239/2022 spells "PESOS UN MILLON CIENTO OCHENTA" (= 1.000.180)
