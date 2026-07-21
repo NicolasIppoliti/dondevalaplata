@@ -128,13 +128,20 @@ _ARTICULO_SPLIT = re.compile(r"ARTICULO\s*\d+[º°o]?\s*:?")
 # hid every direct contract in the corpus, i.e. the LEAST competitive and
 # therefore most accountability-relevant modality.
 _DIRECT_CONTRACT_VERB = r"Autor[ií]zase\s+la\s+[Cc]ontrataci[oó]n\s+[Dd]irecta"
-_OPERATIVE_CLAUSE = re.compile(r"Adjudicar|" + _DIRECT_CONTRACT_VERB)
+# Competitive awards are not always written in the infinitive. The decretos
+# also use the enclitic third-person forms ("Adjudicase el Concurso de Precios
+# Nº 02/25 al proveedor...") and the subjunctive ("Adjudíquese"), which carry
+# the accent on the stem. Matching only "Adjudicar" hid ARS 84 million of real
+# awards, including every one of decreto 20/2026's three adjudicatarios.
+_ADJUDICAR_VERB = r"(?:Adjudic(?:ar|ase|anse)|Adjud[ií]quese)"
+_OPERATIVE_CLAUSE = re.compile(_ADJUDICAR_VERB + r"|" + _DIRECT_CONTRACT_VERB)
 
 # Ordered by specificity: quoted-name forms first (cheapest to trust), then
 # the connector-keyword forms, then a last-resort bare-name fallback.
 _VENDOR_STOP = (
     r'(?=["”]|,?\s*\(Proveedor|,?\s+(?:la|el)\s+Licitaci[oó]n|,?\s+(?:el|los)\s+Concurso'
-    r"|,?\s+(?:la|el)\s+Compra|,?\s+(?:el|los)\s+[ií]tems?|,?\s+por\s+la\s+suma|,?\s+por\s+un\s+monto"
+    r"|,?\s+(?:la|el)\s+Compra|,?\s+(?:el|los)\s+[ií]tems?|,?\s+por\s+la\s+suma|,?\s+la\s+suma"
+    r"|,?\s+por\s+un\s+monto"
     r"|,?\s+[Cc][Uu][Ii][Tt]|,?\s+[Dd][Nn][Ii]|,?\s+instrumentad|,?\s+en\s+el\s+marco|,?\s+en\s+relaci[oó]n"
     r"|,\s|\.\s|$)"
 )
@@ -142,17 +149,27 @@ _VENDOR_NAME = r"(?P<vendor>[A-ZÑÁÉÍÓÚ][^,\n]{2,90}?)"
 _VENDOR_NAME_NO_PAREN = r"(?P<vendor>[A-ZÑÁÉÍÓÚ][^,\n(]{2,90}?)"
 _VENDOR_NAME_LOOSE = r"(?P<vendor>[A-ZÑÁÉÍÓÚ][A-ZÑÁÉÍÓÚa-zñáéíóú0-9. &\-]{2,90}?)"
 _VENDOR_PATTERNS = [
-    re.compile(r'Adjudicar\s+a\s+la\s+firma\s+["“]([^"”\n]{3,90})["”]'),
-    re.compile(r'Adjudicar\s+al\s+proveedor\s+["“]([^"”\n]{3,90})["”]'),
-    re.compile(r'Adjudicar\s+a\s+la\s+empresa\s+["“]([^"”\n]{3,90})["”]'),
-    re.compile(r"Adjudicar\s+a\s+la\s+empresa\s+" + _VENDOR_NAME + _VENDOR_STOP),
-    re.compile(r"Adjudicar\s+a\s+la\s+firma\s+" + _VENDOR_NAME + _VENDOR_STOP),
-    re.compile(r"Adjudicar\s+al\s+proveedor\s+" + _VENDOR_NAME + _VENDOR_STOP),
-    re.compile(r"Adjudicar\s+al\s+oferente\s+" + _VENDOR_NAME + _VENDOR_STOP),
-    re.compile(r"Adjudicar\s+a\s+la\s+Sra\.\s+" + _VENDOR_NAME_NO_PAREN + _VENDOR_STOP),
-    re.compile(r"Adjudicar\s+al\s+Sr\.\s+" + _VENDOR_NAME_NO_PAREN + _VENDOR_STOP),
-    re.compile(r'Adjudicar\s+a\s+["“]([^"”\n]{3,90})["”]'),
-    re.compile(r"Adjudicar\s+al?\s+" + _VENDOR_NAME_LOOSE + _VENDOR_STOP),
+    re.compile(_ADJUDICAR_VERB + r'\s+a\s+la\s+firma\s+["“]([^"”\n]{3,90})["”]'),
+    re.compile(_ADJUDICAR_VERB + r'\s+al\s+proveedor\s+["“]([^"”\n]{3,90})["”]'),
+    re.compile(_ADJUDICAR_VERB + r'\s+a\s+la\s+empresa\s+["“]([^"”\n]{3,90})["”]'),
+    re.compile(_ADJUDICAR_VERB + r"\s+a\s+la\s+empresa\s+" + _VENDOR_NAME + _VENDOR_STOP),
+    re.compile(_ADJUDICAR_VERB + r"\s+a\s+la\s+firma\s+" + _VENDOR_NAME + _VENDOR_STOP),
+    re.compile(_ADJUDICAR_VERB + r"\s+al\s+proveedor\s+" + _VENDOR_NAME + _VENDOR_STOP),
+    re.compile(_ADJUDICAR_VERB + r"\s+al\s+oferente\s+" + _VENDOR_NAME + _VENDOR_STOP),
+    re.compile(_ADJUDICAR_VERB + r"\s+a\s+la\s+Sra\.\s+" + _VENDOR_NAME_NO_PAREN + _VENDOR_STOP),
+    re.compile(_ADJUDICAR_VERB + r"\s+al\s+Sr\.\s+" + _VENDOR_NAME_NO_PAREN + _VENDOR_STOP),
+    re.compile(_ADJUDICAR_VERB + r'\s+a\s+["“]([^"”\n]{3,90})["”]'),
+    # "Adjudicase el Concurso de Precios Nº 02/25 al proveedor Simos Marcelo":
+    # the procedure name sits between the verb and the connector, so none of
+    # the patterns above can reach the vendor.
+    re.compile(
+        _ADJUDICAR_VERB
+        + r"\s+(?:el|la|los)\s+(?:Concurso|Licitaci[oó]n|Compra)[^,\n]{0,60}?"
+        + r"\s+al?\s+(?:proveedor|firma|empresa)\s+[\"“]?"
+        + _VENDOR_NAME_NO_PAREN
+        + _VENDOR_STOP
+    ),
+    re.compile(_ADJUDICAR_VERB + r"\s+al?\s+" + _VENDOR_NAME_LOOSE + _VENDOR_STOP),
 ]
 
 # Direct-contract clauses trail the counterparty name with different
@@ -366,6 +383,137 @@ def find_candidate_decrees(text: str) -> list[dict]:
     return candidates
 
 
+_DECRETO_KEY = re.compile(r"^\d{1,4}/\d{4}$")
+_SUPERSESSION_SCOPES = ("full", "amount-only")
+
+
+def load_curated_supersessions(path: Path) -> dict[str, dict[str, Any]]:
+    """Load the curated superseded-decreto table (``etl/decreto_supersessions.yaml``
+    -- see its header comment for why this is curated and not automated).
+
+    Returns a ``{superseded decreto: entry}`` mapping for the ``supersessions``
+    section only; ``not_superseded`` exists solely to keep the detector tests
+    honest and is never consulted at build time.
+
+    Raises ``ValueError`` on any malformed curation, because a silent mistake
+    here either deletes public spending from the record or leaves a false
+    overstatement standing. Same loader-guard discipline as
+    ``deuda_historica.load_curated_anomalies`` and ``load_vendor_aliases``.
+    """
+    raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    entries = raw.get("supersessions") or {}
+    not_superseded = raw.get("not_superseded") or {}
+
+    curated: dict[str, dict[str, Any]] = {}
+    claimed_by: dict[str, str] = {}
+    for decreto, entry in entries.items():
+        if not _DECRETO_KEY.match(str(decreto)):
+            raise ValueError(
+                f"etl/decreto_supersessions.yaml key {decreto!r} is not a 'N/YYYY' decreto"
+            )
+        if decreto in not_superseded:
+            raise ValueError(
+                f"etl/decreto_supersessions.yaml lists {decreto!r} in BOTH supersessions "
+                "and not_superseded -- it cannot be both"
+            )
+        for field in ("quote", "bulletin", "motivo", "reviewedOn"):
+            if not str(entry.get(field) or "").strip():
+                raise ValueError(
+                    f"etl/decreto_supersessions.yaml entry {decreto!r} has a blank {field} "
+                    "-- an unjustified supersession is always a curation mistake"
+                )
+        scope = entry.get("scope")
+        if scope not in _SUPERSESSION_SCOPES:
+            raise ValueError(
+                f"etl/decreto_supersessions.yaml entry {decreto!r} has scope {scope!r}; "
+                f"expected one of {_SUPERSESSION_SCOPES}"
+            )
+        superseded_by = entry.get("supersededBy")
+        if claimed_by.get(decreto) not in (None, superseded_by):
+            raise ValueError(
+                f"etl/decreto_supersessions.yaml decreto {decreto!r} is claimed by two "
+                "different superseding acts"
+            )
+        claimed_by[decreto] = superseded_by
+
+        if scope == "full" and not entry.get("replacedBy"):
+            raise ValueError(
+                f"etl/decreto_supersessions.yaml entry {decreto!r} has scope 'full' but no "
+                "replacedBy -- we must know which decreto carries the surviving row"
+            )
+        if scope == "amount-only":
+            published, vigente = entry.get("montoArsPublicado"), entry.get("montoArsVigente")
+            if published is None or vigente is None:
+                raise ValueError(
+                    f"etl/decreto_supersessions.yaml entry {decreto!r} has scope 'amount-only' "
+                    "but is missing montoArsPublicado or montoArsVigente"
+                )
+            if published == vigente:
+                raise ValueError(
+                    f"etl/decreto_supersessions.yaml entry {decreto!r} corrects an amount to "
+                    "the same value it already had -- nothing to correct"
+                )
+        curated[str(decreto)] = dict(entry)
+    return curated
+
+
+def _apply_supersessions(
+    rows: list[dict[str, Any]], curated: dict[str, dict[str, Any]]
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Split parsed rows into (published rows, superseded rows).
+
+    A ``scope: full`` row is dropped ONLY when its ``replacedBy`` decreto
+    actually emitted a row for the same expediente -- the replacement-existence
+    guard. Without it, a mis-curated or not-yet-archived replacement would
+    erase real spending from the published record; with it, the row is kept and
+    flagged ``supersessionPendiente`` instead. ``amount-only`` never drops: it
+    rewrites the amount and preserves the originally published figure.
+    """
+    emitted: dict[str, set[str]] = {}
+    for row in rows:
+        emitted.setdefault(row["decreto"], set()).add(str(row.get("expediente") or ""))
+
+    published: list[dict[str, Any]] = []
+    superseded: list[dict[str, Any]] = []
+    for row in rows:
+        entry = curated.get(row["decreto"])
+        if entry is None:
+            published.append(row)
+            continue
+
+        if entry["scope"] == "amount-only":
+            row = dict(row)
+            row["montoArsOficialPublicado"] = entry["montoArsPublicado"]
+            row["montoArs"] = entry["montoArsVigente"]
+            row["supersede"] = {
+                "instrumento": entry.get("supersededBy"),
+                "scope": "amount-only",
+                "motivo": entry["motivo"],
+                "quote": entry["quote"],
+            }
+            published.append(row)
+            continue
+
+        replaced_by = entry["replacedBy"]
+        if str(row.get("expediente") or "") not in emitted.get(replaced_by, set()):
+            row = dict(row)
+            row["supersessionPendiente"] = True
+            published.append(row)
+            continue
+
+        superseded.append(
+            {
+                **row,
+                "estado": "anulado",
+                "supersededBy": entry.get("supersededBy"),
+                "replacedBy": replaced_by,
+                "motivo": entry["motivo"],
+                "quote": entry["quote"],
+            }
+        )
+    return published, superseded
+
+
 def _fecha_to_iso(fecha: str) -> str:
     """Convert a decreto dateline "DD/MM/YYYY" into ISO "YYYY-MM-DD"."""
     day, month, year = fecha.split("/")
@@ -376,6 +524,7 @@ def build_adjudicaciones(
     manifest_path: Path,
     *,
     text_extractor: Callable[[Path], str] | None = None,
+    supersessions: dict[str, dict[str, Any]] | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     """Build the full `data/adjudicaciones.json` payload -- network-free,
@@ -452,6 +601,8 @@ def build_adjudicaciones(
                     }
                 )
 
+    result_rows, superseded_rows = _apply_supersessions(result_rows, supersessions or {})
+
     generated_at = (now or datetime.now(UTC)).strftime("%Y-%m-%dT%H:%M:%SZ")
     window_from = min(bulletin_dates) if bulletin_dates else None
     window_to = max(bulletin_dates) if bulletin_dates else None
@@ -465,6 +616,7 @@ def build_adjudicaciones(
         "skippedCount": skipped_count,
         "sourceRefs": sorted(source_refs),
         "records": result_rows,
+        "supersessions": superseded_rows,
     }
 
 

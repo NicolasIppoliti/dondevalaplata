@@ -51,11 +51,14 @@ def test_build_adjudicaciones_writes_both_data_files(tmp_path, monkeypatch) -> N
 
     aliases_path = tmp_path / "vendor_aliases.yaml"
     aliases_path.write_text("aliases: []\n", encoding="utf-8")
+    supersessions_path = tmp_path / "decreto_supersessions.yaml"
+    supersessions_path.write_text("supersessions: {}\n", encoding="utf-8")
 
     args = argparse.Namespace(
         manifest_path=manifest_path,
         data_root=data_root,
         vendor_aliases_path=aliases_path,
+        supersessions_path=supersessions_path,
     )
     exit_code = cli.run_build_adjudicaciones(args)
 

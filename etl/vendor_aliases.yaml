@@ -64,6 +64,9 @@ aliases:
       placement.
     variants:
       - DROGUERIA IB SA
+      # Decreto 20/2026 writes it accented and with periods; without this the
+      # padrón would silently split the same firm across two cards.
+      - Droguería IB S.A
 
   - canonical: Segusur S.H
     evidence: >-
