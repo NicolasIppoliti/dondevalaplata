@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-08T17:35:40Z",
+  "generatedAt": "2026-07-21T20:15:45Z",
   "proveedores": [
     {
       "proveedor": "RIMSOL S.A",
@@ -37,6 +37,85 @@
       ]
     },
     {
+      "proveedor": "Sociedad de Anestesiología",
+      "totalArs": 486700000,
+      "count": 7,
+      "firstDate": "2024-07-01",
+      "lastDate": "2026-03-31",
+      "decretoRefs": [
+        "315/2024",
+        "477/2024",
+        "88/2025",
+        "250/2025",
+        "479/2025",
+        "635/2025",
+        "133/2026"
+      ]
+    },
+    {
+      "proveedor": "Air Liquide Argentina S.A",
+      "totalArs": 294040000,
+      "count": 8,
+      "firstDate": "2024-03-20",
+      "lastDate": "2026-03-31",
+      "decretoRefs": [
+        "111/2024",
+        "314/2024",
+        "476/2024",
+        "86/2025",
+        "248/2025",
+        "473/2025",
+        "636/2025",
+        "128/2026"
+      ]
+    },
+    {
+      "proveedor": "Bahía Ecológico S.A",
+      "totalArs": 249617004,
+      "count": 11,
+      "firstDate": "2023-06-28",
+      "lastDate": "2026-03-31",
+      "decretoRefs": [
+        "335/2023",
+        "576/2023",
+        "79/2023",
+        "137/2024",
+        "317/2024",
+        "472/2024",
+        "85/2025",
+        "254/2025",
+        "483/2025",
+        "632/2025",
+        "132/2026"
+      ]
+    },
+    {
+      "proveedor": "MG PHARMACORP S.R.L",
+      "totalArs": 248993465,
+      "count": 17,
+      "firstDate": "2024-02-27",
+      "lastDate": "2026-03-31",
+      "decretoRefs": [
+        "75/2024",
+        "77/2024",
+        "78/2024",
+        "664/2024",
+        "94/2025",
+        "95/2025",
+        "96/2025",
+        "251/2025",
+        "470/2025",
+        "471/2025",
+        "472/2025",
+        "623/2025",
+        "626/2025",
+        "627/2025",
+        "633/2025",
+        "129/2026",
+        "136/2026"
+      ]
+    },
+    {
       "proveedor": "EQUIPOS DE SERVICIOS PORTUARIOS RUMAX S.R.L",
       "totalArs": 183377670,
       "count": 1,
@@ -48,13 +127,14 @@
     },
     {
       "proveedor": "OMAR MARCIANO EBERS",
-      "totalArs": 125158814,
-      "count": 5,
-      "firstDate": "2022-08-12",
+      "totalArs": 129320237,
+      "count": 6,
+      "firstDate": "2021-07-13",
       "lastDate": "2025-07-07",
       "decretoRefs": [
         "405/2022",
         "426/2022",
+        "381/2023",
         "42/2024",
         "87/2024",
         "278/2025"
@@ -71,6 +151,42 @@
       ]
     },
     {
+      "proveedor": "MG PHARMACORP SRL",
+      "totalArs": 104691177,
+      "count": 10,
+      "firstDate": "2023-06-28",
+      "lastDate": "2024-09-26",
+      "decretoRefs": [
+        "338/2023",
+        "339/2023",
+        "588/2023",
+        "133/2024",
+        "135/2024",
+        "138/2024",
+        "312/2024",
+        "313/2024",
+        "474/2024",
+        "475/2024"
+      ]
+    },
+    {
+      "proveedor": "DROGUERIA IB SA",
+      "totalArs": 68814726,
+      "count": 8,
+      "firstDate": "2023-09-29",
+      "lastDate": "2026-03-31",
+      "decretoRefs": [
+        "589/2023",
+        "134/2024",
+        "316/2024",
+        "478/2024",
+        "247/2025",
+        "469/2025",
+        "624/2025",
+        "130/2026"
+      ]
+    },
+    {
       "proveedor": "Obras Abedul SRL",
       "totalArs": 65275153,
       "count": 1,
@@ -81,25 +197,93 @@
       ]
     },
     {
+      "proveedor": "RADIOGRAFICA AUSTRAL S.A",
+      "totalArs": 59540201,
+      "count": 8,
+      "firstDate": "2023-06-29",
+      "lastDate": "2025-12-16",
+      "decretoRefs": [
+        "346/2023",
+        "578/2023",
+        "136/2024",
+        "473/2024",
+        "97/2025",
+        "249/2025",
+        "468/2025",
+        "625/2025"
+      ]
+    },
+    {
+      "proveedor": "Talleres B.J",
+      "totalArs": 55584046,
+      "count": 6,
+      "firstDate": "2023-01-19",
+      "lastDate": "2023-08-14",
+      "decretoRefs": [
+        "29/2023",
+        "130/2023",
+        "153/2023",
+        "163/2023",
+        "164/2023",
+        "454/2023"
+      ]
+    },
+    {
+      "proveedor": "Ebers Omar Marciano",
+      "totalArs": 49464013,
+      "count": 2,
+      "firstDate": "2025-08-27",
+      "lastDate": "2025-12-01",
+      "decretoRefs": [
+        "395/2025",
+        "605/2025"
+      ]
+    },
+    {
       "proveedor": "GUTASA SERVICIOS INTEGRALES S.A",
-      "totalArs": 35165497,
-      "count": 3,
+      "totalArs": 44015497,
+      "count": 7,
       "firstDate": "2022-06-01",
       "lastDate": "2023-08-02",
       "decretoRefs": [
         "249/2022",
+        "367/2022",
+        "403/2023",
+        "404/2023",
+        "405/2023",
         "429/2023",
         "430/2023"
       ]
     },
     {
-      "proveedor": "Talleres B.J",
-      "totalArs": 34690040,
+      "proveedor": "Sociedad de Anestesia",
+      "totalArs": 36500000,
       "count": 1,
-      "firstDate": "2023-01-19",
-      "lastDate": "2023-01-19",
+      "firstDate": "2024-04-09",
+      "lastDate": "2024-04-09",
       "decretoRefs": [
-        "29/2023"
+        "139/2024"
+      ]
+    },
+    {
+      "proveedor": "HOSPITAL NAVAL PUERTO BELGRANO",
+      "totalArs": 35000000,
+      "count": 2,
+      "firstDate": "2025-03-19",
+      "lastDate": "2025-07-14",
+      "decretoRefs": [
+        "89/2025",
+        "291/2025"
+      ]
+    },
+    {
+      "proveedor": "Cooperativa de Trabajo La Franco",
+      "totalArs": 34720500,
+      "count": 1,
+      "firstDate": "2025-09-08",
+      "lastDate": "2025-09-08",
+      "decretoRefs": [
+        "413/2025"
       ]
     },
     {
@@ -133,6 +317,28 @@
       ]
     },
     {
+      "proveedor": "BERNARDO LEW SRL",
+      "totalArs": 19219280,
+      "count": 2,
+      "firstDate": "2023-09-28",
+      "lastDate": "2024-09-05",
+      "decretoRefs": [
+        "579/2023",
+        "432/2024"
+      ]
+    },
+    {
+      "proveedor": "Rodolfo A. De La Cereza",
+      "totalArs": 17980000,
+      "count": 2,
+      "firstDate": "2024-09-26",
+      "lastDate": "2024-11-01",
+      "decretoRefs": [
+        "479/2024",
+        "562/2024"
+      ]
+    },
+    {
       "proveedor": "SEDARRI SERGIO ARIEL",
       "totalArs": 17760000,
       "count": 1,
@@ -154,6 +360,64 @@
       ]
     },
     {
+      "proveedor": "JK Transportes S.A",
+      "totalArs": 16154685,
+      "count": 1,
+      "firstDate": "2025-09-08",
+      "lastDate": "2025-09-08",
+      "decretoRefs": [
+        "407/2025"
+      ]
+    },
+    {
+      "proveedor": "ALERTA S.A",
+      "totalArs": 13286000,
+      "count": 4,
+      "firstDate": "2023-06-01",
+      "lastDate": "2023-09-28",
+      "decretoRefs": [
+        "273/2023",
+        "345/2023",
+        "427/2023",
+        "575/2023"
+      ]
+    },
+    {
+      "proveedor": "GRUPO NAVAL ROSALEÑO S.A",
+      "totalArs": 10198010,
+      "count": 3,
+      "firstDate": "2022-06-13",
+      "lastDate": "2023-07-24",
+      "decretoRefs": [
+        "276/2022",
+        "336/2023",
+        "413/2023"
+      ]
+    },
+    {
+      "proveedor": "DROGUERIA IB S.A",
+      "totalArs": 10073187,
+      "count": 2,
+      "firstDate": "2023-07-18",
+      "lastDate": "2025-03-19",
+      "decretoRefs": [
+        "392/2023",
+        "87/2025"
+      ]
+    },
+    {
+      "proveedor": "MAREGO S.A",
+      "totalArs": 9818116,
+      "count": 3,
+      "firstDate": "2022-07-04",
+      "lastDate": "2023-04-17",
+      "decretoRefs": [
+        "325/2022",
+        "21/2023",
+        "152/2023"
+      ]
+    },
+    {
       "proveedor": "Ro Bot S.A",
       "totalArs": 8456820,
       "count": 1,
@@ -161,6 +425,27 @@
       "lastDate": "2023-05-08",
       "decretoRefs": [
         "194/2023"
+      ]
+    },
+    {
+      "proveedor": "Equipo de Servicios Portuarios RUMAX S.R.L",
+      "totalArs": 8161230,
+      "count": 1,
+      "firstDate": "2024-08-02",
+      "lastDate": "2024-08-02",
+      "decretoRefs": [
+        "384/2024"
+      ]
+    },
+    {
+      "proveedor": "Contratista Mariela Sandra Hilfer",
+      "totalArs": 7932379,
+      "count": 2,
+      "firstDate": "2023-11-09",
+      "lastDate": "2023-11-09",
+      "decretoRefs": [
+        "660/2023",
+        "661/2023"
       ]
     },
     {
@@ -174,6 +459,17 @@
       ]
     },
     {
+      "proveedor": "Guillermo Medrano",
+      "totalArs": 7142000,
+      "count": 2,
+      "firstDate": "2023-04-24",
+      "lastDate": "2023-10-24",
+      "decretoRefs": [
+        "171/2023",
+        "624/2023"
+      ]
+    },
+    {
       "proveedor": "Sergio Ariel Sedarri",
       "totalArs": 6682365,
       "count": 1,
@@ -181,16 +477,6 @@
       "lastDate": "2022-09-28",
       "decretoRefs": [
         "501/2022"
-      ]
-    },
-    {
-      "proveedor": "Bernardo Lew SRL",
-      "totalArs": 6674540,
-      "count": 1,
-      "firstDate": "2024-09-05",
-      "lastDate": "2024-09-05",
-      "decretoRefs": [
-        "432/2024"
       ]
     },
     {
@@ -214,6 +500,27 @@
       ]
     },
     {
+      "proveedor": "NININ GUSTAVO DANIEL",
+      "totalArs": 4137152,
+      "count": 2,
+      "firstDate": "2023-11-28",
+      "lastDate": "2023-11-28",
+      "decretoRefs": [
+        "696/2023",
+        "697/2023"
+      ]
+    },
+    {
+      "proveedor": "Contratista Iron Tech Argentina S.A",
+      "totalArs": 3921800,
+      "count": 1,
+      "firstDate": "2023-07-24",
+      "lastDate": "2023-07-24",
+      "decretoRefs": [
+        "415/2023"
+      ]
+    },
+    {
       "proveedor": "SEGUSUR SH",
       "totalArs": 3515839,
       "count": 2,
@@ -225,6 +532,30 @@
       ]
     },
     {
+      "proveedor": "Rodolfo De La Cereza",
+      "totalArs": 3226500,
+      "count": 3,
+      "firstDate": "2022-08-24",
+      "lastDate": "2022-12-15",
+      "decretoRefs": [
+        "425/2022",
+        "514/2022",
+        "664/2022"
+      ]
+    },
+    {
+      "proveedor": "Explorar Servicios Geológicos",
+      "totalArs": 3020000,
+      "count": 3,
+      "firstDate": "2022-11-28",
+      "lastDate": "2023-09-15",
+      "decretoRefs": [
+        "602/2022",
+        "506/2023",
+        "546/2023"
+      ]
+    },
+    {
       "proveedor": "RO-BOT S.R.L",
       "totalArs": 2556689,
       "count": 1,
@@ -232,6 +563,26 @@
       "lastDate": "2022-05-10",
       "decretoRefs": [
         "205/2022"
+      ]
+    },
+    {
+      "proveedor": "GRUPO NAVAL RODSALEÑO S.A",
+      "totalArs": 2515569,
+      "count": 1,
+      "firstDate": "2023-07-18",
+      "lastDate": "2023-07-18",
+      "decretoRefs": [
+        "393/2023"
+      ]
+    },
+    {
+      "proveedor": "ROMBO AVELLANEDA 72",
+      "totalArs": 2500000,
+      "count": 1,
+      "firstDate": "2023-03-15",
+      "lastDate": "2023-03-15",
+      "decretoRefs": [
+        "99/2023"
       ]
     },
     {
@@ -252,6 +603,16 @@
       "lastDate": "2022-09-22",
       "decretoRefs": [
         "476/2022"
+      ]
+    },
+    {
+      "proveedor": "Claverie Servicio Mecánico del Señor Gastón Claverie",
+      "totalArs": 1850000,
+      "count": 1,
+      "firstDate": "2023-02-14",
+      "lastDate": "2023-02-14",
+      "decretoRefs": [
+        "52/2023"
       ]
     },
     {
@@ -306,6 +667,26 @@
       ]
     },
     {
+      "proveedor": "Contratista Gustavo David Tejada",
+      "totalArs": 1320000,
+      "count": 1,
+      "firstDate": "2023-06-07",
+      "lastDate": "2023-06-07",
+      "decretoRefs": [
+        "284/2023"
+      ]
+    },
+    {
+      "proveedor": "SUAREZ RUBEN OMAR",
+      "totalArs": 1222500,
+      "count": 1,
+      "firstDate": "2023-09-28",
+      "lastDate": "2023-09-28",
+      "decretoRefs": [
+        "577/2023"
+      ]
+    },
+    {
       "proveedor": "CARUSO SPORT",
       "totalArs": 1202990,
       "count": 1,
@@ -326,6 +707,46 @@
       ]
     },
     {
+      "proveedor": "BERNARDO LEW E HIJOS SRL",
+      "totalArs": 987187,
+      "count": 1,
+      "firstDate": "2023-09-28",
+      "lastDate": "2023-09-28",
+      "decretoRefs": [
+        "574/2023"
+      ]
+    },
+    {
+      "proveedor": "Carlos Gastinel y Cia",
+      "totalArs": 970320,
+      "count": 1,
+      "firstDate": "2022-10-11",
+      "lastDate": "2022-10-11",
+      "decretoRefs": [
+        "524/2022"
+      ]
+    },
+    {
+      "proveedor": "Labranzas S.A",
+      "totalArs": 957000,
+      "count": 1,
+      "firstDate": "2022-07-04",
+      "lastDate": "2022-07-04",
+      "decretoRefs": [
+        "326/2022"
+      ]
+    },
+    {
+      "proveedor": "Edgardo Adrián Antiman",
+      "totalArs": 902186,
+      "count": 1,
+      "firstDate": "2022-06-02",
+      "lastDate": "2022-06-02",
+      "decretoRefs": [
+        "254/2022"
+      ]
+    },
+    {
       "proveedor": "FERRIMED SRL",
       "totalArs": 759138,
       "count": 1,
@@ -343,6 +764,16 @@
       "lastDate": "2022-06-21",
       "decretoRefs": [
         "288/2022"
+      ]
+    },
+    {
+      "proveedor": "BACHMANN CORDOVA PABLO",
+      "totalArs": 514250,
+      "count": 1,
+      "firstDate": "2022-06-15",
+      "lastDate": "2022-06-15",
+      "decretoRefs": [
+        "285/2022"
       ]
     }
   ]
