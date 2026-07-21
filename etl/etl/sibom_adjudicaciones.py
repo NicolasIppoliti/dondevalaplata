@@ -16,9 +16,19 @@ adjudicación decreto states its peso amount TWICE -- spelled out in words
 and as a numeric figure in parentheses -- and this parser cross-validates
 the two readings (see ``spanish_numbers.py``) before trusting either one:
 disagreement (whether a real drafting typo or an extraction artifact) means
-the row is SKIPPED, never guessed. Decrees that mention "Adjudicar" but
+the row is SKIPPED, never guessed. Operative clauses that award money but
 yield zero valid rows are counted so the page can honestly report
 "N actos no pudieron parsearse automáticamente".
+
+TWO OPERATIVE VERBS, BOTH PARSED. Competitive procedures are awarded with
+"Adjudicar"; direct contracts are awarded with "Autorizase la Contratación
+Directa con/a/de <counterparty>" and never use "Adjudicar" at all. Parsing
+only the first verb hid every direct contract -- the least competitive and
+therefore most accountability-relevant modality -- from the dataset. Direct
+contracts usually cite no tender number (there was no tender), so their
+``procedimiento`` is the bare label "Contratación Directa": which modality
+was used is itself the signal, and leaving it null would make these rows
+indistinguishable from an unparsed competitive procedure.
 
 Text-extraction quirks handled here (verified against the real archived
 bulletin PDFs, the same class of defect already documented in
@@ -107,6 +117,17 @@ def extract_decree_blocks(text: str) -> list[dict]:
 
 _ARTICULO_SPLIT = re.compile(r"ARTICULO\s*\d+[º°o]?\s*:?")
 
+# Two different operative verbs award municipal money, and BOTH must be
+# parsed. Competitive procedures (licitación pública/privada, concurso de
+# precios) are awarded with "Adjudicar". Direct contracts -- the LOM Arts.
+# 132 inc. D / 156 inc. 1 exceptions to competitive bidding -- are awarded
+# with "Autorizase la Contratación Directa con/a/de <counterparty>" and never
+# use the word "Adjudicar" at all. Matching only the latter verb silently
+# hid every direct contract in the corpus, i.e. the LEAST competitive and
+# therefore most accountability-relevant modality.
+_DIRECT_CONTRACT_VERB = r"Autor[ií]zase\s+la\s+[Cc]ontrataci[oó]n\s+[Dd]irecta"
+_OPERATIVE_CLAUSE = re.compile(r"Adjudicar|" + _DIRECT_CONTRACT_VERB)
+
 # Ordered by specificity: quoted-name forms first (cheapest to trust), then
 # the connector-keyword forms, then a last-resort bare-name fallback.
 _VENDOR_STOP = (
@@ -132,6 +153,46 @@ _VENDOR_PATTERNS = [
     re.compile(r"Adjudicar\s+al?\s+" + _VENDOR_NAME_LOOSE + _VENDOR_STOP),
 ]
 
+# Direct-contract clauses trail the counterparty name with different
+# boilerplate than competitive awards ("para la Obra mencionada en el
+# Artículo 1º", "cuya razón social es...", a dash-delimited trade name), so
+# they need their own stop set on top of the shared one.
+_VENDOR_STOP_DIRECT = (
+    r'(?=["”]|,?\s+para\s+(?:la|el|el\s+servicio|la\s+prestaci)|,?\s+cuya\s+raz[oó]n'
+    r"|,?\s+de\s+la\s+(?:Reparaci|provisi|adquisici)|,?\s+por\s+la\s+suma"
+    r"|,?\s+por\s+un\s+(?:valor|monto)|\s+[–—]|\s+-\s*[A-ZÑÁÉÍÓÚ]|,?\s*\(CUIT"
+    r"|,\s|\.\s|$)"
+)
+# An optional opening quote is tolerated because several decretos open a
+# quoted name and never close it (e.g. "el proveedor “HOSPITAL NAVAL PUERTO
+# BELGRANO cuya razón social..."), which no balanced-quote pattern can catch.
+_DIRECT_CONNECTOR = r"\s+(?:con|a|de)\s+"
+_DIRECT_VENDOR_PATTERNS = [
+    re.compile(
+        _DIRECT_CONTRACT_VERB + _DIRECT_CONNECTOR + r'(?:la\s+)?firmar?\s+["“]([^"”\n]{3,90})["”]'
+    ),
+    re.compile(
+        _DIRECT_CONTRACT_VERB
+        + _DIRECT_CONNECTOR
+        + r'(?:el|la)\s+proveedor[ao]?\s+["“]([^"”\n]{3,90})["”]'
+    ),
+    re.compile(
+        _DIRECT_CONTRACT_VERB
+        + _DIRECT_CONNECTOR
+        + r'(?:el|la)\s+proveedor[ao]?\s+["“]?'
+        + _VENDOR_NAME
+        + _VENDOR_STOP_DIRECT
+    ),
+    re.compile(
+        _DIRECT_CONTRACT_VERB
+        + _DIRECT_CONNECTOR
+        + r'(?:la\s+)?firmar?\s+["“]?'
+        + _VENDOR_NAME
+        + _VENDOR_STOP_DIRECT
+    ),
+    re.compile(_DIRECT_CONTRACT_VERB + r"\s+con\s+" + _VENDOR_NAME_NO_PAREN + _VENDOR_STOP_DIRECT),
+]
+
 _AMOUNT_PATTERN = re.compile(r"\(\s*\$\s*([\d.,]{4,20})\s*\.?-?\s*\)")
 _WORDS_AMOUNT_PATTERN = re.compile(r"PESOS\s+(.{3,220}?)\(\s*\$", re.DOTALL | re.IGNORECASE)
 
@@ -153,10 +214,11 @@ _PROCEDIMIENTO_PATTERNS = [
         "Contratación Directa",
     ),
 ]
+_DIRECT_CONTRACT_NUMBERLESS = re.compile(r"Contrataci[oó]n\s+[Dd]irecta", re.IGNORECASE)
 
 
 def _extract_vendor(clause: str) -> str | None:
-    for pat in _VENDOR_PATTERNS:
+    for pat in (*_VENDOR_PATTERNS, *_DIRECT_VENDOR_PATTERNS):
         m = pat.search(clause)
         if not m:
             continue
@@ -204,6 +266,12 @@ def _extract_procedimiento(block_text: str) -> str | None:
         m = pat.search(head)
         if m:
             return f"{label} Nº {re.sub(r'\\s+', '', m.group(1))}"
+    # Direct contracts usually carry no tender number at all -- there was no
+    # tender. Label the modality anyway: WHICH modality was used is itself
+    # the accountability signal, and dropping it to None would render these
+    # rows indistinguishable from an unparsed competitive procedure.
+    if _DIRECT_CONTRACT_NUMBERLESS.search(head):
+        return "Contratación Directa"
     return None
 
 
@@ -238,7 +306,7 @@ def parse_block(block: dict) -> dict:
     rows = []
     skipped = 0
     for clause in _ARTICULO_SPLIT.split(block["text"]):
-        if "Adjudicar" not in clause:
+        if not _OPERATIVE_CLAUSE.search(clause):
             continue
         vendor = _extract_vendor(clause)
         amount = _extract_amount(clause)
