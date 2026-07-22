@@ -117,7 +117,11 @@ def extract_decree_blocks(text: str) -> list[dict]:
     return blocks
 
 
-_ARTICULO_SPLIT = re.compile(r"ARTICULO\s*\d+[º°o]?\s*:?")
+# The decretos spell the clause heading both ways. 1.295 headings in the
+# archived corpus use the accented "ARTÍCULO" and were never split, so their
+# operative clauses stayed fused to the preceding one -- which both hides
+# awards and lets one clause's amount leak into another's cross-validation.
+_ARTICULO_SPLIT = re.compile(r"ART[ÍI]CULO\s*\d+[º°o]?\s*:?")
 
 # Two different operative verbs award municipal money, and BOTH must be
 # parsed. Competitive procedures (licitación pública/privada, concurso de
