@@ -104,6 +104,26 @@ def test_build_proveedores_keeps_deliberate_abstentions_separate() -> None:
     assert len(result["proveedores"]) == 2
 
 
+def test_build_proveedores_does_not_fold_in_a_different_person_sharing_a_surname() -> None:
+    """EBERS, Maximiliano (CUIT 20-36289663-1, insurance representation) is a
+    different person from the works contractor Omar Marciano Ebers (CUIT
+    20-05496692-0). Sharing a surname is not evidence, and the table must
+    never collapse them.
+    """
+    rows = [
+        _row("OMAR MARCIANO EBERS", 13_151_000, "426/2022", "2022-08-12"),
+        _row("Ebers Omar Marciano", 25_355_532, "395/2025", "2025-09-01"),
+        _row("EBERS, Maximiliano", 500_000, "999/2025", "2025-10-01"),
+    ]
+
+    result = build_proveedores(rows, aliases=load_vendor_aliases(ALIASES_PATH))
+
+    by_name = {p["proveedor"]: p for p in result["proveedores"]}
+    assert by_name["OMAR MARCIANO EBERS"]["totalArs"] == 38_506_532
+    assert by_name["OMAR MARCIANO EBERS"]["count"] == 2
+    assert by_name["EBERS, Maximiliano"]["totalArs"] == 500_000
+
+
 def test_build_proveedores_without_aliases_never_merges() -> None:
     """The default stays conservative: no table, no merging."""
     rows = [

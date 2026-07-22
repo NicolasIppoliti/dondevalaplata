@@ -87,6 +87,22 @@ aliases:
     variants:
       - Sociedad de Anestesia
 
+  - canonical: OMAR MARCIANO EBERS
+    evidence: >-
+      One sole-proprietor works contractor whose three name tokens are
+      identical in both spellings; only the order changes, and surname-first
+      is ordinary Argentine administrative usage. Boletín 086 ties the
+      surname-first form to an identifier: "INTIMAR al contribuyente EBERS
+      OMAR MARCIANO, CUIT 20-05496692-0". The award decretos themselves print
+      no identifier in either spelling, so the given-name-first form is tied
+      by the identical token set plus the absence of any second Omar Marciano
+      Ebers anywhere in the corpus. The only other Ebers on record is EBERS,
+      Maximiliano, CUIT 20-36289663-1 (boletín 067), a DIFFERENT person with a
+      different CUIT who holds an insurance-representation licence and is not
+      a municipal contractor -- he must never be folded in here.
+    variants:
+      - Ebers Omar Marciano
+
   - canonical: Rodolfo A. De La Cereza
     evidence: >-
       Same natural person contracted for rectification and repair of the

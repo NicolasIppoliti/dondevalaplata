@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-21T23:02:11Z",
+  "generatedAt": "2026-07-22T02:35:26Z",
   "proveedores": [
     {
       "proveedor": "COMADAR S.R.L",
@@ -129,17 +129,19 @@
     },
     {
       "proveedor": "OMAR MARCIANO EBERS",
-      "totalArs": 129320237,
-      "count": 6,
+      "totalArs": 178784250,
+      "count": 8,
       "firstDate": "2021-07-13",
-      "lastDate": "2025-07-07",
+      "lastDate": "2025-12-01",
       "decretoRefs": [
         "426/2022",
         "447/2022",
         "381/2023",
         "42/2024",
         "87/2024",
-        "278/2025"
+        "278/2025",
+        "395/2025",
+        "605/2025"
       ]
     },
     {
@@ -212,17 +214,6 @@
         "163/2023",
         "164/2023",
         "454/2023"
-      ]
-    },
-    {
-      "proveedor": "Ebers Omar Marciano",
-      "totalArs": 49464013,
-      "count": 2,
-      "firstDate": "2025-08-27",
-      "lastDate": "2025-12-01",
-      "decretoRefs": [
-        "395/2025",
-        "605/2025"
       ]
     },
     {
