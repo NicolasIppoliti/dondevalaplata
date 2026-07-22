@@ -30,6 +30,20 @@ contracts usually cite no tender number (there was no tender), so their
 was used is itself the signal, and leaving it null would make these rows
 indistinguishable from an unparsed competitive procedure.
 
+THE BIDDER FIELD IS NEVER AN EMPTY LIST. ``oferentes`` records who else bid,
+which is what tells a reader how contested a tender actually was. Only ~25%
+of competitive procedures publish a parseable list, and direct contracts have
+no competitors by construction, so an empty array would assert "nobody else
+bid" -- a claim the documents do not support. Every row therefore carries an
+explicit ``estado``: ``listado`` (we have the list), ``sin-competencia`` (a
+direct contract, where the law required no competitors) or ``no-publicado``
+(a competitive tender whose list the Municipality did not publish).
+Extraction refuses rather than guesses: a parse is discarded unless the
+awarded vendor itself appears in it, and any name still containing a comma is
+rejected because "Ripoll, Miguel A. y Di Bella, Salvador E. S.H" is ONE
+sociedad de hecho while "Miguera Carla Anabella, Diego Pedro Botta" is TWO
+bidders, and nothing in the text distinguishes them.
+
 Text-extraction quirks handled here (verified against the real archived
 bulletin PDFs, the same class of defect already documented in
 ``gasto_partida.py``):
@@ -318,6 +332,159 @@ def _extract_objeto(clause: str) -> str:
     return text[:220].strip()
 
 
+# --- Bidder field ("oferentes") -------------------------------------------
+#
+# The decreto names the winner; the losing bidders live in the Considerando
+# recital, if they are published at all. Recovering them is what lets the
+# portal say how contested a tender actually was -- the single most probative
+# competition fact, and today invisible.
+#
+# THE HONEST-UNKNOWN RULE. Only 57% of competitive procedures publish a
+# parseable bidder list, and direct contracts have no competitors by
+# construction. An empty array would read as "nobody else bid", which is a
+# claim the documents do not support. So the field is NEVER an empty list and
+# `cantidad` is NEVER 0: every row carries an explicit `estado` that
+# distinguishes "we know the list" from "the law required no competitors"
+# from "the Municipality did not publish it".
+_ENACTING_FORMULA = re.compile(r"\bDECRETA\b")
+# "según detalle oferta aceptada, solicitud de gastos y demás documentación"
+# appears in direct contracts and is never a bidder enumeration.
+_OFERENTES_BLACKLIST = re.compile(r"oferta\s+aceptada", re.IGNORECASE)
+_OFERENTE_LIST = r"(?P<list>.{5,400}?)"
+_OFERENTES_TEMPLATES = [
+    re.compile(
+        r"(?:los\s+)?oferentes:?\s+" + _OFERENTE_LIST + r"\s+presentaron\s+(?:las\s+)?ofertas",
+        re.I,
+    ),
+    re.compile(
+        r"(?:los\s+)?proveedores:?\s+"
+        + _OFERENTE_LIST
+        + r"\s+presentaron\s+(?:las\s+)?(?:ofertas|cotizaciones)",
+        re.I,
+    ),
+    re.compile(
+        r"abiertas\s+las\s+ofertas.{0,40}?perteneciente[s]?\s+a\s+"
+        + _OFERENTE_LIST
+        + r"(?=\.|\s+Que\s)",
+        re.I,
+    ),
+    re.compile(
+        r"presentaci[o\u00f3]n\s+de\s+\w+\s+ofertas[;:,]\s*"
+        + _OFERENTE_LIST
+        + r"(?=\.\s|\s+Que\s)",
+        re.I,
+    ),
+    re.compile(
+        r"como\s+Oferta\s*(?:N[\u00ba\u00b0o]?\s*)?1\b\s*"
+        + _OFERENTE_LIST
+        + r"(?=\.\s*-|\s+Que,?\s)",
+        re.I,
+    ),
+    re.compile(
+        r"se\s+recepcionaron\s+\w+\s+ofertas:?\s+" + _OFERENTE_LIST + r"(?=\.|\s+Que\s)",
+        re.I,
+    ),
+]
+# Splitting is deliberately conservative, because a wrongly split name
+# publishes a company that never bid. The decretos routinely write natural
+# persons surname-first ("Ebers, Omar Marciano"; "Ripoll, Miguel A."), so a
+# bare comma is NOT a safe separator. Quoted spans are the dominant published
+# form and are extracted verbatim; only when no quoting exists do we fall
+# back to splitting, and then only on separators that never occur inside a
+# single name.
+_OFERENTE_QUOTED = re.compile(r"[\"“]([^\"“”]{3,90})[\"”]")
+_OFERENTE_SPLIT = re.compile(r"\s*(?:;|\sy\s|\se\s)\s*")
+_OFERENTE_NOISE = re.compile(
+    r"^(?:la\s+(?:firma|empresa)|el\s+proveedor|los?\s+Sres?\.?|Sr[a]?\.|"
+    r"la\s+Oferta\s*N?[º°o]?\s*\d*|Oferta\s*N?[º°o]?\s*\d*|"
+    r"(?:la\s+)?(?:primera|segunda|tercera|cuarta)\s*(?:perteneciente\s+a)?|"
+    r"se\s+constat[oó]\s+la\s+presentada\s+por|perteneciente\s+a[l]?)\s*",
+    re.IGNORECASE,
+)
+
+
+def _clean_oferente(raw: str) -> str | None:
+    name = re.sub(r"\s+", " ", raw).strip().strip("\"“”'").strip()
+    previous = None
+    while previous != name:
+        previous = name
+        name = _OFERENTE_NOISE.sub("", name).strip().strip("\"“”'").strip()
+    # Drop any trailing quoted amount ("por la suma de PESOS ... ($ 1.000)").
+    name = re.split(r"\s+(?:por|cuya|con)\s+", name)[0].strip().rstrip(".,;:-").strip()
+    if len(name) < 3 or len(name) > 90 or not name[0].isupper():
+        return None
+    return name
+
+
+def _extract_oferentes(
+    block_text: str, procedimiento: str | None, winner: str, aliases: dict[str, str]
+) -> dict[str, Any]:
+    """Recover the bidder field for one awarded row.
+
+    Returns an object that always states WHY a list is absent, never a bare
+    empty array. A parse is accepted only when the awarded vendor itself
+    appears in it (the winner-presence check) -- that is what catches a
+    truncated capture before it publishes a nonsense bidder name.
+    """
+    unknown = {"estado": "no-publicado", "cantidad": None, "nombres": [], "quote": None}
+    if procedimiento == "Contratación Directa":
+        return {"estado": "sin-competencia", "cantidad": None, "nombres": [], "quote": None}
+
+    considerando = _ENACTING_FORMULA.split(block_text)[0]
+    # Flatten first: bidder enumerations wrap mid-sentence, and the
+    # line-sensitive form of these patterns matches nothing at all.
+    flat = re.sub(r"\s+", " ", considerando)
+    if _OFERENTES_BLACKLIST.search(flat):
+        return unknown
+
+    def canonical(name: str) -> str:
+        key = re.sub(r"\s+", " ", name).strip().upper()
+        return aliases.get(key, name)
+
+    for template in _OFERENTES_TEMPLATES:
+        match = template.search(flat)
+        if not match:
+            continue
+        raw_list = match.group("list")
+        quoted = _OFERENTE_QUOTED.findall(raw_list)
+        chunks = quoted if len(quoted) >= 2 else _OFERENTE_SPLIT.split(raw_list)
+        names = []
+        for chunk in chunks:
+            cleaned = _clean_oferente(chunk)
+            if cleaned and cleaned not in names:
+                names.append(canonical(cleaned))
+        if len(names) < 2:
+            continue
+        # A surviving comma is unresolvable: "Ripoll, Miguel A. y Di Bella,
+        # Salvador E. S.H" is ONE sociedad de hecho, while "Miguera Carla
+        # Anabella, Diego Pedro Botta" is TWO bidders, and nothing in the text
+        # distinguishes them. Splitting would invent a bidder; not splitting
+        # would undercount the field and make the tender look less contested
+        # than it was -- unfair to the Municipality. Refuse instead, and let
+        # the row say the list was not published.
+        if any("," in name for name in names):
+            continue
+        # Winner-presence check. Compare on the significant tokens rather than
+        # raw substrings: "Ebers" alone must not be accepted as proof that
+        # "OMAR MARCIANO EBERS" is in the list, or a mis-split capture would
+        # publish fabricated bidders under a partially matching name.
+        def tokens(value: str) -> set[str]:
+            return {t for t in re.split(r"[^A-Za-zÑÁÉÍÓÚñáéíóú]+", value.upper()) if len(t) > 2}
+
+        winner_tokens = tokens(canonical(winner))
+        if not winner_tokens or not any(
+            winner_tokens.issubset(tokens(n)) or tokens(n).issubset(winner_tokens) for n in names
+        ):
+            continue  # truncated or mis-scoped capture -- refuse it
+        return {
+            "estado": "listado",
+            "cantidad": len(names),
+            "nombres": names,
+            "quote": match.group(0)[:400].strip(),
+        }
+    return unknown
+
+
 def parse_block(block: dict) -> dict:
     """Extract every adjudicación row from one decree block.
 
@@ -529,6 +696,7 @@ def build_adjudicaciones(
     *,
     text_extractor: Callable[[Path], str] | None = None,
     supersessions: dict[str, dict[str, Any]] | None = None,
+    aliases: dict[str, str] | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     """Build the full `data/adjudicaciones.json` payload -- network-free,
@@ -600,6 +768,9 @@ def build_adjudicaciones(
                         "montoArs": row["montoArs"],
                         "procedimiento": parsed["procedimiento"],
                         "objeto": row["objeto"],
+                        "oferentes": _extract_oferentes(
+                            block["text"], parsed["procedimiento"], row["proveedor"], aliases or {}
+                        ),
                         "bulletinNumber": bulletin_number,
                         "sourceRef": source_ref,
                     }

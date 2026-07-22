@@ -317,9 +317,11 @@ def run_build_adjudicaciones(args: argparse.Namespace) -> int:
     (`sibom` bulletin PDFs + `sibom-actos` individual act HTML pages, see
     `etl archive --capability sibom-actos`).
     """
+    aliases = load_vendor_aliases(args.vendor_aliases_path)
     result = build_adjudicaciones(
         args.manifest_path,
         supersessions=load_curated_supersessions(args.supersessions_path),
+        aliases=aliases,
     )
     adjudicaciones_path = args.data_root / "adjudicaciones.json"
     adjudicaciones_path.parent.mkdir(parents=True, exist_ok=True)
@@ -327,9 +329,7 @@ def run_build_adjudicaciones(args: argparse.Namespace) -> int:
         json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
 
-    proveedores = build_proveedores(
-        result["records"], aliases=load_vendor_aliases(args.vendor_aliases_path)
-    )
+    proveedores = build_proveedores(result["records"], aliases=aliases)
     proveedores_path = args.data_root / "proveedores.json"
     proveedores_path.write_text(
         json.dumps(proveedores, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
