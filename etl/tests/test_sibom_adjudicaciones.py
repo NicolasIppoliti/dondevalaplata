@@ -94,6 +94,81 @@ def test_parse_block_skips_row_with_internally_inconsistent_amount() -> None:
     assert result["skippedActosCount"] == 1
 
 
+def test_parse_block_extracts_direct_contract_awarded_to_named_proveedor() -> None:
+    """Direct contracts (Contratación Directa) are awarded with the operative
+    verb "Autorizase la Contratación Directa con el proveedor X", never with
+    "Adjudicar". They are the least competitive procurement modality and so
+    the most accountability-relevant, and must be captured just like a
+    competitive award. Decreto 384/2024 contracts the roof repair of Escuela
+    Primaria Nº 18 for ARS 8.161.230.
+    """
+    text = normalize_bulletin_text(_read("sibom_decreto_384_2024_extract.txt"))
+    block = extract_decree_blocks(text)[0]
+
+    result = parse_block(block)
+
+    assert len(result["rows"]) == 1
+    row = result["rows"][0]
+    assert row["proveedor"] == "Equipo de Servicios Portuarios RUMAX S.R.L"
+    assert row["montoArs"] == 8_161_230
+    assert result["expediente"] == "S-58/24"
+    assert result["procedimiento"] == "Contratación Directa"
+    assert result["skippedActosCount"] == 0
+
+
+def test_parse_block_extracts_direct_contract_with_quoted_firma() -> None:
+    """The other common drafting form names the counterparty as a quoted
+    "firma" rather than a "proveedor". Decreto 338/2023 contracts a lab
+    equipment rental for ARS 1.269.432 under Art. 156 inc. 1 LOM (sole
+    supplier), with no tender number to cite.
+    """
+    text = normalize_bulletin_text(_read("sibom_decreto_338_2023_extract.txt"))
+    block = extract_decree_blocks(text)[0]
+
+    result = parse_block(block)
+
+    assert len(result["rows"]) == 1
+    row = result["rows"][0]
+    assert row["proveedor"] == "MG PHARMACORP SRL"
+    assert row["montoArs"] == 1_269_432
+    assert result["expediente"] == "S-96/23"
+    assert result["procedimiento"] == "Contratación Directa"
+
+
+def test_parse_block_trims_trailing_space_before_the_closing_period() -> None:
+    """Decretos are inconsistently spaced before a name's closing period
+    ("DROGUERIA IB SA ."). Trailing punctuation and whitespace must both go,
+    or the vendor name carries an invisible blank into the padrón.
+    """
+    text = normalize_bulletin_text(
+        "Decreto Nº 589/2023\nCoronel Rosales, 15/12/2023\nVisto\nExpte. S-10/23\nDECRETA\n"
+        "ARTICULO 1º: Autorizase la Contratación Directa con la firma "
+        "“DROGUERIA IB SA .” para la prestación del servicio por la suma de "
+        "PESOS UN MILLON ($ 1.000.000,00.-).-"
+    )
+    block = extract_decree_blocks(text)[0]
+
+    result = parse_block(block)
+
+    assert result["rows"][0]["proveedor"] == "DROGUERIA IB SA"
+
+
+def test_parse_block_skips_direct_contract_with_inconsistent_amount() -> None:
+    """The cross-validation rule applies identically to direct contracts.
+    Decreto 239/2022 spells "PESOS UN MILLON CIENTO OCHENTA" (= 1.000.180)
+    next to the numeric figure "$ 1.180.000" -- the source omits "MIL". The
+    honest behavior is to skip the row and count it, never to guess which of
+    the two readings the drafter meant.
+    """
+    text = normalize_bulletin_text(_read("sibom_decreto_239_2022_extract.txt"))
+    block = extract_decree_blocks(text)[0]
+
+    result = parse_block(block)
+
+    assert result["rows"] == []
+    assert result["skippedActosCount"] == 1
+
+
 def test_find_candidate_decrees_end_to_end_on_multi_decree_bulletin() -> None:
     """A whole (small, synthetic-composition-of-real-fixtures) bulletin text
     containing three real decree blocks: two should yield candidates, one

@@ -48,7 +48,12 @@ from .r2 import R2Store
 from .r2_sync import sync_archived_to_r2
 from .sibom import discover_bulletins, discover_sibom_actos
 from .sibom import to_source_entries as sibom_to_entries
-from .sibom_adjudicaciones import build_adjudicaciones, build_proveedores
+from .sibom_adjudicaciones import (
+    build_adjudicaciones,
+    build_proveedores,
+    load_curated_supersessions,
+    load_vendor_aliases,
+)
 from .storage import LocalArchiveStore
 from .titularidad import build_titularidad
 from .transparencia import build_transparencia
@@ -64,6 +69,8 @@ DEFAULT_CADENCIA_CURATED_PATH = REPO_ROOT / "etl" / "cadencia.yaml"
 DEFAULT_NOVEDADES_SEED_PATH = REPO_ROOT / "etl" / "novedades_seed.yaml"
 DEFAULT_TITULARIDAD_CURATED_PATH = REPO_ROOT / "etl" / "titularidad.yaml"
 DEFAULT_DEUDA_ANOMALIES_CURATED_PATH = REPO_ROOT / "etl" / "deuda_anomalies.yaml"
+DEFAULT_VENDOR_ALIASES_PATH = REPO_ROOT / "etl" / "vendor_aliases.yaml"
+DEFAULT_SUPERSESSIONS_PATH = REPO_ROOT / "etl" / "decreto_supersessions.yaml"
 
 # From Nº31 (2023) onward, per design D4/tasks Slice 2 scope note.
 SIBOM_FROM_NUMBER = 31
@@ -310,14 +317,19 @@ def run_build_adjudicaciones(args: argparse.Namespace) -> int:
     (`sibom` bulletin PDFs + `sibom-actos` individual act HTML pages, see
     `etl archive --capability sibom-actos`).
     """
-    result = build_adjudicaciones(args.manifest_path)
+    aliases = load_vendor_aliases(args.vendor_aliases_path)
+    result = build_adjudicaciones(
+        args.manifest_path,
+        supersessions=load_curated_supersessions(args.supersessions_path),
+        aliases=aliases,
+    )
     adjudicaciones_path = args.data_root / "adjudicaciones.json"
     adjudicaciones_path.parent.mkdir(parents=True, exist_ok=True)
     adjudicaciones_path.write_text(
         json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
 
-    proveedores = build_proveedores(result["records"])
+    proveedores = build_proveedores(result["records"], aliases=aliases)
     proveedores_path = args.data_root / "proveedores.json"
     proveedores_path.write_text(
         json.dumps(proveedores, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
@@ -563,6 +575,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     build_adjudicaciones_parser.add_argument(
         "--data-root", type=Path, default=DEFAULT_DATA_ROOT,
+    )
+    build_adjudicaciones_parser.add_argument(
+        "--vendor-aliases-path", type=Path, default=DEFAULT_VENDOR_ALIASES_PATH,
+    )
+    build_adjudicaciones_parser.add_argument(
+        "--supersessions-path", type=Path, default=DEFAULT_SUPERSESSIONS_PATH,
     )
     build_adjudicaciones_parser.set_defaults(func=run_build_adjudicaciones)
 

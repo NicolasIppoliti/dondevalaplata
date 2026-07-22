@@ -1,0 +1,136 @@
+# Curated vendor-name alias table for the reconstructed proveedores padrón
+# (data/proveedores.json, feature G3). This is the SOURCE OF TRUTH for the
+# only case in which `build_proveedores` is allowed to add two differently
+# spelled adjudicación rows into one padrón entry.
+#
+# WHY THIS FILE EXISTS. The municipality spells the same contractor several
+# ways across decretos -- "COMADAR SRL" and "COMADAR S.R.L", "EQUIPO(S) DE
+# SERVICIOS PORTUARIOS RUMAX S.R.L" -- so the padrón splits one real vendor
+# into several entries and under-reports what each was actually paid.
+# `build_proveedores` groups by the exact (whitespace/case-normalized) name
+# and has NO similarity logic of its own, by design: automatically merging
+# names that merely look alike would eventually fuse two genuinely different
+# companies and publish a false accusation about how much public money one
+# of them received. That failure is far worse than the split it would fix.
+# So the merge decision is made by a human, recorded here with its evidence,
+# and applied by exact match only. Same curated-table pattern as
+# `etl/deuda_anomalies.yaml`, `etl/titularidad.yaml`,
+# `etl/fallos_ficha_2022.yaml` and `etl/asap_transparencia.yaml`.
+#
+# CURATION DISCIPLINE. An entry is justified ONLY by evidence read from the
+# primary sources: a shared CUIT printed in a decreto, or a full legal name
+# that matches on every token but one obvious municipal typo. "These look
+# like the same company" is NOT evidence. When the sources do not settle it,
+# ABSTAIN -- see the abstentions recorded at the bottom of this file, which
+# are as much a part of the curation as the merges.
+#
+# SHAPE. `canonical` is the display name the padrón keeps; `variants` are
+# the other spellings that fold into it. Matching is exact after collapsing
+# whitespace and upper-casing (see `load_vendor_aliases`), never fuzzy. A
+# variant that matches no row in the dataset is a curation mistake and fails
+# the cross-check test in tests/test_build_titularidad-style suites -- see
+# tests/test_vendor_aliases.py.
+
+aliases:
+  - canonical: COMADAR S.R.L
+    evidence: >-
+      Both spellings carry CUIT 30-71823860-5 in the decretos that state it
+      (6 occurrences across the corpus); no other CUIT appears with either.
+    variants:
+      - COMADAR SRL
+
+  - canonical: MG PHARMACORP S.R.L
+    evidence: >-
+      Both spellings carry CUIT 30-70818609-7 in the decretos that state it;
+      no other CUIT appears with either.
+    variants:
+      - MG PHARMACORP SRL
+
+  - canonical: EQUIPOS DE SERVICIOS PORTUARIOS RUMAX S.R.L
+    evidence: >-
+      One company incorporated 29/06/2023, Boletín Oficial PBA nº 29548 of
+      18/07/2023, domicile Mitre 1147 Punta Alta. The municipality writes
+      the first word both singular and plural across its own decretos
+      (639/2024 plural, 384/2024 singular). data/titularidad.json already
+      curates both spellings as this single entity in its vendorMatchKeys.
+    variants:
+      - Equipo de Servicios Portuarios RUMAX S.R.L
+
+  - canonical: DROGUERIA IB S.A
+    evidence: >-
+      Decreto 247/2025 prints "DROGUERIA IB SA." together with
+      CUIT 30-71109470-5; every other decreto names the same firm renting
+      the same MESA DE ANESTESIA equipment, varying only the period
+      placement.
+    variants:
+      - DROGUERIA IB SA
+      # Decreto 20/2026 writes it accented and with periods; without this the
+      # padrón would silently split the same firm across two cards.
+      - Droguería IB S.A
+
+  - canonical: Segusur S.H
+    evidence: >-
+      Same firm supplying work clothing and safety equipment across
+      decretos 205/2022, 194/2023 and 503/2024; the name differs only by
+      the periods in the "S.H." legal form, which is identical in all three.
+    variants:
+      - SEGUSUR SH
+
+  - canonical: Sociedad de Anestesiología
+    evidence: >-
+      The full name in the decretos is "Sociedad de Anestesiología,
+      Analgesia y Reanimación Bahía Blanca". Decreto 139/2024 alone writes
+      "Sociedad de Anestesia, Analgesia y Reanimación de Bahía Blanca" --
+      every other token matches, the contracted service (analgesia and
+      anaesthesia at the Hospital Municipal) is the same, and the decretos
+      describe it as the sole provider of that service in the region.
+    variants:
+      - Sociedad de Anestesia
+
+  - canonical: OMAR MARCIANO EBERS
+    evidence: >-
+      One sole-proprietor works contractor whose three name tokens are
+      identical in both spellings; only the order changes, and surname-first
+      is ordinary Argentine administrative usage. Boletín 086 ties the
+      surname-first form to an identifier: "INTIMAR al contribuyente EBERS
+      OMAR MARCIANO, CUIT 20-05496692-0". The award decretos themselves print
+      no identifier in either spelling, so the given-name-first form is tied
+      by the identical token set plus the absence of any second Omar Marciano
+      Ebers anywhere in the corpus. The only other Ebers on record is EBERS,
+      Maximiliano, CUIT 20-36289663-1 (boletín 067), a DIFFERENT person with a
+      different CUIT who holds an insurance-representation licence and is not
+      a municipal contractor -- he must never be folded in here.
+    variants:
+      - Ebers Omar Marciano
+
+  - canonical: Rodolfo A. De La Cereza
+    evidence: >-
+      Same natural person contracted for rectification and repair of the
+      municipality's heavy machinery across decretos 425/2022, 514/2022,
+      664/2022, 479/2024 and 562/2024; the later decretos add the middle
+      initial "A.", the earlier ones omit it.
+    variants:
+      - Rodolfo De La Cereza
+
+# ---------------------------------------------------------------------------
+# ABSTENTIONS -- deliberately NOT merged. Recorded so a future maintainer
+# does not "fix" these without new evidence.
+#
+# "BERNARDO LEW SRL" vs "BERNARDO LEW E HIJOS SRL"
+#   Two distinct firms, not two spellings. The decretos use each name in a
+#   different contracting context (laboratory reagents vs rental of lab
+#   management software). Merging them would attribute one company's
+#   payments to another. Note also that one decreto records the
+#   municipality's own mix-up: "colocándose como adjudicatario al proveedor
+#   Bernardo Lew SRL siendo el prestador del servicio el proveedor MG
+#   Pharmacorp SRL" -- an administrative error in the source, not a naming
+#   variant, and not something this table should paper over.
+#
+# "Ro Bot S.A" vs "RO-BOT S.R.L"
+#   The two decretos state DIFFERENT legal forms: decreto 194/2023 reads
+#   "Adjudicar a la firma Ro Bot S.A." and decreto 205/2022 reads
+#   'Adjudicar a la firma "RO-BOT S.R.L."'. An S.A. and an S.R.L. are
+#   different legal persons. Neither decreto prints a CUIT, so the sources
+#   cannot settle whether this is one firm the municipality mis-typed or
+#   two. Merge only if a CUIT or a corporate notice resolves it.
+# ---------------------------------------------------------------------------

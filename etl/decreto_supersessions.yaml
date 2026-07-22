@@ -1,0 +1,171 @@
+# Curated table of superseded municipal decretos for the adjudicaciones
+# monitor (data/adjudicaciones.json, feature G3). This is the SOURCE OF TRUTH
+# for the only case in which a parsed adjudicación row is dropped from, or has
+# its amount rewritten in, the published dataset.
+#
+# WHY THIS IS CURATED AND NOT AUTOMATED. The municipality voids and re-issues
+# its own awards, so the raw bulletins contain acts that no longer stand. Left
+# alone the portal double-counts them -- and double-counting is the worse
+# failure direction: it publicly OVERSTATES how much public money a named
+# private company received. Decreto 579/2023 is the sharpest case; the
+# municipality itself wrote that it had named the wrong adjudicatario, so the
+# portal was asserting that BERNARDO LEW SRL received money the Municipality
+# says on the record it never awarded to that firm.
+#
+# The obvious fix -- detect "Derógase/Rectifícase ... Decreto Nº N/YY" and drop
+# the target -- was designed, measured, and REJECTED, because every automatic
+# version of it erases real spending:
+#   * The same verb covers "the whole award is void" (588/2023, which replaces
+#     the counterparty) and "one digit was wrong" (799/2023, which only fixes
+#     an arithmetic slip under Art. 115 of Ordenanza General 267). Dropping on
+#     the verb deletes ARS 4.137.152 of contracts that were built and paid.
+#   * A derogation says nothing about whether the money moved. Decretos
+#     510/2023 and 511/2023 were derogated for procedural omissions and then
+#     reinstated verbatim a week later by 536/2023 and 537/2023. The payments
+#     happened.
+#   * Target references are ambiguous. 114/2026 writes "el Decreto No 98
+#     dictado el día 06 de marzo de 2026" with no year, and decree numbers
+#     repeat across years -- 115 is both a rectifying decree in 2023 and the
+#     COMADAR award that must be KEPT in 2026.
+#   * Decisively: the act that voids 98/2026 is 114/2026, which parses to zero
+#     rows. No rule that inspects only published rows can ever see it. The
+#     supersession authority has to live outside the row set.
+#
+# So the regexes in sibom_adjudicaciones.py are DETECTORS ONLY. They cannot
+# drop anything; their sole power is to fail a test when they fire on a
+# decreto that is in neither section of this file. That is how a future
+# archive refresh surfaces a new supersession without code being able to
+# delete public money on its own. Same curated-table pattern as
+# etl/vendor_aliases.yaml, etl/deuda_anomalies.yaml and etl/titularidad.yaml.
+#
+# TWO SCOPES:
+#   full        -- the award is void. The row is dropped, but ONLY when the
+#                  `replacedBy` decreto actually emitted a row for the same
+#                  expediente (the replacement-existence guard). If it did
+#                  not, the row is KEPT and flagged, never silently deleted.
+#   amount-only -- an arithmetic correction. NEVER drops. Rewrites montoArs
+#                  and preserves the originally published figure.
+#
+# Nothing here is ever hidden from the reader: every dropped act is republished
+# in the `supersessions[]` array of data/adjudicaciones.json, labelled and
+# excluded from totals, the same way the Q4-2025 debt anomaly is disclosed.
+
+supersessions:
+  "405/2022":
+    supersededBy: "447/2022"
+    replacedBy: "447/2022"
+    scope: full
+    bulletin: boletin-031
+    quote: "ARTICULO 1o: Derogase el Decreto N° 405/22 de fecha 12 de agosto de 2022.-"
+    motivo: >-
+      El monto adjudicado superaba la Solicitud de Pedido y de Gastos 2260/22;
+      el municipio derogó y readjudicó la misma obra al mismo proveedor por el
+      mismo importe.
+    reviewedOn: "2026-07-21"
+
+  "506/2023":
+    supersededBy: "546/2023"
+    replacedBy: "546/2023"
+    scope: full
+    bulletin: boletin-036
+    quote: "ARTICULO 1o : Deróguese el Decreto Municipal No 506/23.-"
+    motivo: >-
+      Faltaba declarar la incompetencia en materia de geología del Municipio
+      (Art. 148 LOM); 546/2023 subsana el paso omitido y reautoriza la misma
+      contratación.
+    reviewedOn: "2026-07-21"
+
+  "579/2023":
+    supersededBy: "588/2023"
+    replacedBy: "588/2023"
+    scope: full
+    bulletin: boletin-036
+    quote: >-
+      ARTICULO 1o : Rectificase el articulo N°1 del decreto N°579/23 el que
+      quedara redactado de la siguiente manera: "ARTICULO 1o: Autorizase la
+      Contratación Directa con la firma "MG PHARMACORP SRL""
+    quoteSecundaria: >-
+      Que por error involuntario en la confección proyecto de decreto de
+      adjudicación referente a la solicitud de pedido N°3012 colocándose como
+      adjudicatario al proveedor Bernardo Lew SRL siendo el prestador del
+      servicio el proveedor MG Pharmacorp SRL
+    motivo: >-
+      El decreto original nombró al adjudicatario equivocado. 588/2023 reemplaza
+      la cláusula de adjudicación completa: contraparte, objeto e importe. Sin
+      esta entrada el portal afirma que BERNARDO LEW SRL cobró fondos que el
+      propio Municipio declara por escrito que nunca le adjudicó.
+    reviewedOn: "2026-07-21"
+
+  "98/2026":
+    supersededBy: "114/2026"
+    replacedBy: "115/2026"
+    scope: full
+    bulletin: boletin-082
+    quote: >-
+      ARTICULO 1o: Anular el Decreto No 98 dictado el día 06 de marzo de 2026
+      atento los motivos expuestos en los considerandos:
+    motivo: >-
+      Se omitió la solicitud de pedido y de gastos. 114/2026 anula y ordena
+      dictar un nuevo acto; ese acto es 115/2026, que readjudica la misma obra
+      a COMADAR S.R.L. por el mismo importe.
+    reviewedOn: "2026-07-21"
+
+  "696/2023":
+    supersededBy: "799/2023"
+    scope: amount-only
+    montoArsPublicado: 2519290
+    montoArsVigente: 2949900
+    bulletin: boletin-037
+    quote: >-
+      ARTÍCULO 1o: Rectificase el Artículo 2o del Decreto Municipal No 696/23
+      con fecha 28 de Noviembre de 2023 el que quedará redactado de la
+      siguiente manera ($ 2.949.900,00.-)
+    motivo: >-
+      Corrección aritmética bajo el Art. 115 de la Ordenanza General 267. El
+      Artículo 1 (aprobación del pliego) queda intacto; la obra y el proveedor
+      no cambian.
+    reviewedOn: "2026-07-21"
+
+  "697/2023":
+    supersededBy: "800/2023"
+    scope: amount-only
+    montoArsPublicado: 1617862
+    montoArsVigente: 1550800
+    bulletin: boletin-037
+    quote: >-
+      ARTÍCULO 1o: Rectificase el Artículo 2o del Decreto Municipal No 697/23
+      el que quedará redactado de la siguiente manera ($ 1.550.800,00.-)
+    motivo: "Idéntico caso que 696/2023."
+    reviewedOn: "2026-07-21"
+
+# Decretos a detector fires on that are NOT supersessions. Recorded so the
+# test stays green without weakening the detector, and so a future maintainer
+# does not "fix" them.
+not_superseded:
+  "377/2023":
+    targetedBy: "389/2023"
+    reason: >-
+      Rectificación puramente ortográfica del monto en letras: "CUATROCIENTOS
+      MIL CUATROCIENTOS CINCUENTA" -> "CUATROCIENTOS CINCUENTA MIL". El
+      numeral $ 4.450.000,00, el proveedor, la obra y el expediente son
+      idénticos.
+  "510/2023":
+    targetedBy: "520/2023"
+    reason: >-
+      No es una adjudicación sino una orden de pago de anticipo. Fue derogada
+      por omisiones procedimentales y reinstaurada textualmente siete días
+      después por 536/2023. El pago ocurrió.
+  "511/2023":
+    targetedBy: "519/2023"
+    reason: "Mismo caso que 510/2023; reinstaurada por 537/2023."
+  "479/2024":
+    targetedBy: null
+    reason: >-
+      Falso positivo del detector: "rectificación" es el OBJETO del contrato,
+      no un verbo derogatorio -- "servicio de rectificación y reparación de
+      PALA MICHIGAN (RPM 17764)".
+  "562/2024":
+    targetedBy: null
+    reason: >-
+      Falso positivo idéntico: "servicio de rectificación y reparación de
+      CAMION REGADOR COI 609 RPM 17682".

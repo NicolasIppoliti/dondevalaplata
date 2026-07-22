@@ -49,7 +49,17 @@ def test_build_adjudicaciones_writes_both_data_files(tmp_path, monkeypatch) -> N
     monkeypatch.setattr(cli, "build_adjudicaciones", fake_build_adjudicaciones)
     monkeypatch.setattr(cli, "build_proveedores", fake_build_proveedores)
 
-    args = argparse.Namespace(manifest_path=manifest_path, data_root=data_root)
+    aliases_path = tmp_path / "vendor_aliases.yaml"
+    aliases_path.write_text("aliases: []\n", encoding="utf-8")
+    supersessions_path = tmp_path / "decreto_supersessions.yaml"
+    supersessions_path.write_text("supersessions: {}\n", encoding="utf-8")
+
+    args = argparse.Namespace(
+        manifest_path=manifest_path,
+        data_root=data_root,
+        vendor_aliases_path=aliases_path,
+        supersessions_path=supersessions_path,
+    )
     exit_code = cli.run_build_adjudicaciones(args)
 
     assert exit_code == 0
@@ -57,3 +67,11 @@ def test_build_adjudicaciones_writes_both_data_files(tmp_path, monkeypatch) -> N
     assert adjudicaciones == fake_result
     proveedores = json.loads((data_root / "proveedores.json").read_text(encoding="utf-8"))
     assert proveedores == {"generatedAt": "2026-07-08T00:00:00Z", "proveedores": []}
+
+
+def test_build_adjudicaciones_parser_wires_default_vendor_aliases_path() -> None:
+    parser = cli.build_parser()
+
+    args = parser.parse_args(["build-adjudicaciones"])
+
+    assert args.vendor_aliases_path == cli.DEFAULT_VENDOR_ALIASES_PATH
