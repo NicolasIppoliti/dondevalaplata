@@ -45,18 +45,20 @@ describe("/adjudicaciones page", () => {
     render(<Page />);
     expect(screen.getByRole("searchbox", { name: /buscar/i })).toBeTruthy();
     const first = adjudicaciones.records[0];
-    expect(screen.getByText(first.proveedor)).toBeTruthy();
+    // getAllByText, not getByText: a vendor with several awards renders once
+    // per row, and the assertion here is "the first record is rendered", not
+    // "this vendor won exactly once".
+    expect(screen.getAllByText(first.proveedor).length).toBeGreaterThan(0);
   });
 
   it("expanding a row reveals dual-link provenance (original + archived) with a sha256", () => {
     const { adjudicaciones } = getPortalData();
     render(<Page />);
     const first = adjudicaciones.records[0];
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: new RegExp(`ver detalle de ${escapeRegExp(first.proveedor)}`, "i"),
-      }),
-    );
+    const [firstToggle] = screen.getAllByRole("button", {
+      name: new RegExp(`ver detalle de ${escapeRegExp(first.proveedor)}`, "i"),
+    });
+    fireEvent.click(firstToggle);
     expect(screen.getAllByRole("link", { name: /fuente original/i }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: /copia archivada/i }).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/sha256/i).length).toBeGreaterThan(0);
